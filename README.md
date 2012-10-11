@@ -6,5 +6,7 @@ Healthnmon aims to deliver “Cloud Resource Monitor”, an extensible service t
 HP has proposed following Blueprints for OpenStack and has the initial implementation of the same in this repository 
 
 Cloud Inventory Manager (https://blueprints.launchpad.net/openstack-devops/+spec/cloud-inventory-manager)
+
 Alerts and Notification (https://blueprints.launchpad.net/openstack-devops/+spec/resource-monitor-alerts-and-notifications)
+
 Utilization Data (https://blueprints.launchpad.net/openstack-devops/+spec/utilizationdata)
