@@ -10,3 +10,9 @@ Cloud Inventory Manager (https://blueprints.launchpad.net/openstack-devops/+spec
 Alerts and Notification (https://blueprints.launchpad.net/openstack-devops/+spec/resource-monitor-alerts-and-notifications)
 
 Utilization Data (https://blueprints.launchpad.net/openstack-devops/+spec/utilizationdata)
+
+Refer the Wiki and Downloads section for more information:  https://github.com/healthnmon/healthnmon
+
+Healthnmon module RPM which works with OpenStack ESSEX release can be downloaded from https://github.com/healthnmon/healthnmon/downloads
+
+
