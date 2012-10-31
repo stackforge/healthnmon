@@ -1,0 +1,113 @@
+#!/bin/bash
+#
+# healthnmon	Health and Monitoring service for Cloud
+#
+# chkconfig: 2345 98 04
+# description: Health and Monitoring service for cloud             \
+#
+# config: /etc/nova/nova.conf
+# pidfile: /var/run/nova/healthnmon.pid
+
+### BEGIN INIT INFO
+# Provides: healthnmon
+# Required-Start: $local_fs $network $syslog
+# Required-Stop: $local_fs $syslog
+# Should-Start: $syslog
+# Should-Stop: $network $syslog
+# Default-Start: 3 4 5
+# Default-Stop: 0 2 1 6
+# Short-Description: Health and Monitoring service for cloud
+# description: Health and Monitoring service for cloud             
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+prog="Health and Monitoring service for cloud"
+
+modulename="healthnmon"
+
+flagfile=/etc/nova/nova.conf
+pidfile=/var/run/$modulename/$modulename.pid
+lockfile=/var/lock/subsys/$modulename
+binfile=/usr/bin/$modulename
+logfile="/var/log/$modulename/$modulename.log"
+
+start() {
+	if [ -f "$pidfile" ]; then
+		pid=`cat $pidfile`
+		checkpid $pid
+		r=$?
+		if [ "$r" -eq 0 ]; then
+			cmd=$(basename $binfile)
+			echo -n "$cmd is already running (pid $pid)"; passed
+			echo
+			exit 0
+		fi
+	fi
+	echo -n "Starting $prog: "
+	cd /var/lib/nova
+	daemon --user nova --pidfile $pidfile "$binfile --config-file $flagfile --logfile $logfile &>/dev/null & echo \$! > $pidfile"
+	sleep 1
+	if [ -f "$pidfile" ]; then
+		checkpid `cat $pidfile`
+		r=$?
+		if [ "$r" -eq 0 ]; then
+			touch $lockfile
+			success
+		else
+			failure
+		fi
+	else
+		failure
+	fi
+	echo
+	return
+}	
+
+stop() {
+	echo -n "Stopping $prog: "
+	if [ -n "`pidofproc -p $pidfile $binfile`" ] ; then
+		killproc -p $pidfile $binfile
+	else
+		success $"Stopping $prog"
+	fi
+	retval=$?
+	[ $retval -eq 0 ] && rm -f $lockfile
+	echo
+	return $retval
+}
+
+rh_status() {
+	status -p $pidfile $binfile
+}
+
+restart() {
+    	stop
+	start
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	rh_status
+	retval=$?
+	if [ $retval -eq 3 -a -f $lockfile ] ; then
+		retval=2
+	fi
+        exit $retval
+	;;
+    restart)
+	restart
+	;;
+    *)
+	echo "Usage: service $modulename {start|stop|status|restart}"
+	exit 1
+	;;
+esac
+exit $?

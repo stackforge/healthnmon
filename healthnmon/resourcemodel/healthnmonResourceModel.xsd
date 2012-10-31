@@ -1,0 +1,1370 @@
+<?xml version="1.0"?>
+<!-- Created: September 29, 2011 Updated: July 25, 2011 © 2011 Hewlett-Packard Development Company, L.P. Confidential computer software. 
+    Valid license from HP required for possession, use of copying. Consistent with FAR 12.211 and 12.212, Commercial Computer Software, Computer 
+    Software Documentation, and Technical Data for Commercial Items are licensed to the U.S. Government under vendor's standard commercial 
+    license. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc hj orm annox" jaxb:version="2.0"
+    xmlns:annox="http://annox.dev.java.net" xmlns:ha="http://annox.dev.java.net/org.hibernate.annotations" xmlns:jxp="http://annox.dev.java.net/javax.persistence"
+    xmlns:hj="http://hyperjaxb3.jvnet.org/ejb/schemas/customizations" xmlns:orm="http://java.sun.com/xml/ns/persistence/orm" xmlns="http://hp.com/healthnmon/HealthnMonResourceModel"
+    targetNamespace="http://hp.com/healthnmon/HealthnMonResourceModel" elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:appinfo>
+            <jaxb:globalBindings>
+                <xjc:serializable />
+            </jaxb:globalBindings>
+        </xs:appinfo>
+    </xs:annotation>
+
+    <!-- ++++++++++++++++++++++++++++++ Common Model ++++++++++++++++++++++++++++++ -->
+    <!-- Base Type Definitions -->
+    <xs:complexType name="Entity">
+        <xs:annotation>
+            <xs:appinfo>
+                <hj:mapped-superclass />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="id" type="xs:string" minOccurs="1" maxOccurs="1"> <!-- ISC unique ID for an object. Set by the owner/creator of the object. -->
+                <xs:annotation>
+                    <xs:appinfo>
+                        <hj:id />
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <annox:annotate>
+                            <jxp:Lob />
+                        </annox:annotate>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="createEpoch" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="lastModifiedEpoch" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="deletedEpoch" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="deleted" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+            <xs:element name="cost" type="Cost" minOccurs="0" maxOccurs="1" />
+            <xs:element name="properties" type="Property" minOccurs="0" maxOccurs="unbounded" /> <!-- Name=value properties, allows adding additional attributes to objects without formally changing the model. -->
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Inherited Type Definitions -->
+
+    <xs:complexType name="Property" mixed="false"> <!-- used by Service, Resource, and Management models. Contained in Entity. -->
+        <xs:sequence>
+            <xs:element name="id" type="xs:integer" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <hj:id />
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Cost"> <!-- used by Service, Resource, and Management models. Contained in Entity. -->
+        <xs:annotation>
+            <xs:appinfo>
+                <hj:embeddable />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+            <xs:element name="units" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ResourceTag">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="assertionType" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Enumerated Type Definitions -->
+    <xs:simpleType name="PoolResourceTypeEnum"> <!-- shared by Service and Resource models -->
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="COMPUTE_SERVER" />
+            <xs:enumeration value="SUBNET" />
+            <xs:enumeration value="SERVICE_TEMPLATE" />
+            <xs:enumeration value="STORAGE" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ProcessorArchitectureEnum"> <!-- shared by Service and Resource models -->
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IA_32" />
+            <xs:enumeration value="IA_64" />
+            <!-- The following enum must be explicitly named or JAXB will translate the name unexpectedly. -->
+            <xs:enumeration value="X86_64">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:typesafeEnumMember name="X86_64" />
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SPARC" />
+            <xs:enumeration value="POWER_PC" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="IpTypeEnum"> <!-- shared by Service and Resource models -->
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IPV4" />
+            <xs:enumeration value="IPV6" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RaidLevelEnum"> <!-- shared by Service and Resource models -->
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RAID0" />
+            <xs:enumeration value="RAID1" />
+            <xs:enumeration value="RAID3" />
+            <xs:enumeration value="RAID4" />
+            <xs:enumeration value="RAID5" />
+            <xs:enumeration value="RAID6" />
+            <xs:enumeration value="RAID01" />
+            <xs:enumeration value="RAID05" />
+            <xs:enumeration value="RAID10" />
+            <xs:enumeration value="RAID50" />
+            <xs:enumeration value="RAID60" />
+            <xs:enumeration value="AUTO" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Root Element -->
+    <xs:element name="Entity" type="Entity" />
+
+    <!-- Enumerated Type Definitions -->
+    <xs:simpleType name="YesNoTriple">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="YES" />
+            <xs:enumeration value="NO" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OperationalStatusEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE" />
+            <xs:enumeration value="BUILDING" />
+            <xs:enumeration value="REBUILDING" />
+            <xs:enumeration value="PAUSED" />
+            <xs:enumeration value="SUSPENDED" />            
+            <xs:enumeration value="SHUTDOWN" />
+            <xs:enumeration value="RESCUED" />
+            <xs:enumeration value="DELETED" />
+            <xs:enumeration value="STOPPED" />
+            <xs:enumeration value="SOFT_DELETE" />
+            <xs:enumeration value="MIGRATING" />
+            <xs:enumeration value="RESIZING" />
+            <xs:enumeration value="ERROR" /> 
+            <xs:enumeration value="UNKNOWN" />           
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SoftwareTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IMAGE" />
+            <xs:enumeration value="VM_TEMPLATE" />
+            <xs:enumeration value="CLOUD_IMAGE" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ClusterTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VMHOST" />
+            <xs:enumeration value="GENERAL" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ClusterSubTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ESX" />
+            <xs:enumeration value="HYPER_V" />
+            <xs:enumeration value="UNKNOWN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SubnetRoleTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HEARTBEAT" />
+            <xs:enumeration value="MANAGEMENT" />
+            <xs:enumeration value="MIGRATION" />
+            <xs:enumeration value="CONSOLE" />
+            <xs:enumeration value="QUARANTINE" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="RawMappedTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PHYSICAL" />
+            <xs:enumeration value="VIRTUAL" />
+            <xs:enumeration value="NONE" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ++++++++++++++++++++++++++++++ Resource Model ++++++++++++++++++++++++++++++ -->
+    <!-- Enumerated Type Definitions -->
+    <xs:simpleType name="VirtualizationEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ESX" />
+            <xs:enumeration value="XEN" />
+            <xs:enumeration value="HYPER_V" />
+            <xs:enumeration value="MSVS" />
+            <xs:enumeration value="GSX" />
+            <xs:enumeration value="INTEGRITY_VM" />
+            <xs:enumeration value="CLOUD" />
+            <xs:enumeration value="KVM" />
+            <xs:enumeration value="QEMU" />
+            <xs:enumeration value="UNKNOWN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OsTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="WINDOWS" />
+            <xs:enumeration value="WINDOWS_2008" />
+            <xs:enumeration value="WINDOWS_LH" />
+            <xs:enumeration value="LINUX" />
+            <xs:enumeration value="HP_UX" />
+            <xs:enumeration value="VMWARE" />
+            <xs:enumeration value="HYPER_V" />
+            <xs:enumeration value="KVM" />
+            <xs:enumeration value="CITRIX_XEN" />
+            <xs:enumeration value="SOLARIS" />
+            <xs:enumeration value="AIX" />
+            <xs:enumeration value="OPEN_VMS" />
+            <xs:enumeration value="UNKNOWN" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="StorageTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FC_SAN" />
+            <xs:enumeration value="DAS" />
+            <xs:enumeration value="VMFS" />
+            <xs:enumeration value="SAS_SAN" />
+            <xs:enumeration value="ISCSI_SAN" />
+            <xs:enumeration value="DIR" />
+            <xs:enumeration value="FS" />
+            <xs:enumeration value="DISK" />
+            <xs:enumeration value="NETFS" />
+            <xs:enumeration value="ISCSI" />
+            <xs:enumeration value="SCSI" />
+            <xs:enumeration value="LOGICAL" />
+            <xs:enumeration value="MPATH" />
+            <xs:enumeration value="UNSPECIFIED" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VolumeStateEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LSM" />
+            <xs:enumeration value="SPM_PRE_CARVED" />
+            <xs:enumeration value="SPM_NOT_CARVED" />
+            <xs:enumeration value="UNKNOWN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="StorageProvisioningTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="THICK" />
+            <xs:enumeration value="THIN" />
+            <xs:enumeration value="UNKNOWN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="StorageTemplateTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNKNOWN" />
+            <xs:enumeration value="SPM" />
+            <xs:enumeration value="SPMDEFAULT" />
+            <xs:enumeration value="LSMDEFAULT" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ImageTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OS" />
+            <xs:enumeration value="APPS" />
+            <xs:enumeration value="PATCH" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DeploymentServiceTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RDP" />
+            <xs:enumeration value="SA" />
+            <xs:enumeration value="IGNITE_UX" />
+            <xs:enumeration value="CUSTOM" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="MsDomainTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="WORKGROUP" />
+            <xs:enumeration value="DOMAIN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="IpAllocationTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DHCP" />
+            <xs:enumeration value="AUTO_STATIC" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourceTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PHYSICAL_SERVER" /> <!-- Instead of ComputeServer, which is abstract base class in Pulsar. -->
+            <xs:enumeration value="VMHOST" />
+            <xs:enumeration value="RESOURCE_CAPACITY_POOL" />
+            <xs:enumeration value="SUBNET" />
+            <xs:enumeration value="SAN_VOLUME" />
+            <xs:enumeration value="SAN_VOLUME_TEMPLATE" />
+            <xs:enumeration value="INFRASTRUCTURE_SERVICE_TEMPLATE" />
+            <xs:enumeration value="LOAD_BALANCER" />
+            <xs:enumeration value="FIREWALL" />
+            <xs:enumeration value="VMCLUSTER" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourceSubTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ESX_RESOURCE_POOL" />
+            <xs:enumeration value="EXTERNAL_CLOUD_RESOURCE_POOL" />
+            <xs:enumeration value="ESX" />
+            <xs:enumeration value="HYPER_V" />
+            <xs:enumeration value="HPVM" />
+            <xs:enumeration value="KVM" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NetworkTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MAPPED" />
+            <xs:enumeration value="TUNNEL" />
+            <xs:enumeration value="UNKNOWN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourceAllocationShareEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LOW" />
+            <xs:enumeration value="NORMAL" />
+            <xs:enumeration value="HIGH" />
+            <xs:enumeration value="CUSTOM" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PacketProtocolEnum"> <!-- For FirewallRule objects -->
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TCP" />
+            <xs:enumeration value="UDP" />
+            <xs:enumeration value="ICMP" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Base Type Definitions -->
+    <xs:complexType name="Resource" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Entity"> <!-- ISC Note: Entity has expanded list of attributes that can be populated on Resources. -->
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="resourceManagerId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <!-- For Resources, the Entity.Id may not be globally unique in ISC, if mutliple resource managers of the the same 
+                        type are integrated into ISC. The combination of Entity.Id and Resource.ResourceManagerId will be unique. -->
+
+                    <xs:element name="utilization" type="ResourceUtilization" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="limits" type="ResourceLimit" minOccurs="0" maxOccurs="1" />
+
+                    <!-- Additional, vendor specific properties -->
+                    <xs:element name="vendorProperties" type="VendorProperties" minOccurs="0" maxOccurs="1" />
+
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ResourceUtilization">
+        <!-- Resource utilization metrics in bytes or percentages -->
+        <xs:sequence>
+            <xs:element name="resourceId" type="xs:string" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="timestamp" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
+            <xs:element name="granularity" type="xs:int" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="cpuUserLoad" type="xs:double" minOccurs="0" maxOccurs="1" />
+            <xs:element name="cpuSystemLoad" type="xs:double" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="hostCpuSpeed" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="hostMaxCpuSpeed" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="ncpus" type="xs:int" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="diskRead" type="xs:double" minOccurs="0" maxOccurs="1" />
+            <xs:element name="diskWrite" type="xs:double" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="netRead" type="xs:double" minOccurs="0" maxOccurs="1" />
+            <xs:element name="netWrite" type="xs:double" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="totalMemory" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="freeMemory" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="configuredMemory" type="xs:long" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="uptimeMinute" type="xs:long" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="reservedSystemCapacity" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="maximumSystemCapacity" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="relativeWeight" type="xs:long" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="reservedSystemMemory" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="maximumSystemMemory" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="memoryRelativeWeight" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="status" type="xs:int" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ResourceLimit">
+        <!-- Resource limitations or quotas in bytes or percentages -->
+        <xs:sequence>
+            <xs:element name="resourceId" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="memoryConsumedLimit" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="memoryPercentLimit" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="diskSpaceConsumedLimit" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="diskSpacePercentLimit" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="cpuPercentLimit" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="networkPercentLimit" type="xs:long" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="VendorProperties" mixed="false">
+        <!-- An empty container designed to hold Property elements defining vendor specific attributes on a resource. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Entity">
+                <xs:sequence>
+                    <!-- Properties -->
+
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmGenericDevice" mixed="false">
+        <!-- An empty container designed to hold Property elements defining Generic device specific attributes on a resource. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Entity">
+                <xs:sequence>
+                    <!-- Properties -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmGlobalSettings" mixed="false">
+        <!-- An empty container designed to hold Property elements defining VM Global settings -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Entity">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="autoStartAction" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="autoStopAction" type="xs:string" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="OsProfile" mixed="false">
+        <!-- Common element for the OS attributes of running virtual and physical servers. -->
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="resourceId" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="osType" type="OsTypeEnum" minOccurs="0" maxOccurs="1" />
+            <xs:element name="osSubType" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="osDescription" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="osName" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="osVersion" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- What is Group ID? VCDG for PhysicalServer, Cluster ID for VMHost? -->
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IpProfile" mixed="false">
+        <!-- Common element for the IP attributes of running virtual and physical servers. -->
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="ipAddress" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="ipType" type="IpTypeEnum" minOccurs="0" maxOccurs="1" />
+            <xs:element name="hostname" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="domain" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="VmNetAdapter" mixed="false">
+        <!-- Common element for the Network attributes of running virtual servers. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="addressType" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- MAC address type Automatic 
+                        or Manual -->
+                    <xs:element name="adapterType" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Adapter TYpe like E1000, 
+                        VMXNET, Legacy, Synthetic -->
+                    <xs:element name="switchType" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Switch Type like vSwitch, 
+                        dvSwitch -->
+                    <xs:element name="macAddress" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="ipAddresses" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="networkName" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Virtual Switch Name 
+                        in case of Hyper-V / PortGroup Name in case of ESX -->
+                    <xs:element name="vlanId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmScsiController" mixed="false">
+        <!-- Common element for the Network attributes of running virtual servers. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="controllerId" type="xs:int" minOccurs="0" maxOccurs="1" /><!-- Controller number -->
+                    <xs:element name="controllerName" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Display name of 
+                        the controller like "SCSI Controller 1" -->
+                    <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Controller Type like lsiLogic, 
+                        busLogic, lsiLogicSAS, paraVirtual -->
+                    <xs:element name="busSharing" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- BusSharing details like 
+                        none, physical, virtual -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmDisk" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="controllerType" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- SCSI or IDE -->
+                    <xs:element name="controllerId" type="xs:int" minOccurs="0" maxOccurs="1" /><!-- Controller Id -->
+                    <xs:element name="channel" type="xs:int" minOccurs="0" maxOccurs="1" /><!-- Channel number... In SCSI0:1 
+                        SCSI is the ControllerType 0 is the ControllerId 1 is the Channel -->
+                    <xs:element name="fileName" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Name of the Disk File 
+                        in the File System -->
+                    <xs:element name="mode" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Mode like Persistent, non-persistent 
+                        etc., -->
+                    <xs:element name="diskSize" type="xs:long" minOccurs="0" maxOccurs="1" /><!-- Represents the Total Size 
+                        of the Disk asked for -->
+                    <xs:element name="fileSize" type="xs:long" minOccurs="0" maxOccurs="1" /><!-- Represents the current Physical 
+                        size of the Disk on the File System -->
+                    <xs:element name="rdmDiskProfile" type="RdmDiskProfile" minOccurs="0" maxOccurs="1" /><!-- If the VmDisk 
+                        is RDM disk then details of the LUN and NPIV Wwn -->
+
+                    <!-- Reference to the volume on which this disk resides - StorageVolume or SanVolume. -->
+                    <xs:element name="storageVolumeId" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Datastore on which 
+                        this disk resides -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RdmDiskProfile" mixed="false">
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="lunId" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Unique identifier of the VM Disk 
+                for Raw disk mapping -->
+            <xs:element name="deviceDescription" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="hostHbaNodeWwn" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="hostHbaPortWwn" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="npivNodeWwns" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="npivPortWwns" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="compatibilityMode" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- Physical or Virtual -->
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ResourceAllocation">
+        <!-- Element defining amount or share for a type of resource, used in VMCapacity Pool. -->
+        <xs:sequence>
+            <xs:element name="share" type="ResourceAllocationShareEnum" minOccurs="0" maxOccurs="1" />
+            <xs:element name="customShareValue" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="reservation" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="isExpandableReservation" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+            <xs:element name="limit" type="xs:long" minOccurs="0" maxOccurs="1" />
+            <xs:element name="isUnlimited" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+            <!-- vSphere 4.0 definitions - http://www.vmware.com/pdf/vsphere4/r40/vsp_40_resource_mgmt.pdf Shares Number of CPU or memory 
+                shares the resource pool has with respect to the parentâs total. Sibling resource pools share resources according to their relative share 
+                values bounded by the reservation and limit. You can select Low, Normal, or High, or select Custom to specify a number that assigns a 
+                share value. Reservation Guaranteed CPU or memory allocation for this resource pool. A nonzero reservation is subtracted from the unreserved 
+                resources of the parent (host or resource pool). The resources are considered reserved, regardless of whether virtual machines are associated 
+                with the resource pool. Defaults to 0. Expandable Reservation Indicates whether expandable reservations are considered during admission 
+                control. If you power on a virtual machine in this resource pool, and the reservations of the virtual machines combined are larger than 
+                the reservation of the resource pool, the resource pool can use resources from its parent or ancestors if this check box is selected 
+                (the default). Limit Upper limit for the amount of CPU or memory the host makes available to this resource pool. Default is Unlimited. 
+                To specify a limit, deselect the Unlimitedcheck box. -->
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ExtensibleRaidLevel">
+        <xs:annotation>
+            <xs:appinfo>
+                <hj:embeddable />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="raidLevelEnum" type="RaidLevelEnum" minOccurs="0" maxOccurs="1" />
+            <xs:element name="extendedRaidLevel" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HostMountPoint" mixed="false">
+        <!-- Common element for the StorageVolume mount point of a VM Host -->
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="vmHostId" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="VmClusterCapabilities" mixed="false">
+        <!-- Boolean or other values that describe the features or capabilities of a VmCluster. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties Currently named with ESX bias. -->
+                    <xs:element name="haEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- High Availability -->
+                    <xs:element name="drsEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Cluster Load Balancing. E.g. DRS. -->
+                    <xs:element name="dpmEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Distributes Power Management -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="VmCapabilities" mixed="false">
+        <!-- Boolean or other values that describe the features or capabilities of a Vm. -->
+        <xs:sequence>
+            <!-- Properties Currently named with ESX bias. -->
+            <xs:element name="haEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- High Availability -->
+            <xs:element name="ftEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Fault Tolerant -->
+            <xs:element name="liveMoveEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- vMotion, Quick Move, etc. -->
+            <xs:element name="storageMoveEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Storage vMotion, etc. -->
+            <xs:element name="sharedDisksEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Supports shared data disks? -->
+            <xs:element name="linkedCloneEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Supports linked clone VM provisioning? -->
+            <!-- NOTE: currently not including supported VM modify operations - edit, customize, etc. Rick - is this needed? -->
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Error">
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="code" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="messageBundleKey" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="detail" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="entityId" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Event">
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="date" type="xs:long" minOccurs="1" maxOccurs="1" />
+            <xs:element name="message" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="messageBundleKey" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="parameters" type="MessageParameter" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="status" type="StatusMessageEnum" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="MessageParameter">
+        <xs:sequence>
+            <!-- Properties -->
+            <xs:element name="id" type="xs:long" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <hj:id />
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="parameters" type="MessageParameter" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Inherited Type Definitions -->
+
+    <xs:complexType name="ComputeCluster" mixed="false">
+        <!-- Abstract base element for all Cluster elements. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="processorSpeedTotalMhz" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="memorySize" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorCoresCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="hostsCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+
+                    <xs:element name="effectiveHostsCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="effectiveProcessorSpeedTotalMhz" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="effectiveMemorySize" type="xs:long" minOccurs="0" maxOccurs="1" />
+
+                    <xs:element name="memoryConsumed" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorLoadPercent" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <!-- Relationships -->
+                    <xs:element name="computeServers" type="ComputeServer" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ComputeServer" mixed="false">
+        <!-- Abstract base element for all Server elements. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="memorySize" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorSpeedMhz" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorSpeedTotalMhz" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorCoresCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorArchitecture" type="ProcessorArchitectureEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="serialNumber" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="groupId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- What is Group ID? VCDG for PhysicalServer, Cluster ID for VMHost? -->
+                    <xs:element name="memoryConsumed" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorLoadPercent" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="hyperThreadEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PhysicalServer" mixed="false">
+        <!-- Concrete element for all physical servers. Base element for all VM hosts. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="ComputeServer">
+                <xs:sequence>
+                    <!-- Properties -->
+
+                    <xs:element name="os" type="OsProfile" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="ipAddresses" type="IpProfile" minOccurs="0" maxOccurs="unbounded" />
+
+                    <!-- RICK: Does Model belong in ComputeServer or PhysicalServer? Do VM's on premise or in cloud have a Model attribute? -->
+                    <xs:element name="model" type="xs:string" minOccurs="0" maxOccurs="1" />
+
+                    <!-- RICK: Does LicensingId belong in ComputeServer or PhysicalServer? What is LicensingId? -->
+                    <xs:element name="licensingId" type="xs:string" minOccurs="0" maxOccurs="1" />
+
+                    <!-- RICK: Should we disambiguate Rack, Enclosure, and Bay? -->
+
+                    <!-- Enclosure is either the Blade Enclosure name or the Rack name depending on server type -->
+                    <xs:element name="enclosure" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <!-- Bay is either the Enclosure bay name or the Rack position name depending on server type -->
+                    <xs:element name="bay" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="uuid" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="inUse" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="fcVirtualInitiator" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="ethernetVirtualInitiator" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="localDisks" type="StorageVolume" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="validTarget" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <!-- Relationships -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmHost" mixed="false">
+        <!-- Concrete element for all Vm hosts. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="PhysicalServer">
+                <xs:sequence>
+                    <!-- Properties -->
+
+                    <xs:element name="virtualizationType" type="VirtualizationEnum" minOccurs="0" maxOccurs="1" />
+
+                    <!-- NOTE: Deprecated these 3 attributes. IP of type IPProfile supercedes them. -->
+                    <!-- <xs:element name="IpAddress" type="xs:string" minOccurs="0" maxOccurs="1"/> <xs:element name="Hostname" type="xs:string" 
+                        minOccurs="0" maxOccurs="1"/> <xs:element name="Domain" type="xs:string" minOccurs="0" maxOccurs="1"/> -->
+                    <xs:element name="clusterName" type="xs:string" minOccurs="0" maxOccurs="1" />
+
+                    <!-- Relationships -->
+                    <xs:element name="clusterId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VMCluster in which this VMHost is contained. -->
+                    <xs:element name="storageVolumeIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="virtualSwitches" type="VirtualSwitch" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="portGroups" type="PortGroup" minOccurs="0" maxOccurs="unbounded" /> <!-- Rick: define PortGroup element! -->
+                    <xs:element name="capacityPools" type="VmCapacityPool" minOccurs="0" maxOccurs="unbounded" />
+
+                    <!-- VM's currently on VM Host. -->
+                    <xs:element name="virtualMachineIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <!-- Newly added for schema optimization -->
+                    <xs:element name="ftEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Fault Tolerant -->
+                    <xs:element name="liveMoveEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- vMotion, Quick Move, etc. -->
+                    <xs:element name="storageMoveEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Storage vMotion, etc. -->
+                    <xs:element name="sharedDisksEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Supports shared data disks? -->
+                    <xs:element name="linkedCloneEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- Supports linked clone VM provisioning? This mainly based on version of ESX -->
+                    
+                    <!--xs:element name="os" type="OsProfile" minOccurs="0" maxOccurs="1" /-->
+                    <xs:element name="connectionState" type="xs:string" minOccurs="0" maxOccurs="1" />  <!-- VmHost property. -->
+            		<xs:element name="isMaintenanceMode" type="xs:boolean" minOccurs="0" maxOccurs="1" /> <!-- VmHost property. -->
+            		<xs:element name="powerState" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VmHost property. -->
+            		<!--xs:element name="deleted" type="xs:boolean" minOccurs="0" maxOccurs="1" /-->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmCluster" mixed="false">
+        <!-- Concrete element for all Vm clusters. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="ComputeCluster">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="virtualizationType" type="VirtualizationEnum" minOccurs="0" maxOccurs="1" />
+
+                    <xs:element name="capabilities" type="VmClusterCapabilities" minOccurs="0" maxOccurs="1" />
+
+                    <!-- Relationships -->
+                    <xs:element name="hosts" type="VmHost" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="storageVolumeIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="virtualSwitches" type="VirtualSwitch" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="portGroups" type="PortGroup" minOccurs="0" maxOccurs="unbounded" /> <!-- Rick: define PortGroup element! -->
+                    <xs:element name="capacityPools" type="VmCapacityPool" minOccurs="0" maxOccurs="unbounded" />
+
+                    <!-- VM's currently on VM Cluster. Rick - should this be an ID list or VM object list? Or not included in VM Cluster? -->
+                    <xs:element name="virtualMachineIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Vm" mixed="false">
+        <!-- Concrete element for all virtual servers. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="ComputeServer">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="connectionState" type="xs:string" minOccurs="0" maxOccurs="1" />  <!-- VmHost property. -->
+            		<xs:element name="bootOrder" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VmHost property. -->
+            		<xs:element name="powerState" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VmHost property. -->
+                    <xs:element name="virtualizationType" type="VirtualizationEnum" minOccurs="0" maxOccurs="1" />
+
+                    <xs:element name="ipAddresses" type="IpProfile" minOccurs="0" maxOccurs="unbounded" /><!-- IP Addresses 
+                        associated with the Vm -->
+                    <xs:element name="os" type="OsProfile" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="vmNetAdapters" type="VmNetAdapter" minOccurs="0" maxOccurs="unbounded" /><!-- VNIC details -->
+                    <xs:element name="vmScsiControllers" type="VmScsiController" minOccurs="0" maxOccurs="unbounded" /><!-- 
+                        SCSI Controllers details -->
+                    <xs:element name="vmDisks" type="VmDisk" minOccurs="0" maxOccurs="unbounded" /><!-- VM Disks associated 
+                        with the VM -->
+                    <xs:element name="vmGenericDevices" type="VmGenericDevice" minOccurs="0" maxOccurs="unbounded" /><!-- 
+                        This is to represent any Hypervisor specific DEVICE details for a Vm or any device that is not directly represented like CD-ROM, USB 
+                        Device, Floppy etc., -->
+                    <xs:element name="vmGlobalSettings" type="VmGlobalSettings" minOccurs="0" maxOccurs="1" /><!-- This is 
+                        to represent the global settings for a VM like AutoStartAction, AutoStopAction. These values are used to take appropriate actions on 
+                        Host restarts or when host comes up after a shutdown -->
+                    
+                    <xs:element name="capabilities" type="VmCapabilities" minOccurs="0" maxOccurs="1" />
+
+                    <xs:element name="templateId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VMTemplate from which this VM was created. -->
+                    <xs:element name="vmHostId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VMHost in which this VM is contained. -->
+
+                    <xs:element name="cpuResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="memoryResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+
+                    <!-- Relationships -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ResourceCapacityPool" mixed="false">
+        <!-- Abstract base element for all capacity pools. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmCapacityPool" mixed="false">
+        <!-- Generalized, renamed ESX Capacity Pool. In case other vendors show up with something similar. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="ResourceCapacityPool">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="virtualizationType" type="VirtualizationEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="parentId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- ParentId - the parent VmCapacityPool, VmCluster, or VmHost. -->
+                    <xs:element name="parentName" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="cpuResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="memoryResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="diskResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+
+                    <!-- VM's currently on ResourcePool. -->
+                    <xs:element name="virtualMachineIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <!-- Relationships: TBD -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CloudCapacityPool" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="ResourceCapacityPool">
+                <xs:sequence>
+                    <!-- Properties: TBD -->
+                    <!-- Relationships -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DiskArray" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Relationships -->
+                    <xs:element name="sanVolumes" type="SanVolume" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="WwnConnection">
+        <xs:sequence>
+            <xs:element name="serverWwn" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="targetWwns" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="fabricId" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="presentation" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SanVolume" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <xs:element name="size" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="extensibleRaidLevel" type="ExtensibleRaidLevel" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="osType" type="OsTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="diskArrayId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- Shall match correctly with new DiskArray element -->
+                    <xs:element name="lunId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="tags" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="groupId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="setId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isMultiMemberSet" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="setName" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="availableConnectionCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isBootable" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="inUse" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isSinglePath" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="volumeState" type="VolumeStateEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="provisioningType" type="StorageProvisioningTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="wwnConnections" type="WwnConnection" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="isAutoGenerated" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isManualZoningRequired" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PhysicalServerProfile" mixed="false">
+        <!-- Profile that brings together server, storage, networks. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+
+                    <!-- Relationships -->
+                    <xs:element name="serverId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="subnetIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="sanVolumeIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="VmProfile" mixed="false">
+        <!-- Virtual Machine Profile that brings together server, storage, networks. -->
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="vmNetAdapters" type="VmNetAdapter" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="vmScsiControllers" type="VmScsiController" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="vmDisks" type="VmDisk" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="vmGenericDevices" type="VmGenericDevice" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="vmGlobalSettings" type="VmGlobalSettings" minOccurs="0" maxOccurs="1" />
+                    <!-- Relationships -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="StorageTag" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <xs:element name="tagText" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="spmId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="StorageVolume" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="size" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="free" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="mountPoints" type="HostMountPoint" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="vmfsVolume" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="shared" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="assignedServerCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+
+                    <xs:element name="volumeType" type="StorageTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="volumeId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="connectionState" type="xs:string" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SanVolumeTemplate" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="spmId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="storageTemplateType" type="StorageTemplateTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="spmTemplateId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="provisioningType" type="StorageProvisioningTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <!-- Default -->
+                    <xs:element name="size" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="raidLevel" type="RaidLevelEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="osType" type="OsTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="tags" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <!-- Immutable -->
+                    <xs:element name="minSize" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="maxSize" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="allowedRaidLevels" type="RaidLevelEnum" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="allowedOsTypes" type="OsTypeEnum" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="requiredTags" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="excludeTags" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PortGroup" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="virtualSwitchId" type="xs:string" minOccurs="0" maxOccurs="1" />
+
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="VirtualSwitch" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="switchType" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="networkInterfaces" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="subnetIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="portGroups" type="PortGroup" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="connectionState" type="xs:string" minOccurs="0" maxOccurs="1" /><!-- New attribute added for tracking the state-->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DeployableSoftware" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="os" type="OsProfile" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="location" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="size" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="memorySize" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="processorArchitecture" type="ProcessorArchitectureEnum" minOccurs="0" maxOccurs="1" />
+                    <!-- Relationships -->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VmTemplate" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="DeployableSoftware">
+                <xs:sequence>
+                    <xs:element name="virtualizationType" type="VirtualizationEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="vmNetAdapters" type="VmNetAdapter" minOccurs="0" maxOccurs="unbounded" /><!-- VNIC details -->
+                    <xs:element name="vmScsiControllers" type="VmScsiController" minOccurs="0" maxOccurs="unbounded" /><!-- 
+                        SCSI Controllers details -->
+                    <xs:element name="vmDisks" type="VmDisk" minOccurs="0" maxOccurs="unbounded" /><!-- VM Disks associated 
+                        with the VM -->
+                    <xs:element name="vmGenericDevices" type="VmGenericDevice" minOccurs="0" maxOccurs="unbounded" /><!-- 
+                        This is to represent any Hypervisor specific DEVICE details for a VM or any device that is not directly represented like CD-ROM, USB 
+                        Device, Floppy etc., -->
+                    <xs:element name="vmGlobalSettings" type="VmGlobalSettings" minOccurs="0" maxOccurs="1" /><!-- This is 
+                        to represent the global settings for a VM like AutoStartAction, AutoStopAction. These values are used to take appropriate actions on 
+                        Host restarts or when host comes up after a shutdown -->
+                    <!-- Do we need this at Template level? If required we can consider in future -->
+                    <!-- <xs:element name="Capabilities" type="VmCapabilities" minOccurs="0" maxOccurs="1"/> -->
+
+                    <!-- Need to check with Rick on this -->
+                    <!-- <xs:element name="TemplateId" type="xs:string" minOccurs="0" maxOccurs="1"/> --> <!-- VMTemplate from which this VM was created. -->
+
+                    <xs:element name="vmHostId" type="xs:string" minOccurs="0" maxOccurs="1" /> <!-- VMHost in which this Template is contained. -->
+
+                    <!-- Check if Data is available and depending on test set/unset -->
+                    <xs:element name="cpuResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="memoryResourceAllocation" type="ResourceAllocation" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Image" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="DeployableSoftware">
+                <xs:sequence>
+                    <!-- RICK: Image is overloaded for OS image/job, software package, and patch. Based on ImageTypeEnum. Continue w 
+                        same in ISC. Custom properties can be used to decorate with distinguishing attributes as needed. -->
+                    <xs:element name="type" type="ImageTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="dsType" type="DeploymentServiceTypeEnum" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CloudImage" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="DeployableSoftware">
+                <xs:sequence>
+                    <xs:element name="sourceCapacityPoolIds" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="IpAddressRange" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="startAddress" type="IpAddress" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="endAddress" type="IpAddress" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="allocationType" type="IpAllocationTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="addressRangeCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="usedIpAddressCount" type="xs:int" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="IpAddress" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="rangeId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="allocationType" type="IpAllocationTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="inMaintenance" type="xs:boolean" default="false" minOccurs="0" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VcNetwork" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="vcDomainId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="vcDomainGroupId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="networkEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="GroupIdType" mixed="false">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <hj:id />
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="networkTypes" type="NetworkTypeEnum" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Subnet" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <!-- Properties -->
+                    <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="networkAddress" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="networkMask" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="networkSources" type="NetworkSourceEnum" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="ipType" type="IpTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isPublic" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isShareable" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="dnsDomain" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="dnsServers" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="dnsSearchSuffixes" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="defaultGateways" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="msDomainType" type="MsDomainTypeEnum" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="msDomainName" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="winsServers" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="ntpDateServers" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="vlanId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isBootNetwork" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="deploymentServices" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="groupIdTypes" type="GroupIdType" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="parentIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="childIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="isTrunk" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="redundancyPeerIds" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="redundancyMasterId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isNativeVlan" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="resourceTags" type="ResourceTag" minOccurs="0" maxOccurs="unbounded" />
+                    <!-- Relationships -->
+                    <xs:element name="ipAddressRanges" type="IpAddressRange" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="usedIpAddresses" type="IpAddress" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="LoadBalancer" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <xs:element name="model" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="version" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="subnetIds" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                    <xs:element name="managementAddress" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="managementPort" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="managementUserName" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="managementPasswordId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="managementCertificateId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="isHaSupported" type="YesNoTriple" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="isSslSupported" type="YesNoTriple" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="tags" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <!-- Firewall elements -->
+
+    <xs:complexType name="Firewall" mixed="false">
+        <xs:complexContent mixed="false">
+            <xs:extension base="Resource">
+                <xs:sequence>
+                    <xs:element name="rules" type="FirewallRule" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="groupName" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="groupId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="capacityPoolId" type="xs:string" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="FirewallRule">
+        <xs:sequence>
+            <xs:element name="protocolType" type="PacketProtocolEnum" minOccurs="0" maxOccurs="1" />
+            <xs:element name="portStart" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="portEnd" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="icmpType" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="icmpCode" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="ipRanges" type="IpAddressRange" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!-- Root Elements -->
+    <xs:element name="VmHost" type="VmHost" />
+    <xs:element name="Vm" type="Vm" />
+    <xs:element name="Subnet" type="Subnet" />
+    <xs:element name="StorageVolume" type="StorageVolume" />
+    <xs:element name="VmCluster" type="VmCluster" />
+    <xs:element name="VmTemplate" type="VmTemplate" />
+    <xs:element name="Image" type="Image" />
+    <xs:element name="CloudImage" type="CloudImage" />
+    <xs:element name="LoadBalancer" type="LoadBalancer" />
+
+    <!-- Enumerated Type Definitions -->
+
+    <xs:simpleType name="StatusMessageEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CRITICAL" />
+            <xs:enumeration value="MAJOR" />
+            <xs:enumeration value="MINOR" />
+            <xs:enumeration value="WARNING" />
+            <xs:enumeration value="NORMAL" />
+            <xs:enumeration value="INFORMATIONAL" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SanProtocolType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FC" />
+            <xs:enumeration value="SAS" />
+            <xs:enumeration value="iSCSI" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NetworkSourceEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VS_NETWORK" />
+            <xs:enumeration value="PS_NETWORK" />
+            <xs:enumeration value="DS_NETWORK" />
+            <xs:enumeration value="CLOUD_NETWORK" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourceReferencePoolTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNASSIGNED" />
+            <xs:enumeration value="MAINTENANCE" />
+            <xs:enumeration value="NORMAL" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Base Type Definitions -->
+
+</xs:schema>
