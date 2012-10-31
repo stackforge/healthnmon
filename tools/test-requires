@@ -2,7 +2,7 @@
 distribute>=0.6.24
 coverage
 mox==0.5.3
-nose
+nose==1.1.2
 nosexcover
 openstack.nose_plugin
 pep8==0.6.1
