@@ -73,11 +73,14 @@ class LibvirtEvents(object):
         @param conn: The instance of the virt.libvirt.connection.LibvirtConnection class
         @param compute_id: An integer representing the compute id of the host'''
         try:
-            self.registered = True
             self.call_back_ids['domain_events'][:] = []
             conn_driver = InventoryCacheManager.get_compute_inventory(self.compute_id).get_compute_conn_driver()
             self.libvirt_con = conn_driver.get_new_connection(conn_driver.uri, True)
+            if self.libvirt_con is None:
+                self.first_poll = True
+                return
             self._register_libvirt_domain_events()
+            self.registered = True
         except Exception:
             self.first_poll = True
             self.deregister_libvirt_events()
@@ -91,7 +94,6 @@ class LibvirtEvents(object):
         LOG.debug(_('Registering host with compute id %s for events' % str(self.compute_id)))
         self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self._domain_event_callback, None))
         self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_REBOOT, self._domain_event_callback, None))
-        self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_DISK_CHANGE, self._domain_event_callback, None))
 
     def deregister_libvirt_events(self):
         '''De-registers the hosts for libvirt events '''
@@ -99,10 +101,14 @@ class LibvirtEvents(object):
             if self.registered:
                 self.registered = False
                 self._deregister_libvirt_domain_events()
-                self.libvirt_con.close()
         except Exception:
             LOG.error(_('An exception occurred while deregistering the host for events'))
             LOG.error(_(traceback.format_exc()))
+        finally:
+            self.call_back_ids['domain_events'][:] = []
+            if self.libvirt_con is not None:
+                self.libvirt_con.close()
+                self.libvirt_con = None
 
     def _deregister_libvirt_domain_events(self):
         '''Deregisters the hosts for domain events by calling the domainEventDeregisterAny method
@@ -110,7 +116,6 @@ class LibvirtEvents(object):
         LOG.debug(_('Deregistering the host with compute id %s for events' % str(self.compute_id)))
         for callBackId in self.call_back_ids['domain_events']:
             self.libvirt_con.domainEventDeregisterAny(callBackId)
-        self.call_back_ids['domain_events'][:] = []
 
     def _process_updates_for_updated_domain(self, domainObj):
         '''Calls the processUpdatesForDomainUpdated method of the LibvirtVM

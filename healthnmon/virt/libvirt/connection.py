@@ -133,6 +133,7 @@ class LibvirtConnection(driver.ComputeInventoryDriver):
                 return libvirt.openAuth(uri, auth, 0)
         except libvirt.libvirtError:
             LOG.debug(_('Unable to connect to libvirt on the host'))
+            LOG.error(_(traceback.format_exc()))
 
     def get_new_connection(self, uri, read_only):
         return self._connect(uri, read_only)

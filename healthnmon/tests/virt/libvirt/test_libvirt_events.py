@@ -52,6 +52,24 @@ class test_LibvirtEvents(unittest.TestCase):
         libvirtEvents.register_libvirt_events()
         self.mock.VerifyAll()
 
+    def test_register_libvirt_events_conn_none(self):
+        libvirtEvents = libvirt_event_monitor.LibvirtEvents()
+        libvirtEvents.compute_id = '1'
+        connection = LibvirtConnection(False)
+        connection.compute_rmcontext = \
+            ComputeRMContext(rmType='fake', rmIpAddress='10.10.155.165',
+                             rmUserName='openstack',
+                             rmPassword='password')
+        InventoryCacheManager.get_all_compute_inventory()['2'] = \
+            ComputeInventory(connection.compute_rmcontext)
+        from healthnmon.virt.fake import FakeConnection
+        self.mock.StubOutWithMock(FakeConnection, 'get_new_connection')
+        fc = FakeConnection()
+        fc.get_new_connection(mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(None)
+        self.mock.ReplayAll()
+        libvirtEvents.register_libvirt_events()
+        self.mock.VerifyAll()
+
     def test_register_libvirt_eventsException(self):
         libvirtEvents = libvirt_event_monitor.LibvirtEvents()
         libvirtEvents.register_libvirt_events()
@@ -73,6 +91,7 @@ class test_LibvirtEvents(unittest.TestCase):
     def test_deregister_libvirt_events_Exception(self):
         libvirtEvents = libvirt_event_monitor.LibvirtEvents()
         libvirtEvents.registered = True
+        libvirtEvents.call_back_ids['domain_events'] = [1, 2, 3]
         libvirtEvents.deregister_libvirt_events()
 
     def test_deregister_libvirt_domain_events(self):

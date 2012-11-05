@@ -251,7 +251,10 @@ class Test_virt_connection(test.TestCase):
         self.mox.StubOutWithMock(libvirt, 'openReadOnly')
         libvirt.openReadOnly(mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
         self.mox.ReplayAll()
-        con = self.libvirt_connection_cls._connect('uri', True)
+        try:
+            self.libvirt_connection_cls._connect('uri', True)
+        except Exception as e:
+            self.assertTrue(isinstance(e, libvirt.libvirtError))
 
     def test_get_connection_with_conn_static_False(self):
 
