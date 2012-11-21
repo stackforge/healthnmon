@@ -16,8 +16,7 @@
 
 from nova import test
 import healthnmon.notifier.api as notifier_api
-from nova.openstack.common import context 
-from nova import exception
+from nova.openstack.common import context
 
 
 class APiTest(test.TestCase):

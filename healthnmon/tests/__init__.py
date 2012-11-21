@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 import __builtin__
 setattr(__builtin__, '_', lambda x: x)
 
@@ -34,6 +35,7 @@ sys.modules['libvirt'] = FakeLibvirt
 FLAGS = flags.FLAGS
 FLAGS.set_default('sqlite_db', 'nova.sqlite')
 FLAGS.set_default('sqlite_synchronous', False)
+
 
 def setup():
     ''' for nova test.py create a dummy clean.sqlite '''

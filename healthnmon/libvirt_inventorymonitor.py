@@ -309,10 +309,10 @@ class LibvirtVmHost:
             - self.libvirtconn.getFreeMemory() / 1024
 
     def getUuid(self):
-         if self.uuid is None and self.libvirtconn is not None:
+        if self.uuid is None and self.libvirtconn is not None:
             hostCapXml = self.libvirtconn.getCapabilities()
             self.uuid = self.utils.parseXML(hostCapXml, '//host/uuid')
-         return self.uuid
+        return self.uuid
 
     def _persist(self):
         LOG.debug(_('Entering _persist for host uuid '

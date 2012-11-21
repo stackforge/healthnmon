@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 from nova import flags
 import unittest
 import os
@@ -24,6 +25,7 @@ import healthnmon
 healthnmon_path = os.path.abspath(os.path.join(healthnmon.get_healthnmon_location(), '../'))
 
 FLAGS = flags.FLAGS
+
 
 class TestCase(unittest.TestCase):
 

@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 class ExceptionNotifier(object):
 
     '''Test notifier which raises a exception for covering exception block
