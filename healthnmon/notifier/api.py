@@ -21,7 +21,7 @@ Implements the healthnmon notifier API
 import uuid
 
 from nova import flags
-from nova import utils
+from nova.openstack.common import timeutils, jsonutils, importutils
 from healthnmon import log as logging
 from nova.openstack.common import cfg
 from nova import exception
@@ -30,18 +30,7 @@ from healthnmon.constants import Constants
 
 LOG = logging.getLogger('healthnmon.notifier.api')
 
-notifier_opts = [cfg.StrOpt('healthnmon_default_notification_level',
-                 default='INFO',
-                 help='Default notification level for healthnmon notifications'
-                 ),
-                 cfg.ListOpt('healthnmon_notification_drivers',
-                 default=[
-                 'healthnmon.notifier.rabbit_notifier',
-                  ],
-                help='Default notification drivers for healthnmon notifications')]
-
 FLAGS = flags.FLAGS
-FLAGS.register_opts(notifier_opts)
 
 WARN = 'WARN'
 INFO = 'INFO'
@@ -59,7 +48,7 @@ class BadPriorityException(Exception):
     pass
 
 
-def notify(
+def notify(context,
     publisher_id,
     event_type,
     priority,
@@ -103,7 +92,7 @@ def notify(
 
     # Ensure everything is JSON serializable.
 
-    payload = utils.to_primitive(payload, convert_instances=True)
+    payload = jsonutils.to_primitive(payload, convert_instances=True)
 
     msg = dict(
         message_id=str(uuid.uuid4()),
@@ -111,11 +100,11 @@ def notify(
         event_type=event_type,
         priority=priority,
         payload=payload,
-        timestamp=time.strftime(Constants.DATE_TIME_FORMAT, utils.utcnow().timetuple()),
+        timestamp=time.strftime(Constants.DATE_TIME_FORMAT, timeutils.utcnow().timetuple()),
         )
     for driver in _get_drivers():
         try:
-            driver.notify(msg)
+            driver.notify(context, msg)
         except Exception, e:
             LOG.exception(_("Problem '%(e)s' attempting to send to healthnmon notification driver %(driver)s."
                        % locals()))
@@ -127,9 +116,10 @@ def _get_drivers():
     if not drivers:
         drivers = []
         for notification_driver in FLAGS.healthnmon_notification_drivers:
-            try:
-                drivers.append(utils.import_object(notification_driver))
-            except exception.ClassNotFound as e:
-                LOG.exception(_("Problem in importing notification driver %(notification_driver)s."
-                       % locals()))
+            drivers.append(importutils.import_module(notification_driver))
+#            try:
+#                drivers.append(importutils.import_module(notification_driver))
+#            except exception.ClassNotFound as e:
+#                LOG.exception(_("Problem in importing notification driver %(notification_driver)s."
+#                       % locals()))
     return drivers

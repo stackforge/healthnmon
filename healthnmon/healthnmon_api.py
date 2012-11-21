@@ -21,7 +21,7 @@ from healthnmon import log as logging
 from nova.openstack.common import cfg
 from nova.db.sqlalchemy import api as context_api
 from healthnmon.db import api
-from nova import rpc
+from nova.openstack.common import rpc
 from nova import flags
 
 LOG = logging.getLogger('healthnmon.healthnmon_api')

@@ -1,0 +1,17 @@
+/coverage.xml
+/.project
+/pep8.txt
+/nova.sqlite
+/nosetests.xml
+/clean.sqlite
+/.coverage
+/.pydevproject
+/tests.sqlite
+/pylint.txt
+/.settings
+/.tox
+/.cache.bundle
+/dist
+/covhtml
+/target
+/healthnmon.egg-info

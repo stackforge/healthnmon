@@ -16,7 +16,7 @@
 
 import mox
 from healthnmon.db import migration
-from nova import test
+from healthnmon.tests.db import test
 from migrate.versioning import api as versioning_api
 try:
     from migrate.versioning import exceptions as versioning_exceptions
@@ -30,6 +30,7 @@ class MigrationTestCase(test.TestCase):
 
     def setUp(self):
         super(MigrationTestCase, self).setUp()
+        self.mox = mox.Mox()
 
     def test_dbSync(self):
         self.assertEqual(migration.db_sync(0), None)
@@ -55,3 +56,4 @@ class MigrationTestCase(test.TestCase):
                 versioning_exceptions.DatabaseNotControlledError)
         self.mox.ReplayAll()
         self.assertRaises(Exception, migration.db_sync, '0')
+        self.mox.UnsetStubs()

@@ -17,9 +17,9 @@
 from nova.service import Service
 from nova import version
 from nova import utils
-from nova import context
+from nova.openstack.common import context
 from nova import exception
-from nova import rpc
+from nova.openstack.common import rpc
 from nova import db
 from healthnmon import log
 
@@ -32,7 +32,6 @@ class HealthnmonService(Service):
         vcs_string = version.version_string_with_vcs()
         LOG.audit(_('Starting %(topic)s node (version %(vcs_string)s)'),
                   {'topic': self.topic, 'vcs_string': vcs_string})
-        utils.cleanup_file_locks()
         self.manager.init_host()
         self.model_disconnected = False
         ctxt = context.get_admin_context()

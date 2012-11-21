@@ -20,7 +20,7 @@ import mox
 import json
 from webob.exc import HTTPNotFound
 
-from nova import rpc
+from nova.openstack.common import rpc
 from nova import context
 from healthnmon.db import api
 from healthnmon.api import util

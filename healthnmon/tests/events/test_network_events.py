@@ -21,7 +21,7 @@ from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
 from healthnmon.libvirt_inventorymonitor import LibvirtNetwork
 from healthnmon.tests import FakeLibvirt as libvirt
 from healthnmon.constants import Constants
-from nova.notifier import test_notifier
+from nova.openstack.common.notifier import test_notifier
 from healthnmon.notifier import api as notifier_api
 from healthnmon.events import event_metadata
 from healthnmon.inventory_manager import ComputeInventory

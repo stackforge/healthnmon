@@ -24,11 +24,6 @@ import healthnmon
 healthnmon_path = os.path.abspath(os.path.join(healthnmon.get_healthnmon_location(), '../'))
 
 FLAGS = flags.FLAGS
-FLAGS.set_default('sqlite_db', 'tests.sqlite')
-FLAGS.set_default('sqlite_synchronous', False)
-sql_connection_url = "sqlite:///" + str(healthnmon_path) + "/$sqlite_db"
-FLAGS.set_default("sql_connection", sql_connection_url)
-
 
 class TestCase(unittest.TestCase):
 

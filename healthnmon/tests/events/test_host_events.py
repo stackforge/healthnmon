@@ -28,7 +28,7 @@ from nova.db import api as nova_db_api
 import mox
 from healthnmon.db import api
 from healthnmon.constants import Constants
-from nova.notifier import test_notifier
+from nova.openstack.common.notifier import test_notifier
 from healthnmon.notifier import api as notifier_api
 from healthnmon.events import event_metadata
 from healthnmon.virt.libvirt import connection

@@ -18,6 +18,7 @@ import time
 from lxml import etree
 from healthnmon.resourcemodel import resourcemodel_diff
 from nova import flags, utils
+from nova.openstack.common import timeutils
 from healthnmon import log
 
 # including instances_path defined in nova.compute.manager in order to create nova-storage-pool
@@ -37,7 +38,7 @@ def getFlagByKey(key):
 
 
 def is_service_alive(updated_at, created_at):
-    delta = utils.utcnow() - (updated_at or created_at)
+    delta = timeutils.utcnow() - (updated_at or created_at)
     return abs(utils.total_seconds(delta)) <= FLAGS.service_down_time
 
 

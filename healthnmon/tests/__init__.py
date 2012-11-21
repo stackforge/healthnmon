@@ -27,13 +27,13 @@ import shutil
 import healthnmon
 import sys
 from healthnmon.tests import FakeLibvirt
+import eventlet
 
 sys.modules['libvirt'] = FakeLibvirt
 
 FLAGS = flags.FLAGS
-FLAGS.set_default('sqlite_db', 'tests.sqlite')
+FLAGS.set_default('sqlite_db', 'nova.sqlite')
 FLAGS.set_default('sqlite_synchronous', False)
-
 
 def setup():
     ''' for nova test.py create a dummy clean.sqlite '''
@@ -50,8 +50,8 @@ def setup():
     testdb = os.path.join(healthnmon_path, FLAGS.sqlite_db)
     if os.path.exists(testdb):
         return
-    healthnmon_migration.db_sync()
     nova_migration.db_sync()
+    healthnmon_migration.db_sync()
     cleandb = os.path.join(healthnmon_path, FLAGS.sqlite_clean_db)
     shutil.copyfile(testdb, cleandb)
 

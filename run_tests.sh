@@ -66,6 +66,7 @@ just_hacking=0
 coverage=0
 recreate_db=1
 patch_migrate=1
+xcoverage_file=$PWD/coverage.xml
 
 for arg in "$@"; do
   process_option $arg
@@ -73,7 +74,21 @@ done
 
 # If enabled, tell nose to collect coverage data
 if [ $coverage -eq 1 ]; then
-    noseopts="$noseopts --cover-erase --cover-package=healthnmon --with-xcoverage --with-xunit"
+    #noseopts="$noseopts --cover-erase --cover-package=healthnmon --with-xcoverage --with-xunit"
+    
+    files=" `find healthnmon -type f -name "*.py" | grep -v "healthnmon/resourcemodel/healthnmonResourceModel.py"| grep -v "__init__" | grep -v "tests" | grep -v "testing" `"
+
+    # Removing ".py"
+    files=${files//.py/}
+
+    # Replacing "/" by "."
+    files=${files////.}
+
+    noseopts="$noseopts --cover-erase"
+    noseopts="$noseopts --cover-package=isc_scheduler"
+    for file in $files; do noseopts="$noseopts --cover-package=$file"; done
+    noseopts="$noseopts --with-xcoverage --with-xunit"
+    noseopts="$noseopts --xcoverage-file=$xcoverage_file"
 fi
 
 if [ $no_site_packages -eq 1 ]; then

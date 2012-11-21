@@ -24,7 +24,8 @@ from healthnmon.constants import Constants
 from healthnmon import rmcontext
 from healthnmon.db import api
 #from nova.db import api as nova_db
-from nova import test, utils
+from nova import test
+from nova.openstack.common import timeutils
 from nova import db
 from datetime import timedelta
 import eventlet
@@ -33,7 +34,7 @@ import mox
 
 def _create_Compute(compute_id=1, compute_service=None):
     if compute_service is None:
-        compute_service = dict(host='host1', created_at=utils.utcnow(), updated_at=utils.utcnow(), binary='healthnmon')
+        compute_service = dict(host='host1', created_at=timeutils.utcnow(), updated_at=timeutils.utcnow(), binary='healthnmon')
     return dict(id=compute_id, hypervisor_type='fake',
                 service=compute_service)
 
@@ -243,7 +244,7 @@ class InventoryManagerTestCase(test.TestCase):
         compute1 = _create_Compute(compute_id='vmhost1')
         srvc = compute1['service']
         compute1['service']['binary'] = 'healthnmon'
-        srvc['updated_at'] = utils.utcnow() - timedelta(1)
+        srvc['updated_at'] = timeutils.utcnow() - timedelta(1)
         self.mox.StubOutWithMock(db, 'compute_node_get_all')
         db.compute_node_get_all(mox.IgnoreArg()).AndReturn([compute1])
 
@@ -261,7 +262,7 @@ class InventoryManagerTestCase(test.TestCase):
         self._createInvCache()
         self.inv_manager_cls._compute_inventory = {}
         compute1 = _create_Compute(compute_id='vmhost1')
-        compute1['service']['created_at'] = utils.utcnow() - timedelta(1)
+        compute1['service']['created_at'] = timeutils.utcnow() - timedelta(1)
         compute1['service']['updated_at'] = None
         self.mox.StubOutWithMock(db, 'compute_node_get_all')
         db.compute_node_get_all(mox.IgnoreArg()).AndReturn([compute1])

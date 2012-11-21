@@ -24,12 +24,12 @@ from webob import exc
 from sqlalchemy import exc as sql_exc
 from nova.exception import Invalid
 from nova.api.openstack import common
+from nova.openstack.common import timeutils
 
 from ..api import util
 from ..api import constants
-from nova import flags, utils
-from nova import log as logging
-import time
+from nova import flags
+from nova.openstack.common import log as logging
 from ..constants import DbConstants
 from ..resourcemodel import healthnmonResourceModel
 from types import *
@@ -68,7 +68,7 @@ class Controller(common.ViewBuilder):
         for item in items:
             itemdict = {'id': item.get_id(),
                         'name': item.get_name(),
-                        'links': self._get_links(req, item.get_id())
+                        'links': self._get_links(req, item.get_id(), self._collection_name)
                         }
             item_dict_list.append(itemdict)
             LOG.debug(_('Appending item:' + str(itemdict)))
@@ -233,7 +233,7 @@ class Controller(common.ViewBuilder):
         # Parse ISO 8601 formatted changes-since input to epoch millisecs
         if 'changes-since' in query_params:
             try:
-                parsed = utils.parse_isotime(query_params['changes-since'])
+                parsed = timeutils.parse_isotime(query_params['changes-since'])
                 utctimetuple = parsed.utctimetuple()
                 epoch_ms = long(calendar.timegm(utctimetuple) * 1000L)
             except ValueError:
@@ -318,22 +318,22 @@ class Controller(common.ViewBuilder):
             collection_links.append({
                     'rel': 'next',
                     'href': self._get_next_link(request,
-                                        str(items[range_end - 1].get_id()))
+                                        str(items[range_end - 1].get_id()), self._collection_name)
                 })
         if prev_index > 0:
             collection_links.append({
                     'rel': 'previous',
                     'href': self._get_previous_link(request,
-                                        str(items[prev_index - 1].get_id()))
+                                        str(items[prev_index - 1].get_id()), self._collection_name)
                 })
         elif prev_index == 0:
             collection_links.append({
                     'rel': 'previous',
-                    'href': self._get_previous_link(request)
+                    'href': self._get_previous_link(request, None, self._collection_name)
                 })
         return (items[start_index:range_end], collection_links)
 
-    def _get_previous_link(self, request, identifier=None):
+    def _get_previous_link(self, request, identifier, collection_name):
         """
         Return href string with proper limit and marker params. If identifier
         is not specified, no marker would be added.
@@ -350,17 +350,17 @@ class Controller(common.ViewBuilder):
                                           FLAGS.osapi_compute_link_prefix)
         url = os.path.join(prefix,
                            request.environ["nova.context"].project_id,
-                           self._collection_name)
+                           collection_name)
         return "%s?%s" % (url, common.dict_to_query_str(params))
 
     #NOTE(siva): This method is overridden to retain filtered output.
-    def _get_href_link(self, request, identifier):
+    def _get_href_link(self, request, identifier, collection_name):
         """Return an href string pointing to this object."""
         prefix = self._update_link_prefix(request.application_url,
                                           FLAGS.osapi_compute_link_prefix)
         url = os.path.join(prefix,
                             request.environ["nova.context"].project_id,
-                            self._collection_name,
+                            collection_name,
                             str(identifier))
         if 'fields' in request.params:
             return "%s?%s" % (url,

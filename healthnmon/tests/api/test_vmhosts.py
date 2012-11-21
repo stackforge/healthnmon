@@ -18,7 +18,7 @@ from healthnmon.api import util
 from healthnmon.api.vmhosts import VmHostsController
 from healthnmon.db import api
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost
-from nova import rpc
+from nova.openstack.common import rpc
 from nova import context
 from webob.exc import HTTPNotFound
 import mox

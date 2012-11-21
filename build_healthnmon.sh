@@ -64,7 +64,7 @@ if [ $create_rpm -eq 1 ]; then
 	rm -rf $rpmBuildPath
 	
 	mkdir -p $rpmBuildPath/SOURCES
-	cp dist/healthnmon-2012.1.tar.gz $rpmBuildPath/SOURCES
+	cp dist/healthnmon-2012.2.tar.gz $rpmBuildPath/SOURCES
 	cp rpm/healthnmon.init $rpmBuildPath/SOURCES
 	cp rpm/copyright $rpmBuildPath/SOURCES
 	

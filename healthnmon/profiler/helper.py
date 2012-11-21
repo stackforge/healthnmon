@@ -20,7 +20,7 @@ import pyclbr
 import inspect
 import logging
 import traceback
-from nova import utils
+from nova.openstack.common import importutils
 from healthnmon import log
 from healthnmon.profiler import profile_cpu, profile_mem
 
@@ -35,14 +35,14 @@ def profile_cputime(module, decorator_name, status):
             profile_cpu.delete_module(module)
 
         # import decorator function
-        decorator = utils.import_class(decorator_name)
+        decorator = importutils.import_class(decorator_name)
         __import__(module)
         # Retrieve module information using pyclbr
         module_data = pyclbr.readmodule_ex(module)
         for key in module_data.keys():
             # set the decorator for the class methods
             if isinstance(module_data[key], pyclbr.Class):
-                clz = utils.import_class("%s.%s" % (module, key))
+                clz = importutils.import_class("%s.%s" % (module, key))
                 for method, func in inspect.getmembers(clz, inspect.ismethod):
                     if func.func_code.co_name == 'profile_cputime':
                         pass
@@ -52,7 +52,7 @@ def profile_cputime(module, decorator_name, status):
                         LOG.info(_('Decorated method ' + method))
             # set the decorator for the function
             if isinstance(module_data[key], pyclbr.Function):
-                func = utils.import_class("%s.%s" % (module, key))
+                func = importutils.import_class("%s.%s" % (module, key))
                 if func.func_code.co_name == 'profile_cputime':
                     pass
                 else:
@@ -69,9 +69,9 @@ def profile_memory(method, decorator_name, status, setref):
         profile_mem.modules_profiling_status[method] = status
         profile_mem.setref = setref
         # import decorator function
-        decorator = utils.import_class(decorator_name)
+        decorator = importutils.import_class(decorator_name)
         class_str, _sep, method_str = method.rpartition('.')
-        clz = utils.import_class(class_str)
+        clz = importutils.import_class(class_str)
         # set the decorator for the function
         func = getattr(clz, method_str)
         if func.func_code.co_name == 'profile_memory':

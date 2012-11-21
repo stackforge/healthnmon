@@ -18,9 +18,9 @@
 heathnmon Service default driver - Manage communication with compute nodes and collects inventory and monitoring info
 """
 
-from nova import flags, utils
+from nova import flags
+from nova.openstack.common import importutils
 from nova.openstack.common import cfg
-from healthnmon.constants import Constants
 from healthnmon import log as logging
 
 LOG = logging.getLogger('healthnmon.driver')
@@ -40,7 +40,7 @@ class Healthnmon(object):
 
     def __init__(self):
         self.inventory_manager = \
-            utils.import_object(FLAGS.healthnmon_inventory_manager)
+            importutils.import_object(FLAGS.healthnmon_inventory_manager)
 
     def get_compute_list(self):
         """Get a list of hosts from the InventoryManager."""

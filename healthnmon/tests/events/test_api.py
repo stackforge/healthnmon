@@ -21,7 +21,7 @@ from healthnmon.events import api as events_api
 from healthnmon.notifier import api as notifier_api
 from healthnmon.events import event_metadata
 from nova.db import api as nova_db
-from nova.notifier import test_notifier
+from nova.openstack.common.notifier import test_notifier
 
 
 class APiTest(test.TestCase):
@@ -34,7 +34,7 @@ class APiTest(test.TestCase):
         self.vm = Vm()
         self.vm.set_id('12345')
         self.vm.set_name('TestVm')
-        self.flags(healthnmon_notification_drivers=['nova.notifier.test_notifier'
+        self.flags(healthnmon_notification_drivers=['nova.openstack.common.notifier.test_notifier'
                    ])
         test_notifier.NOTIFICATIONS = []
 

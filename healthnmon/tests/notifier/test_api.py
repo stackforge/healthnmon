@@ -16,6 +16,8 @@
 
 from nova import test
 import healthnmon.notifier.api as notifier_api
+from nova.openstack.common import context 
+from nova import exception
 
 
 class APiTest(test.TestCase):
@@ -25,10 +27,10 @@ class APiTest(test.TestCase):
     def setUp(self):
         super(APiTest, self).setUp()
         self.flags(healthnmon_default_notification_level='INFO',
-         healthnmon_notification_drivers=[
-                 'healthnmon.notifier.rabbit_notifier',
-                 'healthnmon.notifier.atlas_event_notifier'
+        healthnmon_notification_drivers=[
+                 'healthnmon.notifier.rabbit_notifier'
                   ])
+        self.context = context.get_admin_context()
 
     def testNotify(self):
         self.flags(healthnmon_default_notification_level='INFO')
@@ -36,7 +38,7 @@ class APiTest(test.TestCase):
         publisher_id = 'healthnmon.unittest'
         priority = 'INFO'
         payload = {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'}
-        self.assertEquals(notifier_api.notify(publisher_id, event_type,
+        self.assertEquals(notifier_api.notify(self.context, publisher_id, event_type,
                           priority, payload), None)
 
     def testNotifyForPriorityException(self):
@@ -47,6 +49,7 @@ class APiTest(test.TestCase):
         self.assertRaises(
             notifier_api.BadPriorityException,
             notifier_api.notify,
+            self.context,
             publisher_id,
             event_type,
             priority,
@@ -55,32 +58,13 @@ class APiTest(test.TestCase):
 
     def testNotifierException(self):
         self.flags(healthnmon_notification_drivers=['healthnmon.tests.\
-notifier.test_api.ExceptionNotifier']
+notifier.ExceptionNotifier']
                    )
         event_type = 'LifeCycle.Vm.Reconfigured'
         publisher_id = 'healthnmon.unittest'
         priority = 'INFO'
         payload = {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'}
-        notifier_api.notify(publisher_id, event_type, priority, payload)
-
-    def testNotifierClassNotfound(self):
-        self.flags(healthnmon_notification_drivers=['healthnmon.tests.\
-notifier.test_api.ExceptionNotifier1']
-                   )
-        event_type = 'LifeCycle.Vm.Reconfigured'
-        publisher_id = 'healthnmon.unittest'
-        priority = 'INFO'
-        payload = {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'}
-        notifier_api.notify(publisher_id, event_type, priority, payload)
+        notifier_api.notify(self.context, publisher_id, event_type, priority, payload)
 
     def tearDown(self):
         super(APiTest, self).tearDown()
-
-
-class ExceptionNotifier(object):
-
-    '''Test notifier which raises a exception for covering exception block
-    '''
-
-    def notify(self, message):
-        raise Exception('Test Exception')

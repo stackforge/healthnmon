@@ -28,6 +28,8 @@ from nova import db, flags, utils
 from healthnmon import utils as hnm_utils
 from healthnmon import log as logging
 from nova.openstack.common import cfg
+from nova.openstack.common import importutils
+from nova.openstack.common import timeutils
 #from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
 #    Vm, StorageVolume, Subnet
 from healthnmon.constants import Constants
@@ -66,7 +68,7 @@ class ComputeInventory(object):
         self.compute_rmcontext = compute_rmcontext
         self.compute_info = {}
         inventory_driver = \
-            utils.import_object(FLAGS._compute_inventory_driver)
+            importutils.import_module(FLAGS._compute_inventory_driver)
         self.driver = \
             utils.check_isinstance(inventory_driver.get_connection(self.compute_rmcontext.rmType),
                                    driver.ComputeInventoryDriver)
@@ -85,7 +87,7 @@ class ComputeInventory(object):
         """Update compute_node inventory after successful communications with
        compute_node."""
 
-        self.last_seen = utils.utcnow()
+        self.last_seen = timeutils.utcnow()
         self.attempt = 0
         self.is_active = True
         self.driver.update_inventory(self.compute_id)
@@ -216,10 +218,10 @@ class InventoryManager(object):
         periodically to refresh the compute_node inventory.
         """
         self.green_pool.waitall()
-        diff = utils.utcnow() - self.last_compute_db_check
+        diff = timeutils.utcnow() - self.last_compute_db_check
         if diff.seconds >= FLAGS.compute_db_check_interval:
             LOG.info(_('Updating compute_node cache from db.'))
-            self.last_compute_db_check = utils.utcnow()
+            self.last_compute_db_check = timeutils.utcnow()
             self._refresh_from_db(context)
         self._poll_computes()
 

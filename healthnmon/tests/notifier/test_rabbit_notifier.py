@@ -16,20 +16,19 @@
 
 from nova import test
 import mox
-from nova import rpc
+from nova.openstack.common import rpc
 import healthnmon.notifier.rabbit_notifier
-
-DEFAULT_NOTIFICATION_PRIORITY = 'INFO'
+from nova.openstack.common import context
 
 
 class RabbitNotifierTest(test.TestCase):
 
     ''' TestCase for healthnmon.notifier.rabbit_notifier '''
     def setUp(self):
+        self.flags(healthnmon_default_notification_level='INFO')
         super(RabbitNotifierTest, self).setUp()
-        self.flags(\
-         healthnmon_default_notification_level=DEFAULT_NOTIFICATION_PRIORITY)
         self.mox.StubOutWithMock(rpc, 'notify')
+        self.context = context.get_admin_context()
 
     def testNotify(self):
         message = {
@@ -42,7 +41,7 @@ class RabbitNotifierTest(test.TestCase):
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
                  mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(message),
+        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
                           None)
 
     def testNotifyEvent_TypeNone(self):
@@ -56,7 +55,7 @@ class RabbitNotifierTest(test.TestCase):
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
                  mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(message),
+        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
                           None)
 
     def testNotifyPayloadNone(self):
@@ -70,7 +69,7 @@ class RabbitNotifierTest(test.TestCase):
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
                  mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(message),
+        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
                           None)
 
     def testNotifyEntity_IdNone(self):
@@ -84,7 +83,7 @@ class RabbitNotifierTest(test.TestCase):
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
                  mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(message),
+        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
                           None)
 
     def tearDown(self):

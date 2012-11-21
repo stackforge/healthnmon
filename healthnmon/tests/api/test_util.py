@@ -195,11 +195,11 @@ class UtilTest(unittest.TestCase):
                           'get path elements')
 
     def test_get_project_context(self):
-        test_context = context.RequestContext('user', 'admin')
+        test_context = context.RequestContext('user', 'admin', is_admin=True)
         req = BaseRequest({'nova.context': test_context})
         (ctx, proj_id) = util.get_project_context(req)
         self.assertEquals(ctx, test_context, 'Context test util')
-        self.assertEquals(proj_id, 'admin', 'test get project context')
+        self.assertEquals(proj_id, 'admin')
 
 #    def test_remove_version_from_href(self):
 #        common.remove_version_from_href( \

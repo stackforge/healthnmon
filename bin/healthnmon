@@ -50,10 +50,9 @@ FLAGS = flags.FLAGS
 FLAGS.register_opts(healthnmon_opts)
 
 if __name__ == '__main__':
-    utils.default_flagfile()
-    flags.FLAGS(sys.argv)
     logging.setup()
     utils.monkey_patch()
+    flags.parse_args(sys.argv)
     server = HealthnmonService.create(binary='healthnmon')
     service.serve(server)
     service.wait()

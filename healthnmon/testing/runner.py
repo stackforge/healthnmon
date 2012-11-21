@@ -72,7 +72,7 @@ absdir = os.path.abspath(reldir)
 sys.path.insert(0, absdir)
 
 from nova import flags
-from nova import log as logging
+from nova.openstack.common import log as logging
 
 FLAGS = flags.FLAGS
 
@@ -395,7 +395,7 @@ def run():
 
     argv = [x for x in sys.argv if x != '--hide-elapsed']
     hide_elapsed = argv != sys.argv
-    logging.setup()
+    logging.setup("healthnmon")
 
     # If any argument looks like a test name but doesn't have "nova.tests" in
     # front of it, automatically add that so we don't have to type as much

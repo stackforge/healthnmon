@@ -17,18 +17,18 @@
 """ Healthnmon notification driver which sends message to rabbitmq
 """
 
-import nova.context
-
 from nova import flags
-from nova import rpc
+from nova.openstack.common import rpc
+from nova.openstack.common import context as req_context
 
 FLAGS = flags.FLAGS
 
 
-def notify(message):
+def notify(context, message):
     """Sends a notification to the RabbitMQ"""
+    if not context:
+        context = req_context.get_admin_context()
 
-    context = nova.context.get_admin_context()
     priority = message.get('priority',
                            FLAGS.healthnmon_default_notification_level)
     priority = priority.lower()

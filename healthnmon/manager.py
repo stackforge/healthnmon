@@ -20,6 +20,7 @@ heathnmon Service - Manage communication with compute nodes and collects invento
 
 from nova import flags, manager, utils
 from healthnmon.profiler import helper
+from nova.openstack.common import importutils
 from nova.openstack.common import cfg
 from healthnmon.constants import Constants
 from healthnmon import driver
@@ -82,8 +83,11 @@ class HealthnMonManager(manager.Manager):
         LOG.info("Initializing healthnmon. Loading driver %s" % healthnmon_driver)
         try:
             self.driver = \
-                utils.check_isinstance(utils.import_object(healthnmon_driver),
+                utils.check_isinstance(importutils.import_object(healthnmon_driver),
                     driver.Healthnmon)
+        except ImportError, e:
+            LOG.error(_('Unable to load the healthnmon driver: %s') % e)
+            sys.exit(1)
         except exception.ClassNotFound, e:
             LOG.error(_('Unable to load the healthnmon driver: %s') % e)
             sys.exit(1)

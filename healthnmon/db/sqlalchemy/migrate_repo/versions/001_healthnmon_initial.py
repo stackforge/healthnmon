@@ -468,9 +468,9 @@ Vm = Table(
     Column('linkedCloneEnabled', Boolean),
     Column('vmHostId', String(255), ForeignKey('healthnmon_vm_host.id'
            )),
-    Column('cpuResourceAllocationId', BigInteger,
+    Column('cpuResourceAllocationId', Integer,
            ForeignKey('healthnmon_resource_allocation.id')),
-    Column('memoryResourceAllocationId', BigInteger,
+    Column('memoryResourceAllocationId', Integer,
            ForeignKey('healthnmon_resource_allocation.id')),
     Column('vmCapacityPoolId', String(255),
            ForeignKey('healthnmon_vm_capacity_pool.id')),

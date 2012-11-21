@@ -25,7 +25,7 @@ from healthnmon import log as logging
 FLAGS = flags.FLAGS
 
 
-def notify(message):
+def notify(context, message):
     """Notifies the recipient of the desired event given the model.
     Log notifications using nova's default logging system"""
 
