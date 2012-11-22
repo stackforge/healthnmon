@@ -19,7 +19,7 @@
 
 from nova import flags
 from nova.openstack.common import rpc
-from nova.openstack.common import context as req_context
+from nova import context as req_context
 
 FLAGS = flags.FLAGS
 

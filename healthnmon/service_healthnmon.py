@@ -17,7 +17,7 @@
 from nova.service import Service
 from nova import version
 from nova import utils
-from nova.openstack.common import context
+from nova import context
 from nova import exception
 from nova.openstack.common import rpc
 from nova import db
@@ -60,10 +60,10 @@ class HealthnmonService(Service):
 
         if self.report_interval:
             pulse = utils.LoopingCall(self.report_state)
-            pulse.start(interval=self.report_interval, now=False)
+            pulse.start(interval=self.report_interval)
             self.timers.append(pulse)
 
         if self.periodic_interval:
             periodic = utils.LoopingCall(self.periodic_tasks)
-            periodic.start(interval=self.periodic_interval, now=True)
+            periodic.start(interval=self.periodic_interval)
             self.timers.append(periodic)

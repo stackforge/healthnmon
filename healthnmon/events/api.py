@@ -22,7 +22,7 @@ from healthnmon.inventory_cache_manager import InventoryCacheManager
 from healthnmon.events import event_metadata, payload_generator
 from healthnmon.constants import Constants
 from healthnmon.notifier import api as notifier_api
-from nova.openstack.common import context
+from nova import context
 from nova.db import api as nova_db
 from healthnmon import log
 

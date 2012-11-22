@@ -40,13 +40,12 @@ from healthnmon import db
 from nova import exception
 from nova import flags
 from healthnmon import log as logging
-from nova import rpc
 from nova import utils
 from nova import version
 from healthnmon.db import migration
 from nova.db import api as db_api
 from healthnmon.common import ssh_configuration
-from nova.openstack.common import cfg
+from nova.openstack.common import cfg, rpc
 
 api_opts = [
 cfg.StrOpt('healthnmon_topic',
@@ -220,18 +219,9 @@ def methods_of(obj):
 
 def main():
     """Parse options and call the appropriate class/method."""
-    flagfile = utils.default_flagfile()
-
-    if flagfile and not os.access(flagfile, os.R_OK):
-        st = os.stat(flagfile)
-        print "Could not read %s. Re-running with sudo" % flagfile
-        try:
-            os.execvp('sudo', ['sudo', '-u', '#%s' % st.st_uid] + sys.argv)
-        except Exception:
-            print 'sudo failed, continuing as if nothing happened'
 
     try:
-        argv = FLAGS(sys.argv)
+        argv = flags.parse_args(sys.argv)
         logging.healthnmon_manage_setup()
     except IOError, e:
         if e.errno == errno.EACCES:
