@@ -15,7 +15,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from nova import flags, service, utils
+from nova import config
+from nova import service, utils
 from healthnmon import log as logging
 from nova.openstack.common import cfg
 import eventlet
@@ -47,13 +48,13 @@ healthnmon_opts = [
                default='healthnmon.manager.HealthnMonManager',
                help='The healthnmon manager class to use'), ]
 
-FLAGS = flags.FLAGS
-FLAGS.register_opts(healthnmon_opts)
+CONF = cfg.CONF
+CONF.register_opts(healthnmon_opts)
 
 if __name__ == '__main__':
     logging.setup()
     utils.monkey_patch()
-    flags.parse_args(sys.argv)
+    config.parse_args(sys.argv)
     server = HealthnmonService.create(binary='healthnmon')
     service.serve(server)
     service.wait()

@@ -38,7 +38,7 @@ from nova import context
 from nova import crypto
 from healthnmon import db
 from nova import exception
-from nova import flags
+from nova import config
 from healthnmon import log as logging
 from nova import utils
 from nova import version
@@ -53,8 +53,8 @@ api_opts = [
                help='the topic healthnmon service listen on')
 ]
 
-FLAGS = flags.FLAGS
-FLAGS.register_opts(api_opts)
+CONF = cfg.CONF
+CONF.register_opts(api_opts)
 
 
 # Decorators for actions
@@ -125,7 +125,7 @@ class ProfileCommands(object):
             return
 
         result = rpc.call(context.get_admin_context(),
-                          FLAGS.healthnmon_topic,
+                          CONF.healthnmon_topic,
                           {"method": "profile_cputime",
                            "args": {"module": module,
                                     "decorator": decorator,
@@ -154,7 +154,7 @@ class ProfileCommands(object):
             return
 
         result = rpc.call(context.get_admin_context(),
-                          FLAGS.healthnmon_topic,
+                          CONF.healthnmon_topic,
                           {"method": "profile_memory",
                            "args": {"method": method,
                                     "decorator": decorator,
@@ -176,7 +176,7 @@ class LogCommands(object):
         """enables in setting the required log level to healthnmon logger."""
 
         result = rpc.call(context.get_admin_context(),
-                          FLAGS.healthnmon_topic,
+                          CONF.healthnmon_topic,
                           {"method": "setLogLevel",
                            "args": {"level": level,
                                     "module": module}})
@@ -222,7 +222,7 @@ def main():
     """Parse options and call the appropriate class/method."""
 
     try:
-        argv = flags.parse_args(sys.argv)
+        argv = config.parse_args(sys.argv)
         logging.healthnmon_manage_setup()
     except IOError, e:
         if e.errno == errno.EACCES:
