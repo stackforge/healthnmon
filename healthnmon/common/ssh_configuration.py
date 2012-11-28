@@ -84,23 +84,25 @@ def is_valid_appliance():
         LOG.debug(_('nova does not exists'))
         return False
 
-    if os.path.exists(nova_home) == False:
+    if os.path.exists(nova_home) is False:
         '''
         nova does not exists.Exiting now
         #todo : sys.exit()
         '''
         return False
 
-    "    Check if the id_rsa and id_rsa.pub already exists.If they exist don't generate new keys"
+    #    Check if the id_rsa and id_rsa.pub already exists.
+    #    If they exist don't generate new keys"
 
     if not os.path.exists(os.path.join(nova_home + '/.ssh/')):
         os.makedirs(os.path.join(nova_home + '/.ssh/'), 01700)
 
-    if os.path.isfile(os.path.join(nova_home + '/.ssh/id_rsa.pub')) == \
-        False and os.path.isfile(os.path.join(nova_home + '/.ssh/id_rsa')) == \
-        False:
-        '    Generate id_rsa and id_rsa.pub files. This will be stored in $NOVAHOME/.ssh/ '
-        'use nova'
+    if os.path.isfile(
+        os.path.join(nova_home + '/.ssh/id_rsa.pub')) is False and \
+            os.path.isfile(os.path.join(nova_home + '/.ssh/id_rsa')) is False:
+        '    Generate id_rsa and id_rsa.pub files. '
+        '    This will be stored in $NOVAHOME/.ssh/ '
+        '    use nova'
         private_key, public_key, _fingerprint = crypto.generate_key_pair()
         pub_file = open(os.path.join(nova_home + '/.ssh/id_rsa.pub'), "w+")
         pub_file.writelines(public_key)
@@ -119,8 +121,7 @@ def is_valid_appliance():
         LOG.debug(_('id_rsa and id_rsa.pub exists'))
 
     '  create known_hosts file if it does not exist'
-    if os.path.isfile(os.path.join(nova_home + '/.ssh/known_hosts')) == \
-        False:
+    if os.path.isfile(os.path.join(nova_home + '/.ssh/known_hosts')) is False:
         filename = os.path.join(nova_home + '/.ssh/known_hosts')
         handle = open(filename, 'w')
         handle.close
@@ -134,7 +135,7 @@ def configure_host(hostname, user, password):
     sshConn = Client(hostname, user, password)
 
     ' Validate and configure appliance'
-    if is_valid_appliance() == True:
+    if is_valid_appliance() is True:
 
         ' Test Connection with host '
         if sshConn.test_connection_auth() == 'False':
@@ -153,7 +154,8 @@ def configure_host(hostname, user, password):
                 sftp.stat('.ssh/')
             except IOError:
 
-                LOG.debug(_('.ssh folder does not exists on Host.Creating .ssh folder'))
+                LOG.debug(_('.ssh folder does not exists on Host. ' +
+                            'Creating .ssh folder'))
                 try:
                     sftp.mkdir('.ssh/')
                     ' folder created. Now change permissions '
@@ -161,12 +163,14 @@ def configure_host(hostname, user, password):
                 except IOError:
                     pass
 
-            ' Now check if authorized_keys2 files exists. If not create it and change file permissions    '
+            ' Now check if authorized_keys2 files exists. '
+            ' If not create it and change file permissions    '
             try:
                 sftp.stat('.ssh/authorized_keys2')
             except IOError:
 
-                LOG.debug(_('authorized_keys2 file does not exists on Host.Creating authorized_keys2 filer'))
+                LOG.debug(_('authorized_keys2 file does not exists on Host. ' +
+                            'Creating authorized_keys2 filer'))
                 try:
                     sftp.file('.ssh/authorized_keys2', ' x')
                     ' file created. Now change permissions '
@@ -185,10 +189,12 @@ def configure_host(hostname, user, password):
             sftp.mkdir('tempPubKey')
 
         ' Transfer the id_rsa.pub to kvm host '
-        sftp.put(os.path.join(nova_home + '/.ssh/id_rsa.pub'), 'tempPubKey/id_rsa.pub')
+        sftp.put(os.path.join(
+            nova_home + '/.ssh/id_rsa.pub'), 'tempPubKey/id_rsa.pub')
 
         ' Append tempPubKey/id_rsa.pub to .ssh/authorized_keys2 '
-        sshConn.exec_command('cat tempPubKey/id_rsa.pub >> .ssh/authorized_keys2')
+        sshConn.exec_command(
+            'cat tempPubKey/id_rsa.pub >> .ssh/authorized_keys2')
 
         sftp.close()
         '    delete the temp directory    '
@@ -206,7 +212,8 @@ def configure_host(hostname, user, password):
 def verify_libvirt_connection(user, hostname):
 
     try:
-        conn = libvirt.open('qemu+ssh://' + str(user) + '@' + str(hostname) + '/system')
+        conn = libvirt.open(
+            'qemu+ssh://' + str(user) + '@' + str(hostname) + '/system')
         if isinstance(conn, libvirt.virConnect):
             print 'SSH successfully configured'
     except libvirt.libvirtError:
@@ -239,7 +246,9 @@ class Client(object):
 
         while not self._is_timed_out(self.timeout, _start_time):
             try:
-                ssh.connect(self.host, username=self.username, password=self.password, look_for_keys=False, timeout=20)
+                ssh.connect(self.host, username=self.username,
+                            password=self.password,
+                            look_for_keys=False, timeout=20)
                 _timeout = False
                 break
             except socket.error:
@@ -248,7 +257,8 @@ class Client(object):
                 time.sleep(15)
                 continue
         if _timeout:
-            print 'SSH connection timed out. Cannot Connect to ' + str(self.username) + '@' + str(self.host)
+            print 'SSH connection timed out. Cannot Connect to '
+            + str(self.username) + '@' + str(self.host)
             sys.exit(0)
         return ssh
 
@@ -272,7 +282,7 @@ class Client(object):
             while _transport.is_active() and not _timed_out:
                 time.sleep(5)
                 _timed_out = self._is_timed_out(self.timeout,
-                        _start_time)
+                                                _start_time)
             ssh.close()
         except (EOFError, paramiko.AuthenticationException, socket.error):
             return

@@ -43,12 +43,12 @@ class SubnetController(base.Controller):
         :returns: simple list of subnets with resource links to each subnet.
         """
         subnet_list = self.get_all_by_filters(req,
-                                        api.subnet_get_all_by_filters)
+                                              api.subnet_get_all_by_filters)
         if not subnet_list:
             subnet_list = []
-        limited_list, collection_links = self.limited_by_marker(\
-                                                            subnet_list,
-                                                            req)
+        limited_list, collection_links = self.limited_by_marker(
+            subnet_list,
+            req)
         return self._index(req, limited_list, collection_links)
 
     def detail(self, req):
@@ -60,12 +60,12 @@ class SubnetController(base.Controller):
         """
 
         subnet_list = self.get_all_by_filters(req,
-                                        api.subnet_get_all_by_filters)
+                                              api.subnet_get_all_by_filters)
         if not subnet_list:
             subnet_list = []
-        limited_list, collection_links = self.limited_by_marker(\
-                                                            subnet_list,
-                                                            req)
+        limited_list, collection_links = self.limited_by_marker(
+            subnet_list,
+            req)
         return self._detail(req, limited_list, collection_links)
 
     def show(self, req, id):
@@ -82,11 +82,11 @@ class SubnetController(base.Controller):
             (ctx, proj_id) = util.get_project_context(req)
             subnet_list = api.subnet_get_by_ids(ctx, [id])
             LOG.debug(_('Project id: %s Received subnets from the database'
-                       % proj_id))
+                        % proj_id))
             if subnet_list:
                 return self._show(req, subnet_list[0])
         except Exception, err:
             LOG.error(_('Exception while fetching data from healthnmon api %s'
-                       % str(err)), exc_info=1)
+                        % str(err)), exc_info=1)
 
         return HTTPNotFound()

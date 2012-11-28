@@ -23,9 +23,10 @@ class SSHClient (object):
     def set_missing_host_key_policy(self, policy):
         pass
 
-    def connect(self, hostname, port=None, username=None, password=None, pkey=None,
-                key_filename=None, timeout=None, allow_agent=True, look_for_keys=True,
-                compress=False):
+    def connect(
+        self, hostname, port=None, username=None, password=None, pkey=None,
+        key_filename=None, timeout=None, allow_agent=True, look_for_keys=True,
+            compress=False):
         pass
 
     def exec_command(self, cmd):

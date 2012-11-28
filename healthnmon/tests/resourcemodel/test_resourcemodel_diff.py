@@ -42,43 +42,43 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                        '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                    '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-9')
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-112')
         storagevolume1.set_name('datastore-112')
-        storagevolume1.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        storagevolume1.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-9')
         storagevolume1.add_mountPoints(hostMountPoint1)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -92,43 +92,43 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                        '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-9')
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-112')
         storagevolume1.set_name('datastore-112')
-        storagevolume1.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        storagevolume1.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           'host-19')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-19')
         storagevolume1.add_mountPoints(hostMountPoint1)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -140,12 +140,12 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(mountPoints in diff_res[self.update])
         self.assertTrue(self.update in diff_res[self.update][mountPoints])
         key = diff_res[self.update][mountPoints][self.update].keys()[0]
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                                                self.update][key])
-        self.assertTrue(vmHostId in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                        key][self.update][vmHostId], 'host-19')
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key])
+        self.assertTrue(vmHostId in diff_res[self.update][mountPoints][
+            self.update][key][self.update])
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update][vmHostId], 'host-19')
 
     def test_diff_resourcemodel_storagevolume_withupdateadd(self):
         """Unit Test to test for resource model comparison with some change """
@@ -153,48 +153,48 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                        '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                        'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-9')
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-114')
         storagevolume1.set_name('datastore-114')
-        storagevolume1.set_resourceManagerId(\
-                '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
+        storagevolume1.set_volumeId(
             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           'host-19')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-19')
         storagevolume1.add_mountPoints(hostMountPoint1)
         hostMountPoint2 = \
-            HostMountPoint(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc', \
-                           'host-20')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc',
+                'host-20')
         storagevolume1.add_mountPoints(hostMountPoint2)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -209,21 +209,21 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(self.add in diff_res[self.update][mountPoints])
 
         key = diff_res[self.update][mountPoints][self.add].keys()[0]
-        self.assertTrue(isinstance(diff_res[self.update][mountPoints][\
+        self.assertTrue(isinstance(diff_res[self.update][mountPoints][
                         self.add][key], HostMountPoint))
         addMount = diff_res[self.update][mountPoints][self.add][key]
         self.assertEquals(addMount.vmHostId, 'host-20')
-        self.assertEquals(addMount.path, \
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc')
+        self.assertEquals(addMount.path,
+                          '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc')
 
         self.assertTrue(self.update in diff_res[self.update][mountPoints])
         key1 = diff_res[self.update][mountPoints][self.update].keys()[0]
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                            self.update][key1])
-        self.assertTrue(vmHostId in diff_res[self.update][mountPoints][\
-                            self.update][key1][self.update])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                        key1][self.update][vmHostId], 'host-19')
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key1])
+        self.assertTrue(vmHostId in diff_res[self.update][mountPoints][
+            self.update][key1][self.update])
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key1][self.update][vmHostId], 'host-19')
 
         self.assertTrue('id' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['id'], 'datastore-114')
@@ -237,39 +237,39 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
+        storagevolume.set_volumeId(
             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        )
         hostMountPoint = \
-            HostMountPoint(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                'host-9')
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-114')
         storagevolume1.set_name('datastore-114')
-        storagevolume1.set_resourceManagerId(\
-                            '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        storagevolume1.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
         diff_res = diff.diff_resourcemodel()
@@ -280,12 +280,12 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(self.delete in diff_res[self.update][mountPoints])
 
         key = diff_res[self.update][mountPoints][self.delete].keys()[0]
-        self.assertTrue(isinstance(diff_res[self.update][mountPoints][\
+        self.assertTrue(isinstance(diff_res[self.update][mountPoints][
                         self.delete][key], HostMountPoint))
         delMount = diff_res[self.update][mountPoints][self.delete][key]
         self.assertEquals(delMount.vmHostId, 'host-9')
-        self.assertEquals(delMount.path, \
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
+        self.assertEquals(delMount.path,
+                          '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
 
         self.assertTrue('id' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['id'], 'datastore-114')
@@ -329,28 +329,28 @@ class ResourceModelDiffTestCase(test.TestCase):
 
         self.assertTrue(self.add in diff_res[self.update][vmDisks])
         self.assertTrue('disk-03' in diff_res[self.update][vmDisks][self.add])
-        self.assertTrue(isinstance(diff_res[self.update][vmDisks][self.add][\
-                                            'disk-03'], VmDisk))
+        self.assertTrue(isinstance(diff_res[self.update][vmDisks][self.add][
+            'disk-03'], VmDisk))
         addVmdisk = diff_res[self.update][vmDisks][self.add]['disk-03']
         self.assertEquals(addVmdisk.get_storageVolumeId(), 'datastore-439-999')
 
         self.assertTrue(self.delete in diff_res[self.update][vmDisks])
-        self.assertTrue('disk-02' in diff_res[self.update][vmDisks][\
-                                        self.delete])
-        self.assertTrue(isinstance(diff_res[self.update][vmDisks][\
-                                    self.delete]['disk-02'], VmDisk))
+        self.assertTrue('disk-02' in diff_res[self.update][vmDisks][
+            self.delete])
+        self.assertTrue(isinstance(diff_res[self.update][vmDisks][
+            self.delete]['disk-02'], VmDisk))
         delVmdisk = diff_res[self.update][vmDisks][self.delete]['disk-02']
         self.assertEquals(delVmdisk.get_storageVolumeId(), 'datastore-439')
 
         self.assertTrue(self.update in diff_res[self.update][vmDisks])
-        self.assertTrue('disk-01' in diff_res[self.update][vmDisks][\
-                                                self.update])
-        self.assertTrue(self.update in diff_res[self.update][vmDisks][\
-                                                self.update]['disk-01'])
-        self.assertTrue('storageVolumeId' in diff_res[self.update][vmDisks][\
-                                self.update]['disk-01'][self.update])
-        self.assertEquals(diff_res[self.update][vmDisks][self.update][\
-         'disk-01'][self.update]['storageVolumeId'], 'datastore-939-999')
+        self.assertTrue('disk-01' in diff_res[self.update][vmDisks][
+            self.update])
+        self.assertTrue(self.update in diff_res[self.update][vmDisks][
+            self.update]['disk-01'])
+        self.assertTrue('storageVolumeId' in diff_res[self.update][vmDisks][
+            self.update]['disk-01'][self.update])
+        self.assertEquals(diff_res[self.update][vmDisks][self.update][
+                          'disk-01'][self.update]['storageVolumeId'], 'datastore-939-999')
 
         self.assertTrue('vmHostId' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['vmHostId'], 'host-329-999')
@@ -364,43 +364,43 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
+        storagevolume.set_volumeId(
             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        )
         hostMountPoint = \
-            HostMountPoint(\
-             {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           '2': 'host-9'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-9'})
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-112')
         storagevolume1.set_name('datastore-112')
-        storagevolume1.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                    '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        storagevolume1.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           '2': 'host-9'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-9'})
         storagevolume1.add_mountPoints(hostMountPoint1)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -414,43 +414,43 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-             {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           '2': 'host-9'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-9'})
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-112')
         storagevolume1.set_name('datastore-112')
-        storagevolume1.set_resourceManagerId(\
-                '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
+        storagevolume1.set_volumeId(
             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-             {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           '2': 'host-19'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-19'})
         storagevolume1.add_mountPoints(hostMountPoint1)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -465,16 +465,16 @@ class ResourceModelDiffTestCase(test.TestCase):
 
         key = diff_res[self.update][mountPoints][self.update].keys()[0]
 
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                            self.update][key])
-        self.assertTrue('path' in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update])
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update]['path'])
-        self.assertTrue('2' in diff_res[self.update][mountPoints][\
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key])
+        self.assertTrue('path' in diff_res[self.update][mountPoints][
+            self.update][key][self.update])
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key][self.update]['path'])
+        self.assertTrue('2' in diff_res[self.update][mountPoints][
                         self.update][key][self.update]['path'][self.update])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                    key][self.update]['path'][self.update]['2'], 'host-19')
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update]['path'][self.update]['2'], 'host-19')
 
     def test_diff_resourcemodel_storagevolume_withupdateadd_withDict(self):
         """Unit Test to test for resource model comparison with some change """
@@ -482,48 +482,48 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-             {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                        '2': 'host-9'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-9'})
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-114')
         storagevolume1.set_name('datastore-114')
-        storagevolume1.set_resourceManagerId(\
-                        '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        storagevolume1.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-             {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                        '2': 'host-19'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-19'})
         storagevolume1.add_mountPoints(hostMountPoint1)
         hostMountPoint2 = \
-            HostMountPoint(\
-                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc', \
-                        '2': 'host-20'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc',
+                 '2': 'host-20'})
         storagevolume1.add_mountPoints(hostMountPoint2)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -538,26 +538,26 @@ class ResourceModelDiffTestCase(test.TestCase):
 
         key = diff_res[self.update][mountPoints][self.update].keys()[0]
 
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                            self.update][key])
-        self.assertTrue('path' in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update])
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update]['path'])
-        self.assertTrue('2' in diff_res[self.update][mountPoints][\
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key])
+        self.assertTrue('path' in diff_res[self.update][mountPoints][
+            self.update][key][self.update])
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key][self.update]['path'])
+        self.assertTrue('2' in diff_res[self.update][mountPoints][
                         self.update][key][self.update]['path'][self.update])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                    key][self.update]['path'][self.update]['2'], 'host-19')
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update]['path'][self.update]['2'], 'host-19')
 
         self.assertTrue(self.add in diff_res[self.update][mountPoints])
 
         key = diff_res[self.update][mountPoints][self.add].keys()[0]
-        self.assertTrue(isinstance(diff_res[self.update][mountPoints][\
+        self.assertTrue(isinstance(diff_res[self.update][mountPoints][
                         self.add][key], HostMountPoint))
         addMount = diff_res[self.update][mountPoints][self.add][key]
-        self.assertEquals(addMount.pathProp, \
-            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc', \
-                        '2': 'host-20'})
+        self.assertEquals(addMount.pathProp,
+                          {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc',
+                           '2': 'host-20'})
 
         self.assertTrue('id' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['id'], 'datastore-114')
@@ -571,38 +571,38 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                        '2': 'host-9'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-9'})
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-114')
         storagevolume1.set_name('datastore-114')
-        storagevolume1.set_resourceManagerId(\
-                        '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'})
+        storagevolume1.set_volumeId(
+            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'})
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
         diff_res = diff.diff_resourcemodel()
@@ -614,12 +614,12 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(self.delete in diff_res[self.update][mountPoints])
 
         key = diff_res[self.update][mountPoints][self.delete].keys()[0]
-        self.assertTrue(isinstance(diff_res[self.update][mountPoints][\
+        self.assertTrue(isinstance(diff_res[self.update][mountPoints][
                         self.delete][key], HostMountPoint))
         delMount = diff_res[self.update][mountPoints][self.delete][key]
-        self.assertEquals(delMount.pathProp, \
-            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                        '2': 'host-9'})
+        self.assertEquals(delMount.pathProp,
+                          {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                           '2': 'host-9'})
 
         self.assertTrue('id' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['id'], 'datastore-114')
@@ -628,8 +628,8 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertEquals(diff_res[self.update]['name'], 'datastore-114')
 
         self.assertTrue('volumeId' in diff_res[self.update])
-        self.assertEquals(diff_res[self.update]['volumeId'], \
-            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'})
+        self.assertEquals(diff_res[self.update]['volumeId'],
+                          {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'})
 
     def test_diff_resourcemodel_virtualSwitch_withadd(self):
         cachedHost = VmHost()
@@ -649,7 +649,7 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(self.add in diff_res[self.update][virtualSwitches])
 
         key = diff_res[self.update][virtualSwitches][self.add].keys()[0]
-        self.assertTrue(isinstance(diff_res[self.update][virtualSwitches][\
+        self.assertTrue(isinstance(diff_res[self.update][virtualSwitches][
                         self.add][key], VirtualSwitch))
         addVirSwitch = diff_res[self.update][virtualSwitches][self.add][key]
         self.assertEquals(addVirSwitch.id, '11')
@@ -673,7 +673,7 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(self.delete in diff_res[self.update][virtualSwitches])
 
         key = diff_res[self.update][virtualSwitches][self.delete].keys()[0]
-        self.assertTrue(isinstance(diff_res[self.update][virtualSwitches][\
+        self.assertTrue(isinstance(diff_res[self.update][virtualSwitches][
                         self.delete][key], VirtualSwitch))
         delVirSwitch = diff_res[self.update][virtualSwitches][self.delete][key]
         self.assertEquals(delVirSwitch.id, '11')
@@ -723,43 +723,43 @@ class ResourceModelDiffTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                   )
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint = \
-            HostMountPoint(\
-             {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                        '2': 'host-9'})
+            HostMountPoint(
+                {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '2': 'host-9'})
         storagevolume.add_mountPoints(hostMountPoint)
 
         storagevolume1 = StorageVolume()
         storagevolume1.set_id('datastore-112')
         storagevolume1.set_name('datastore-112')
-        storagevolume1.set_resourceManagerId(\
-                    '13274325-BFD6-464F-A9D1-61332573B5E2'
-                )
+        storagevolume1.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2'
+        )
         storagevolume1.set_size(107105746944)
         storagevolume1.set_free(32256294912)
         storagevolume1.set_vmfsVolume(False)
         storagevolume1.set_shared(False)
         storagevolume1.set_assignedServerCount(1)
         storagevolume1.set_volumeType('VMFS')
-        storagevolume1.set_volumeId(\
-                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
-                                    )
+        storagevolume1.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'
+        )
         hostMountPoint1 = \
-            HostMountPoint(\
-             {'3': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', \
-                           '4': 'host-19'})
+            HostMountPoint(
+                {'3': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+                 '4': 'host-19'})
         storagevolume1.add_mountPoints(hostMountPoint1)
 
         diff = ResourceModelDiff(storagevolume, storagevolume1)
@@ -773,33 +773,33 @@ class ResourceModelDiffTestCase(test.TestCase):
 
         key = diff_res[self.update][mountPoints][self.update].keys()[0]
 
-        self.assertTrue(self.update in diff_res[self.update][mountPoints][\
-                            self.update][key])
-        self.assertTrue('path' in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update])
-        self.assertTrue(self.add in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update]['path'])
-        self.assertTrue('3' in diff_res[self.update][mountPoints][\
+        self.assertTrue(self.update in diff_res[self.update][mountPoints][
+            self.update][key])
+        self.assertTrue('path' in diff_res[self.update][mountPoints][
+            self.update][key][self.update])
+        self.assertTrue(self.add in diff_res[self.update][mountPoints][
+            self.update][key][self.update]['path'])
+        self.assertTrue('3' in diff_res[self.update][mountPoints][
                         self.update][key][self.update]['path'][self.add])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                    key][self.update]['path'][self.add]['3'], \
-                        '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
-        self.assertTrue('4' in diff_res[self.update][mountPoints][\
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update]['path'][self.add]['3'],
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
+        self.assertTrue('4' in diff_res[self.update][mountPoints][
                         self.update][key][self.update]['path'][self.add])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                    key][self.update]['path'][self.add]['4'], 'host-19')
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update]['path'][self.add]['4'], 'host-19')
 
-        self.assertTrue(self.delete in diff_res[self.update][mountPoints][\
-                            self.update][key][self.update]['path'])
-        self.assertTrue('1' in diff_res[self.update][mountPoints][\
+        self.assertTrue(self.delete in diff_res[self.update][mountPoints][
+            self.update][key][self.update]['path'])
+        self.assertTrue('1' in diff_res[self.update][mountPoints][
                         self.update][key][self.update]['path'][self.delete])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                    key][self.update]['path'][self.delete]['1'], \
-                        '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
-        self.assertTrue('2' in diff_res[self.update][mountPoints][\
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update]['path'][self.delete]['1'],
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
+        self.assertTrue('2' in diff_res[self.update][mountPoints][
                         self.update][key][self.update]['path'][self.delete])
-        self.assertEquals(diff_res[self.update][mountPoints][self.update][\
-                    key][self.update]['path'][self.delete]['2'], 'host-9')
+        self.assertEquals(diff_res[self.update][mountPoints][self.update][
+            key][self.update]['path'][self.delete]['2'], 'host-9')
 
     '''
     This test case will check whether the old type has the unicode type
@@ -857,11 +857,11 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(vmDisks in diff_res[self.update])
 
         self.assertTrue(self.update in diff_res[self.update][vmDisks])
-        self.assertTrue('disk-01' in diff_res[self.update][vmDisks][\
-                                                self.update])
-        self.assertTrue(self.update in diff_res[self.update][vmDisks][\
-                                                self.update]['disk-01'])
-        self.assertTrue('storageVolumeId' in diff_res[self.update][vmDisks][\
-                                self.update]['disk-01'][self.update])
-        self.assertEquals(diff_res[self.update][vmDisks][self.update][\
-         'disk-01'][self.update]['storageVolumeId'], 'datastore-939-999')
+        self.assertTrue('disk-01' in diff_res[self.update][vmDisks][
+            self.update])
+        self.assertTrue(self.update in diff_res[self.update][vmDisks][
+            self.update]['disk-01'])
+        self.assertTrue('storageVolumeId' in diff_res[self.update][vmDisks][
+            self.update]['disk-01'][self.update])
+        self.assertEquals(diff_res[self.update][vmDisks][self.update][
+                          'disk-01'][self.update]['storageVolumeId'], 'datastore-939-999')

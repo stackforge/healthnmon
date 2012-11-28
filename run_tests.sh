@@ -74,7 +74,7 @@ done
 
 # If enabled, tell nose to collect coverage data
 if [ $coverage -eq 1 ]; then
-    #noseopts="$noseopts --cover-erase --cover-package=healthnmon --with-xcoverage --with-xunit"
+    #noseopts="$noseopts --cover-erase --cover-package=healthnmon --with-coverage --with-xunit"
     
     files=" `find healthnmon -type f -name "*.py" | grep -v "healthnmon/resourcemodel/healthnmonResourceModel.py"| grep -v "__init__" | grep -v "tests" | grep -v "testing" `"
 
@@ -87,8 +87,8 @@ if [ $coverage -eq 1 ]; then
     noseopts="$noseopts --cover-erase"
     noseopts="$noseopts --cover-package=isc_scheduler"
     for file in $files; do noseopts="$noseopts --cover-package=$file"; done
-    noseopts="$noseopts --with-xcoverage --with-xunit"
-    noseopts="$noseopts --xcoverage-file=$xcoverage_file"
+    noseopts="$noseopts --with-coverage --with-xunit"
+    #noseopts="$noseopts --xcoverage-file=$xcoverage_file"
 fi
 
 if [ $no_site_packages -eq 1 ]; then

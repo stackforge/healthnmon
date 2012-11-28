@@ -51,44 +51,46 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         storagevolume = StorageVolume()
         storagevolume.id = 'SV1'
         healthnmon_db_api.storage_volume_save(self.admin_context,
-                storagevolume)
+                                              storagevolume)
         healthnmon_db_api.storage_volume_save(self.admin_context,
-                storagevolume)
+                                              storagevolume)
 
     def test_storagevolume_get_all(self):
         storagevolume = StorageVolume()
         storagevolume.id = 'SV1'
         healthnmon_db_api.storage_volume_save(self.admin_context,
-                storagevolume)
+                                              storagevolume)
         storagevolume = StorageVolume()
         storagevolume.id = 'SV2'
         healthnmon_db_api.storage_volume_save(self.admin_context,
-                storagevolume)
+                                              storagevolume)
         storagevolumes = \
             healthnmon_db_api.storage_volume_get_all(self.admin_context)
-        self.assertFalse(storagevolumes == None,
+        self.assertFalse(storagevolumes is None,
                          'storage volume all returned a none list')
         self.assertTrue(len(storagevolumes) == 2,
                         'storage volume all returned invalid number of list'
                         )
-        self.assertTrue(storagevolumes[0].id == 'SV1', 'Storage volume id mismatch')
-        self.assertTrue(storagevolumes[1].id == 'SV2', 'Storage volume id mismatch')
+        self.assertTrue(
+            storagevolumes[0].id == 'SV1', 'Storage volume id mismatch')
+        self.assertTrue(
+            storagevolumes[1].id == 'SV2', 'Storage volume id mismatch')
 
     def test_storagevolume_get_by_id(self):
         storagevolume_id = 'SV1'
         storagevolume = StorageVolume()
         storagevolume.id = storagevolume_id
         healthnmon_db_api.storage_volume_save(self.admin_context,
-                storagevolume)
+                                              storagevolume)
 
         storagevolumes = \
             healthnmon_db_api.storage_volume_get_by_ids(self.admin_context,
-                [storagevolume_id])
-        self.assertFalse(storagevolumes == None,
+                                                        [storagevolume_id])
+        self.assertFalse(storagevolumes is None,
                          'storage volume get by id returned a none list'
                          )
         self.assertTrue(len(storagevolumes) > 0,
-            'storage volume get by id returned invalid number of list'
+                        'storage volume get by id returned invalid number of list'
                         )
         self.assertTrue(storagevolumes[0].id == 'SV1')
 
@@ -112,38 +114,41 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_save(self.admin_context, vm)
 
         healthnmon_db_api.storage_volume_save(self.admin_context,
-                storagevolume)
+                                              storagevolume)
 
         storagevolumes = \
             healthnmon_db_api.storage_volume_get_by_ids(self.admin_context,
-                [storagevolume_id])
-        self.assertFalse(storagevolumes == None,
+                                                        [storagevolume_id])
+        self.assertFalse(storagevolumes is None,
                          'storage volume get by id returned a none list'
                          )
         self.assertTrue(len(storagevolumes) > 0,
-            'storage volume get by id returned invalid number of list'
+                        'storage volume get by id returned invalid number of list'
                         )
 
         healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context,
-                [storagevolume_id])
+                                                       [storagevolume_id])
 
         storagevolumes = \
             healthnmon_db_api.storage_volume_get_by_ids(self.admin_context,
-                [storagevolume_id])
-        self.assertTrue(storagevolumes == None or len(storagevolumes)
+                                                        [storagevolume_id])
+        self.assertTrue(storagevolumes is None or len(storagevolumes)
                         == 0, 'Storage volume not deleted')
 
     def test_storagevolume_save_none(self):
-        self.assertTrue(healthnmon_db_api.storage_volume_save(self.admin_context, None) == None, 'The storage volume should save nothing')
+        self.assertTrue(healthnmon_db_api.storage_volume_save(self.admin_context, None) is None, 'The storage volume should save nothing')
 
     def test_storagevolume_get_by_id_none(self):
-        storageVolumes = healthnmon_db_api.storage_volume_get_by_ids(self.admin_context,
-                None)
-        self.assertTrue(storageVolumes == None, 'Storage Volumes should be an empty list')
+        storageVolumes = healthnmon_db_api.storage_volume_get_by_ids(
+            self.admin_context,
+            None)
+        self.assertTrue(
+            storageVolumes is None, 'Storage Volumes should be an empty list')
 
     def test_storagevolume_delete_none(self):
-        self.assertTrue(healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context,
-                None) == None, 'Storage Volumes should be an empty list')
+        self.assertTrue(
+            healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context,
+                                                           None) is None, 'Storage Volumes should be an empty list')
 
     def test_storagevolume_save_throw_exception(self):
         self.assertRaises(Exception,
@@ -191,8 +196,8 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         # Query with filter
         filters = {'name': vol_names[1]}
         vols = healthnmon_db_api.storage_volume_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(vols is not None)
         self.assert_(len(vols) == 1)
         self.assert_(vols[0] is not None)
@@ -205,12 +210,13 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         for i in range(len(vol_ids)):
             self.__create_volume(id=vol_ids[i], name=vol_names[i])
         # Delete one vol
-        healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context, [vol_ids[0]])
+        healthnmon_db_api.storage_volume_delete_by_ids(
+            self.admin_context, [vol_ids[0]])
         # Query with filter
         filters = {'deleted': 'true'}
         vols = healthnmon_db_api.storage_volume_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(vols is not None)
         self.assert_(len(vols) == 1)
         self.assert_(vols[0] is not None)
@@ -223,12 +229,13 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         for i in range(len(vol_ids)):
             self.__create_volume(id=vol_ids[i], name=vol_names[i])
         # Delete one vol
-        healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context, [vol_ids[0]])
+        healthnmon_db_api.storage_volume_delete_by_ids(
+            self.admin_context, [vol_ids[0]])
         # Query with filter
         filters = {'deleted': 'false'}
         vols = healthnmon_db_api.storage_volume_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         print "vols::", vols[0].id
         self.assert_(vols is not None)
         self.assert_(len(vols) == 1)
@@ -245,16 +252,17 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         # Wait for 1 sec and update second vol and delete third vol
         time.sleep(1)
         second_vol = healthnmon_db_api.storage_volume_get_by_ids(
-                                self.admin_context, [vol_ids[1]])[0]
+            self.admin_context, [vol_ids[1]])[0]
         second_vol.name = 'New name'
         healthnmon_db_api.storage_volume_save(self.admin_context, second_vol)
-        healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context, [vol_ids[2]])
+        healthnmon_db_api.storage_volume_delete_by_ids(
+            self.admin_context, [vol_ids[2]])
         # Query with filter
         expected_updated_ids = [vol_ids[1], vol_ids[2]]
         filters = {'changes-since': created_time}
         vols = healthnmon_db_api.storage_volume_get_all_by_filters(
-                                self.admin_context, filters,
-                                None, None)
+            self.admin_context, filters,
+            None, None)
         self.assert_(vols is not None)
         self.assert_(len(vols) == 2)
         for vol in vols:
@@ -269,8 +277,8 @@ class StoragevolumeDbApiTestCase(test.TestCase):
             self.__create_volume(id=vol_ids[i], name=vol_names[i])
         # Query with sort
         vols = healthnmon_db_api.storage_volume_get_all_by_filters(
-                                self.admin_context, None,
-                                'name', DbConstants.ORDER_ASC)
+            self.admin_context, None,
+            'name', DbConstants.ORDER_ASC)
         self.assert_(vols is not None)
         self.assert_(len(vols) == 2)
         self.assert_(vols[0] is not None)
@@ -286,8 +294,8 @@ class StoragevolumeDbApiTestCase(test.TestCase):
             self.__create_volume(id=vol_ids[i], name=vol_names[i])
         # Query with sort
         vols = healthnmon_db_api.storage_volume_get_all_by_filters(
-                                self.admin_context, {'name': vol_names},
-                                'name', DbConstants.ORDER_DESC)
+            self.admin_context, {'name': vol_names},
+            'name', DbConstants.ORDER_DESC)
         self.assert_(vols is not None)
         self.assert_(len(vols) == 2)
         self.assert_(vols[0] is not None)
@@ -305,9 +313,10 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.storage_volume_save(self.admin_context, vol)
         epoch_after = utils.get_current_epoch_ms()
-        vol_queried = healthnmon_db_api.storage_volume_get_by_ids(self.admin_context, [vol.get_id()])[0]
+        vol_queried = healthnmon_db_api.storage_volume_get_by_ids(
+            self.admin_context, [vol.get_id()])[0]
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, vol_queried.get_createEpoch()))
+            epoch_before, epoch_after, vol_queried.get_createEpoch()))
         # Check for lastModifiedEpoch
         vol_modified = vol_queried
         test_utils.unset_timestamp_fields(vol_modified)
@@ -315,7 +324,9 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.storage_volume_save(self.admin_context, vol_modified)
         epoch_after = utils.get_current_epoch_ms()
-        vol_queried = healthnmon_db_api.storage_volume_get_by_ids(self.admin_context, [vol.get_id()])[0]
-        self.assert_(vol_modified.get_createEpoch() == vol_queried.get_createEpoch())
+        vol_queried = healthnmon_db_api.storage_volume_get_by_ids(
+            self.admin_context, [vol.get_id()])[0]
+        self.assert_(
+            vol_modified.get_createEpoch() == vol_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, vol_queried.get_lastModifiedEpoch()))
+            epoch_before, epoch_after, vol_queried.get_lastModifiedEpoch()))

@@ -58,7 +58,7 @@ class ComputeInventoryDriver(object):
         uuid,
         perfmon_type,
         window_minutes,
-        ):
+    ):
         """
         Returns the performance data of VM Host, VMs for specified window minutes.
         """

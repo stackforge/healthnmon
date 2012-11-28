@@ -62,18 +62,19 @@ class StorageVolumeEventsTest(test.TestCase):
         self.mox.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
     def test_storage_added_event(self):
         storagePool = libvirt.virStoragePool()
         self.mox.StubOutWithMock(api, 'storage_volume_save')
 
         api.storage_volume_save(mox.IgnoreArg(),
-                    mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(storagePool.UUIDString(),
-                Constants.StorageVolume).AndReturn(None)
+                                                    Constants.StorageVolume).AndReturn(None)
 
         self.mox.ReplayAll()
         self.LibvirtStorageVolume._processStorage(storagePool)
@@ -81,8 +82,8 @@ class StorageVolumeEventsTest(test.TestCase):
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_STORAGE_ADDED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_STORAGE_ADDED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -94,27 +95,28 @@ class StorageVolumeEventsTest(test.TestCase):
         self.mox.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
         api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
         deleted_storage_id = '3fbfbefb-17dd-07aa-2dac-13afbedf3be3'
         deleted_storage = StorageVolume()
         deleted_storage.id = deleted_storage_id
 
         InventoryCacheManager.get_object_from_cache(deleted_storage_id,
-                Constants.StorageVolume).AndReturn(deleted_storage)
+                                                    Constants.StorageVolume).AndReturn(deleted_storage)
         self.mox.ReplayAll()
         cachedList = [deleted_storage_id,
                       '3fbfbefb-17dd-07aa-2dac-13afbedf1234']
         updatedList = ['3fbfbefb-17dd-07aa-2dac-13afbedf1234']
         self.mox.ReplayAll()
         self.LibvirtStorageVolume.processStorageDeletes(cachedList,
-                updatedList)
+                                                        updatedList)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         eventMetaData = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_STORAGE_DELETED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_STORAGE_DELETED)
         event_type = eventMetaData.get_event_fully_qal_name()
         self.assertEquals(msg['event_type'], event_type)
         payload = msg['payload']
@@ -126,17 +128,18 @@ class StorageVolumeEventsTest(test.TestCase):
         self.mox.StubOutWithMock(api, 'storage_volume_save')
 
         api.storage_volume_save(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         cachedStorageVolume = StorageVolume()
         cachedStorageVolume.id = storagePool.UUIDString()
         cachedStorageVolume.size = 0
         cachedStorageVolume.free = 0
         cachedStorageVolume.connectionState = \
             Constants.STORAGE_STATE_INACTIVE
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(storagePool.UUIDString(),
-                Constants.StorageVolume).AndReturn(cachedStorageVolume)
+                                                    Constants.StorageVolume).AndReturn(cachedStorageVolume)
 #        self.mox.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
 #
 #        InventoryCacheManager.get_compute_conn_driver(self.LibvirtStorageVolume.compute_id,
@@ -147,8 +150,8 @@ class StorageVolumeEventsTest(test.TestCase):
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_STORAGE_ENABLED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_STORAGE_ENABLED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -163,17 +166,18 @@ class StorageVolumeEventsTest(test.TestCase):
         self.mox.StubOutWithMock(api, 'storage_volume_save')
 
         api.storage_volume_save(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         cachedStorageVolume = StorageVolume()
         cachedStorageVolume.id = storagePool.UUIDString()
         cachedStorageVolume.size = 0
         cachedStorageVolume.free = 0
         cachedStorageVolume.connectionState = \
             Constants.STORAGE_STATE_ACTIVE
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(storagePool.UUIDString(),
-                Constants.StorageVolume).AndReturn(cachedStorageVolume)
+                                                    Constants.StorageVolume).AndReturn(cachedStorageVolume)
         self.mox.StubOutWithMock(storagePool, 'isActive')
         storagePool.isActive().AndReturn(0)
 
@@ -187,7 +191,7 @@ class StorageVolumeEventsTest(test.TestCase):
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.WARN)
         event_type = \
-            event_metadata.get_EventMetaData(\
+            event_metadata.get_EventMetaData(
                 event_metadata.EVENT_TYPE_STORAGE_DISABLED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
@@ -203,17 +207,18 @@ class StorageVolumeEventsTest(test.TestCase):
         self.mox.StubOutWithMock(api, 'storage_volume_save')
 
         api.storage_volume_save(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         cachedStorageVolume = StorageVolume()
         cachedStorageVolume.id = storagePool.UUIDString()
         cachedStorageVolume.size = 0
         cachedStorageVolume.free = 0
         cachedStorageVolume.connectionState = \
             Constants.STORAGE_STATE_ACTIVE
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(storagePool.UUIDString(),
-                Constants.StorageVolume).AndReturn(cachedStorageVolume)
+                                                    Constants.StorageVolume).AndReturn(cachedStorageVolume)
 #        self.mox.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
 #
 #        InventoryCacheManager.get_compute_conn_driver(self.LibvirtStorageVolume.compute_id,

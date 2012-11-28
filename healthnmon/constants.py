@@ -54,7 +54,7 @@ class Constants(object):
         5: VM_POWER_STATE_STOPPED,
         6: VM_POWER_STATE_ERROR,
         7: VM_POWER_STATE_ERROR,
-        }
+    }
 
     # StorageVolume Connection States
 

@@ -65,20 +65,21 @@ def _create_filtered_ordered_query(session, *models, **kwargs):
                 lastModifiedEpoch_col = getattr(primary_model, 'lastModifiedEpoch')
                 deletedEpoch_col = getattr(primary_model, 'deletedEpoch')
                 createEpoch_col = getattr(primary_model, 'createEpoch')
-                changes_since_filter = or_(lastModifiedEpoch_col > changes_since,
-                                           deletedEpoch_col > changes_since,
-                                           createEpoch_col > changes_since,)
+                changes_since_filter = or_(
+                    lastModifiedEpoch_col > changes_since,
+                    deletedEpoch_col > changes_since,
+                    createEpoch_col > changes_since,)
                 query = query.filter(changes_since_filter)
             except ValueError:
                 LOG.warn(
-                          _('Invalid value for changes-since filter : '
-                            + str(changes_since_val)),
-                          exc_info=True)
+                    _('Invalid value for changes-since filter : '
+                        + str(changes_since_val)),
+                    exc_info=True)
             except AttributeError:
                 LOG.warn(
-                          _('Cannot apply changes-since filter to model : '
-                            + str(primary_model)),
-                          exc_info=True)
+                    _('Cannot apply changes-since filter to model : '
+                        + str(primary_model)),
+                    exc_info=True)
         if 'deleted' in filters:
             try:
                 deleted_val = filters.pop('deleted')
@@ -90,9 +91,9 @@ def _create_filtered_ordered_query(session, *models, **kwargs):
                     query = query.filter(not_deleted_filter)
             except AttributeError:
                 LOG.warn(
-                          _('Cannot apply deleted filter to model : '
-                            + str(primary_model)),
-                          exc_info=True)
+                    _('Cannot apply deleted filter to model : '
+                        + str(primary_model)),
+                    exc_info=True)
         # Apply other filters
         filter_dict = {}
         for key in filters.keys():
@@ -101,9 +102,9 @@ def _create_filtered_ordered_query(session, *models, **kwargs):
                 column_attr = getattr(primary_model, key)
             except AttributeError:
                 LOG.warn(
-                          _('Cannot apply ' + str(key) + ' filter to model : '
-                            + str(primary_model)),
-                          exc_info=True)
+                    _('Cannot apply ' + str(key) + ' filter to model : '
+                        + str(primary_model)),
+                    exc_info=True)
                 continue
             if primary_model.get_all_members()[key].container == 1:
                 # Its a list type attribute. So use contains
@@ -136,9 +137,10 @@ def _create_filtered_ordered_query(session, *models, **kwargs):
             query = query.order_by(sort_fn(sort_col))
         except AttributeError:
             LOG.warn(
-                      _('Cannot apply sorting as model '
-                        + str(primary_model) + ' do not have field ' + str(sort_key)),
-                      exc_info=True)
+                _('Cannot apply sorting as model '
+                    + str(
+                  primary_model) + ' do not have field ' + str(sort_key)),
+                exc_info=True)
     return query
 
 
@@ -336,16 +338,16 @@ def vm_host_get_by_ids(context, ids):
     try:
         session = nova_session.get_session()
         vmhosts = session.query(VmHost).filter(and_(VmHost.id.in_(ids),
-                or_(VmHost.deleted == False, VmHost.deleted == None))).\
-                options(joinedload('cost')).\
-                options(joinedload('os')).\
-                options(joinedload_all('virtualSwitches.portGroups.cost')).\
-                options(joinedload_all('portGroups.cost')).\
-                options(joinedload('ipAddresses')).\
-                options(joinedload_all('virtualSwitches.subnets')).\
-                options(joinedload_all('virtualSwitches.networks')).\
-                options(joinedload_all('virtualSwitches.cost')).\
-                all()
+                                                    or_(VmHost.deleted == False, VmHost.deleted == None))).\
+            options(joinedload('cost')).\
+            options(joinedload('os')).\
+            options(joinedload_all('virtualSwitches.portGroups.cost')).\
+            options(joinedload_all('portGroups.cost')).\
+            options(joinedload('ipAddresses')).\
+            options(joinedload_all('virtualSwitches.subnets')).\
+            options(joinedload_all('virtualSwitches.networks')).\
+            options(joinedload_all('virtualSwitches.cost')).\
+            all()
 
         # Populate virtualMachineIds
         vmIdsRes = session.query(Vm.vmHostId, Vm.id).\
@@ -378,16 +380,16 @@ def vm_host_get_all(context):
     try:
         session = nova_session.get_session()
         vmhosts = session.query(VmHost).filter(
-                or_(VmHost.deleted == False, VmHost.deleted == None)).\
-                options(joinedload('cost')).\
-                options(joinedload('os')).\
-                options(joinedload_all('virtualSwitches.portGroups.cost')).\
-                options(joinedload_all('portGroups.cost')).\
-                options(joinedload('ipAddresses')).\
-                options(joinedload_all('virtualSwitches.subnets')).\
-                options(joinedload_all('virtualSwitches.networks')).\
-                options(joinedload_all('virtualSwitches.cost')).\
-                all()
+            or_(VmHost.deleted == False, VmHost.deleted == None)).\
+            options(joinedload('cost')).\
+            options(joinedload('os')).\
+            options(joinedload_all('virtualSwitches.portGroups.cost')).\
+            options(joinedload_all('portGroups.cost')).\
+            options(joinedload('ipAddresses')).\
+            options(joinedload_all('virtualSwitches.subnets')).\
+            options(joinedload_all('virtualSwitches.networks')).\
+            options(joinedload_all('virtualSwitches.cost')).\
+            all()
 
 # options(joinedload_all('localDisks.mountPoints')).\
         # Populate virtualMachineIds
@@ -425,7 +427,7 @@ def vm_host_delete_by_ids(context, ids):
         for host in vmhosts:
             vmid_tuples = \
                 session.query(Vm.id).filter(and_(Vm.vmHostId.in_(ids),
-                    or_(Vm.deleted == False, Vm.deleted == None))).all()
+                                                 or_(Vm.deleted == False, Vm.deleted == None))).all()
             vmIds = []
             for vmid_tuple in vmid_tuples:
                 vmid = vmid_tuple[0]
@@ -523,24 +525,24 @@ def vm_host_get_all_by_filters(context, filters, sort_key, sort_dir):
     try:
         session = nova_session.get_session()
         filtered_query = _create_filtered_ordered_query(session, VmHost,
-                    filters=filters, sort_key=sort_key, sort_dir=sort_dir)
+                                                        filters=filters, sort_key=sort_key, sort_dir=sort_dir)
         vmhosts = filtered_query.options(joinedload('cost')).\
-                    options(joinedload('os')).\
-                    options(joinedload_all('virtualSwitches.portGroups.cost')).\
-                    options(joinedload_all('portGroups.cost')).\
-                    options(joinedload('ipAddresses')).\
-                    options(joinedload_all('virtualSwitches.subnets')).\
-                    options(joinedload_all('virtualSwitches.networks')).\
-                    options(joinedload_all('virtualSwitches.cost')).all()
+            options(joinedload('os')).\
+            options(joinedload_all('virtualSwitches.portGroups.cost')).\
+            options(joinedload_all('portGroups.cost')).\
+            options(joinedload('ipAddresses')).\
+            options(joinedload_all('virtualSwitches.subnets')).\
+            options(joinedload_all('virtualSwitches.networks')).\
+            options(joinedload_all('virtualSwitches.cost')).all()
         # Populate virtualMachineIds
         if deleted_val and deleted_val == 'true':
             _load_deleted_objects(session, vmhosts)
             vmIdsRes = session.query(Vm.vmHostId, Vm.id).filter(Vm.deleted
-                    == True).all()
+                                                                == True).all()
         else:
             vmIdsRes = session.query(Vm.vmHostId, Vm.id).filter(or_(Vm.deleted
-                    == False, Vm.deleted
-                    == None)).all()
+                                                                    == False, Vm.deleted
+                                                                    == None)).all()
         __vm_host_set_virtualMachineIds(vmhosts, vmIdsRes)
         # Populate storageVolumeIds
         volIdsRes = session.query(HostMountPoint.vmHostId,
@@ -609,19 +611,19 @@ def vm_get_by_ids(context, ids):
     try:
         session = nova_session.get_session()
         vms = session.query(Vm).filter(and_(Vm.id.in_(ids),
-                or_(Vm.deleted == False, Vm.deleted
-                == None))).options(joinedload('cost'
-                                   )).options(joinedload('os'
-                )).options(joinedload('ipAddresses'
-                           )).options(joinedload_all('vmNetAdapters',
-                'ipAdd')).options(joinedload('vmScsiControllers'
-                                  )).options(joinedload('vmDisks'
-                )).options(joinedload_all('vmGenericDevices',
-                           'properties'
-                           )).options(joinedload('vmGlobalSettings'
-                )).options(joinedload('cpuResourceAllocation'
-                           )).options(joinedload('memoryResourceAllocation'
-                )).all()
+                                            or_(Vm.deleted == False, Vm.deleted
+                                                == None))).options(joinedload('cost'
+                                                                              )).options(joinedload('os'
+                                                                                                    )).options(joinedload('ipAddresses'
+                                                                                                                          )).options(joinedload_all('vmNetAdapters',
+                                                                                                                                                    'ipAdd')).options(joinedload('vmScsiControllers'
+                                                                                                                                                                                 )).options(joinedload('vmDisks'
+                                                                                                                                                                                                       )).options(joinedload_all('vmGenericDevices',
+                                                                                                                                                                                                                                 'properties'
+                                                                                                                                                                                                                                 )).options(joinedload('vmGlobalSettings'
+                                                                                                                                                                                                                                                       )).options(joinedload('cpuResourceAllocation'
+                                                                                                                                                                                                                                                                             )).options(joinedload('memoryResourceAllocation'
+                                                                                                                                                                                                                                                                                                   )).all()
         return vms
     except Exception:
         LOG.exception(_('error while obtaining Vm'))
@@ -640,7 +642,7 @@ def vm_get_all(context):
     try:
         session = nova_session.get_session()
         vms = session.query(Vm).filter(or_(Vm.deleted == False,
-                Vm.deleted == None)).options(joinedload('cost'
+                                           Vm.deleted == None)).options(joinedload('cost'
                 )).options(joinedload('os'
                            )).options(joinedload('ipAddresses'
                 )).options(joinedload_all('vmNetAdapters', 'ipAdd'
@@ -1023,7 +1025,8 @@ def virtual_switch_delete_by_ids(context, ids):
         session = nova_session.get_session()
         vSwitches = virtual_switch_get_by_ids(context, ids)
         portGroupIds = \
-            session.query(PortGroup.id).filter(and_(PortGroup.virtualSwitchId.in_(ids),
+            session.query(
+                PortGroup.id).filter(and_(PortGroup.virtualSwitchId.in_(ids),
                 or_(PortGroup.deleted == False, PortGroup.deleted
                 == None))).all()
         pgIds = []
@@ -1357,7 +1360,7 @@ def subnet_get_all(context):
 
 def __delete_vSwitch_subnet_association(session, subnetId):
     vSwitches = session.query(VirtualSwitch, VirtualSwitchSubnetIds).\
-            filter(and_(VirtualSwitchSubnetIds.subnetId == subnetId, \
+            filter(and_(VirtualSwitchSubnetIds.subnetId == subnetId,
                         or_(VirtualSwitch.deleted == False, VirtualSwitch.deleted == None))).\
             options(joinedload_all('subnets')).all()
     if len(vSwitches) > 0:

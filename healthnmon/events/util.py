@@ -40,14 +40,14 @@ ignoredProperties = {Vm: [
     'lastModifiedEpoch',
     'deletedEpoch',
     'deleted',
-    ], PortGroup: [
+], PortGroup: [
     'utilization',
     'limits',
     'createEpoch',
     'lastModifiedEpoch',
     'deletedEpoch',
     'deleted',
-    ]}
+]}
 
 
 def getChangedAttributesForUpdateEvent(obj, resourcemodel_diff_res):

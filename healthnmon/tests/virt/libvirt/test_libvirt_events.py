@@ -103,7 +103,8 @@ class test_LibvirtEvents(unittest.TestCase):
     def test__process_updates_for_updated_domain(self):
         self.mock.StubOutClassWithMocks(libvirt_inventorymonitor, 'LibvirtVM')
         mocked_libvirtVM = libvirt_inventorymonitor.LibvirtVM(None, None)
-        mocked_libvirtVM.process_updates_for_updated_VM(mox.IgnoreArg()).AndReturn(None)
+        mocked_libvirtVM.process_updates_for_updated_VM(
+            mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         libvirtEvents = libvirt_event_monitor.LibvirtEvents()
         libvirtEvents._process_updates_for_updated_domain(None)
@@ -111,8 +112,10 @@ class test_LibvirtEvents(unittest.TestCase):
 
     def test_domain_event_callback(self):
         libvirt_event_monitor.pool_for_processing_updated_vm = eventlet.greenpool.GreenPool(200)
-        self.mock.StubOutWithMock(libvirt_event_monitor.pool_for_processing_updated_vm, 'spawn_n')
-        libvirt_event_monitor.pool_for_processing_updated_vm.spawn_n(mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(None)
+        self.mock.StubOutWithMock(
+            libvirt_event_monitor.pool_for_processing_updated_vm, 'spawn_n')
+        libvirt_event_monitor.pool_for_processing_updated_vm.spawn_n(
+            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         libvirtEvents = libvirt_event_monitor.LibvirtEvents()
         libvirtEvents._domain_event_callback('DummyParam1', 'DummyParam2')

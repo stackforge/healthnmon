@@ -125,7 +125,7 @@ rel="next"/></vmhosts>'
         self.config_drive = None
         self.mock = mox.Mox()
         self.admin_context = context.RequestContext('admin', '',
-                is_admin=True)
+                                                    is_admin=True)
 
     def tearDown(self):
         self.mock.stubs.UnsetAll()
@@ -134,13 +134,13 @@ rel="next"/></vmhosts>'
         hosts = self.get_limited_list(3)
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank(
-                            '/v2.0/vmhosts.json?limit=1&marker=host-1', \
-                base_url='http://localhost:8774/v2.0/')
+            '/v2.0/vmhosts.json?limit=1&marker=host-1',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
         self.assertEqual(self.expected_index_limited_json, resp.body)
@@ -149,13 +149,13 @@ rel="next"/></vmhosts>'
         hosts = self.get_limited_list(3)
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank(
-                    '/v2.0/vmhosts.json?limit=1&marker=host-2', \
-        base_url='http://localhost:8774/v2.0/')
+            '/v2.0/vmhosts.json?limit=1&marker=host-2',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
         self.assertEqual(self.expected_index_limited_previous_json, resp.body)
@@ -164,12 +164,12 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
         self.assertNotEqual(resp, None, 'Return json string')
@@ -179,12 +179,12 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -194,12 +194,12 @@ rel="next"/></vmhosts>'
         hosts = None
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -208,12 +208,12 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/detail',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().detail(request)
         self.assertNotEqual(resp, None)
@@ -223,12 +223,12 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -238,13 +238,13 @@ rel="next"/></vmhosts>'
         hosts = self.get_limited_list(3)
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank(
-                '/v2.0/vmhosts.xml?limit=1&marker=host-1', \
-                base_url='http://localhost:8774/v2.0/')
+            '/v2.0/vmhosts.xml?limit=1&marker=host-1',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
         self.assertEqual(resp.body, self.expected_index_limited_xml)
@@ -253,12 +253,12 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/xml'
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
@@ -269,12 +269,12 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/json'
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
@@ -284,12 +284,12 @@ rel="next"/></vmhosts>'
     def test_list_vmhost_none_check(self):
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(None)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().index(request)
         self.assertEqual(resp.body, '{"vmhosts": []}',
@@ -299,13 +299,13 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
-        request = webob.Request.blank(\
-                '/v2.0/vmhosts/detail.xml?limit=1&marker=host-01', \
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/vmhosts/detail.xml?limit=1&marker=host-01',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().detail(request)
         self.assertNotEqual(resp, None,
@@ -316,13 +316,13 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         self.mock.StubOutWithMock(api, 'vm_host_get_all_by_filters')
         api.vm_host_get_all_by_filters(mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg(),
-                                  mox.IgnoreArg()).AndReturn(hosts)
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg(),
+                                       mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank(
-                '/v2.0/vmhosts/detail?limit=1&marker=host-01', \
-                base_url='http://localhost:8774/v2.0/')
+            '/v2.0/vmhosts/detail?limit=1&marker=host-01',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().detail(request)
         self.assertNotEqual(resp, None)
@@ -336,7 +336,7 @@ rel="next"/></vmhosts>'
                                mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/host-01.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
         self.assertNotEqual(resp, None,
@@ -351,7 +351,7 @@ rel="next"/></vmhosts>'
                                mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/host-01.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
         self.assertNotEqual(resp, None,
@@ -366,7 +366,7 @@ rel="next"/></vmhosts>'
                                mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/host-01.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
         self.assertNotEqual(resp, None,
@@ -376,15 +376,15 @@ rel="next"/></vmhosts>'
         hosts = self.get_host_list()
         xml_utils = util
         self.mock.StubOutWithMock(xml_utils, 'xml_to_dict')
-        xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(\
-                                Exception('Test Exception'))
+        xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(
+            Exception('Test Exception'))
         self.mock.StubOutWithMock(api, 'vm_host_get_by_ids')
 
         api.vm_host_get_by_ids(mox.IgnoreArg(),
                                mox.IgnoreArg()).AndReturn(hosts)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vmhosts/host-01.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
         self.assertTrue(isinstance(resp, HTTPNotFound))
@@ -400,11 +400,9 @@ rel="next"/></vmhosts>'
         rpc.call(mox.IgnoreArg(), mox.IgnoreArg(),
                  mox.IgnoreArg()).AndReturn(self.get_resource_utilization())
         self.mock.ReplayAll()
-        request = \
-            webob.Request.blank(
-                    '/v2.0/vmhosts/host-01.json?fields=id,name', \
-                            base_url='http://localhost:8774/v2.0/'
-                                )
+        request = webob.Request.blank(
+            '/v2.0/vmhosts/host-01.json?fields=id,name',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
         self.assertNotEqual(resp, None,
@@ -423,11 +421,9 @@ rel="next"/></vmhosts>'
         rpc.call(mox.IgnoreArg(), mox.IgnoreArg(),
                  mox.IgnoreArg()).AndReturn(self.get_resource_utilization())
         self.mock.ReplayAll()
-        request = \
-            webob.Request.blank(
-                    '/v2.0/vmhosts/host-01.json?fields=utilization', \
-                    base_url='http://localhost:8774/v2.0/'
-                                )
+        request = webob.Request.blank(
+            '/v2.0/vmhosts/host-01.json?fields=utilization',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
         self.assertNotEqual(resp, None,
@@ -447,9 +443,8 @@ rel="next"/></vmhosts>'
                  mox.IgnoreArg()).AndReturn(self.get_resource_utilization())
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank('/v2.0/vmhosts/host-01.xml?utilization', \
-                                base_url='http://localhost:8774/v2.0/'
-                                )
+            webob.Request.blank('/v2.0/vmhosts/host-01.xml?utilization',
+                                base_url='http://localhost:8774/v2.0/')
 
         request.environ['nova.context'] = self.admin_context
         resp = VmHostsController().show(request, 'host-01')
@@ -458,24 +453,30 @@ rel="next"/></vmhosts>'
         self.assertEqual(self.expected_utilization_xml, resp.body)
 
     def test_vmhost_identifier_json(self):
-        request = webob.Request.blank('/v2.0/vmhosts/host-01?fields=storagevolume',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/vmhosts/host-01?fields=storagevolume',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         item_list = self.get_host_list()
-        self.assertEquals(VmHostsController()._show(request, item_list[0]).body,
-                          self.expected_identifier_show_json)
-        self.assertEquals(VmHostsController()._detail(request, item_list, []).body,
-                          self.expected_identifier_detail_json)
+        self.assertEquals(
+            VmHostsController()._show(request, item_list[0]).body,
+            self.expected_identifier_show_json)
+        self.assertEquals(
+            VmHostsController()._detail(request, item_list, []).body,
+            self.expected_identifier_detail_json)
 
     def test_vmhost_identifier_xml(self):
-        request = webob.Request.blank('/v2.0/vmhosts/host-01.xml?fields=storagevolume',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/vmhosts/host-01.xml?fields=storagevolume',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         item_list = self.get_host_list()
-        self.assertEquals(VmHostsController()._show(request, item_list[0]).body,
-                          self.expected_identifier_show_xml)
-        self.assertEquals(VmHostsController()._detail(request, item_list, []).body,
-                          self.expected_identifier_detail_xml)
+        self.assertEquals(
+            VmHostsController()._show(request, item_list[0]).body,
+            self.expected_identifier_show_xml)
+        self.assertEquals(
+            VmHostsController()._detail(request, item_list, []).body,
+            self.expected_identifier_detail_xml)
 
     def get_single_host(self):
         host_list = []
@@ -544,7 +545,7 @@ rel="next"/></vmhosts>'
             'reservedSystemMemory': 38929823983,
             'maximumSystemMemory': 2398293832,
             'memoryRelativeWeight': 89239823,
-            }
+        }
         return dict(ResourceUtilization=resource_dict)
 
 

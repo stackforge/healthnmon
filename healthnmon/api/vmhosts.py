@@ -79,20 +79,20 @@ class VmHostsController(base.Controller):
         host_xml = util.dump_resource_xml(host, self._model_name)
         out_dict = {}
         host_xml_update = util.replace_with_links(host_xml,
-                self._get_resource_tag_dict_list(req.application_url,
-                                               proj_id),
-                out_dict)
+                                                  self._get_resource_tag_dict_list(req.application_url,
+                                                                                   proj_id),
+                                                  out_dict)
         field_list = util.get_query_fields(req)
-        if field_list != None:
+        if field_list is not None:
             if 'utilization' in field_list:
                 host_xml_update = self._add_perf_data(host.get_id(),
-                        host_xml_update, ctx)
+                                                      host_xml_update, ctx)
             host_xml_update = \
                 util.get_select_elements_xml(host_xml_update,
-                    field_list, 'id')
+                                             field_list, 'id')
         elif len(req.GET.getall('utilization')) > 0:
             host_xml_update = self._add_perf_data(host.get_id(),
-                    host_xml_update, ctx)
+                                                  host_xml_update, ctx)
         return (host_xml_update, out_dict)
 
     def _get_resource_tag_dict_list(self, application_url, proj_id):
@@ -104,44 +104,44 @@ class VmHostsController(base.Controller):
         """
 
         return  [{
-                'tag': 'virtualSwitches',
-                'tag_replacement': 'virtualswitch',
-                'tag_key': 'id',
-                'tag_collection_url': os.path.join(application_url,
-                        proj_id,
-                        constants.VIRTUAL_SWITCH_COLLECTION_NAME),
-                'tag_attrib': ['name', 'switchType'],
-                }, {
-                'tag': 'storageVolumeIds',
-                'tag_replacement': 'storagevolume',
-                'tag_key': 'id',
-                'tag_collection_url': os.path.join(application_url,
-                        proj_id,
-                        constants.STORAGEVOLUME_COLLECTION_NAME),
-                'tag_attrib': None,
-                }, {
-                'tag': 'virtualMachineIds',
-                'tag_replacement': 'virtualmachine',
-                'tag_key': 'id',
-                'tag_collection_url': os.path.join(application_url,
-                        proj_id, constants.VM_COLLECTION_NAME),
-                'tag_attrib': None,
-                }, {
-                'tag': 'virtualSwitchId',
-                'tag_replacement': 'virtualswitch',
-                'tag_key': 'id',
-                'tag_collection_url': os.path.join(application_url,
-                        proj_id,
-                        constants.VIRTUAL_SWITCH_COLLECTION_NAME),
-                'tag_attrib': None,
-                }, {
-                'tag': 'subnetIds',
-                'tag_replacement': 'subnet',
-                'tag_key': 'id',
-                'tag_collection_url': os.path.join(application_url,
-                        proj_id, constants.SUBNET_COLLECTION_NAME),
-                'tag_attrib': None,
-                }]
+            'tag': 'virtualSwitches',
+            'tag_replacement': 'virtualswitch',
+            'tag_key': 'id',
+            'tag_collection_url': os.path.join(application_url,
+                                               proj_id,
+                                               constants.VIRTUAL_SWITCH_COLLECTION_NAME),
+            'tag_attrib': ['name', 'switchType'],
+        }, {
+            'tag': 'storageVolumeIds',
+            'tag_replacement': 'storagevolume',
+            'tag_key': 'id',
+            'tag_collection_url': os.path.join(application_url,
+                                               proj_id,
+                                               constants.STORAGEVOLUME_COLLECTION_NAME),
+            'tag_attrib': None,
+        }, {
+            'tag': 'virtualMachineIds',
+            'tag_replacement': 'virtualmachine',
+            'tag_key': 'id',
+            'tag_collection_url': os.path.join(application_url,
+                                               proj_id, constants.VM_COLLECTION_NAME),
+            'tag_attrib': None,
+        }, {
+            'tag': 'virtualSwitchId',
+            'tag_replacement': 'virtualswitch',
+            'tag_key': 'id',
+            'tag_collection_url': os.path.join(application_url,
+                                               proj_id,
+                                               constants.VIRTUAL_SWITCH_COLLECTION_NAME),
+            'tag_attrib': None,
+        }, {
+            'tag': 'subnetIds',
+            'tag_replacement': 'subnet',
+            'tag_key': 'id',
+            'tag_collection_url': os.path.join(application_url,
+                                               proj_id, constants.SUBNET_COLLECTION_NAME),
+            'tag_attrib': None,
+        }]
 
     def show(self, req, id):
         """ Display details for particular vmhost
@@ -158,12 +158,12 @@ class VmHostsController(base.Controller):
             (ctx, proj_id) = util.get_project_context(req)
             host_list = api.vm_host_get_by_ids(ctx, [id])
             LOG.debug(_('Project id: %s Received vmhosts from the database'
-                       % proj_id))
+                        % proj_id))
             if host_list:
                 return self._show(req, host_list[0])
         except Exception, err:
             LOG.error(_('Exception while fetching data from healthnmon api %s'
-                       % str(err)), exc_info=1)
+                        % str(err)), exc_info=1)
         return HTTPNotFound()
 
     def _add_perf_data(
@@ -171,7 +171,7 @@ class VmHostsController(base.Controller):
         vmhost_id,
         input_xml,
         ctx,
-        ):
+    ):
         ''' Append vmhost resource utilization data
             :param vmhost_id: vmhost id
             :param input_xml: vmhost detail xml
@@ -184,6 +184,6 @@ class VmHostsController(base.Controller):
         resource_obj = healthnmonResourceModel.ResourceUtilization()
         util.set_select_attributes(resource_obj, attr_dict)
         utilization_xml = util.dump_resource_xml(resource_obj,
-                'utilization')
+                                                 'utilization')
         LOG.debug(_('Utilization xml: %s' % utilization_xml))
         return util.append_xml_as_child(input_xml, utilization_xml)

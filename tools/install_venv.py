@@ -135,7 +135,7 @@ class Fedora(Distro):
 
 def get_distro():
     if os.path.exists('/etc/fedora-release') or \
-       os.path.exists('/etc/redhat-release'):
+            os.path.exists('/etc/redhat-release'):
         return Fedora()
     else:
         return Distro()
@@ -182,7 +182,7 @@ def install_dependencies(venv=VENV):
 
     # Tell the virtual env how to "import healthnmon"
     pthfile = os.path.join(venv, "lib", PY_VERSION, "site-packages",
-                        "healthnmon.pth")
+                           "healthnmon.pth")
     f = open(pthfile, 'w')
     f.write("%s\n" % ROOT)
 
@@ -217,8 +217,8 @@ def parse_args():
     """Parse command-line arguments"""
     parser = optparse.OptionParser()
     parser.add_option("-n", "--no-site-packages", dest="no_site_packages",
-        default=False, action="store_true",
-        help="Do not inherit packages from global Python install")
+                      default=False, action="store_true",
+                      help="Do not inherit packages from global Python install")
     return parser.parse_args()
 
 

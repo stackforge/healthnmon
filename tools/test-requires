@@ -1,10 +1,15 @@
 # Packages needed for dev testing
 distribute>=0.6.24
+
 coverage
+fixtures
 mox==0.5.3
-nose==1.1.2
-nosexcover
-openstack.nose_plugin
-pep8==0.6.1
-pylint
+nose
+testtools
+openstack.nose_plugin>=0.7
+nosehtmloutput
+pep8==1.2
+pylint==0.25.2
 sphinx>=1.1.2
+feedparser
+#MySQL-python

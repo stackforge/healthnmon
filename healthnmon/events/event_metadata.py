@@ -45,7 +45,7 @@ class EventMetaData(object):
         short_desc_template,
         long_desc_template,
         priority,
-        ):
+    ):
         self.event_type_name = event_type_name
         self.event_category = event_category
         self.short_desc_template = short_desc_template
@@ -57,7 +57,7 @@ class EventMetaData(object):
         template_str,
         obj,
         **kwargs
-        ):
+    ):
         obj_members = obj.get_all_members()
         placeholder_values = {}
 
@@ -83,7 +83,7 @@ class EventMetaData(object):
         """
 
         return self.__get_formatted_string(self.short_desc_template,
-                obj, **kwargs)
+                                           obj, **kwargs)
 
     def get_long_desc(self, obj, **kwargs):
         """Get long description text replaced with place holder values
@@ -96,7 +96,7 @@ class EventMetaData(object):
         """
 
         return self.__get_formatted_string(self.long_desc_template,
-                obj, **kwargs)
+                                           obj, **kwargs)
 
     def get_topic_name(self, objuuid):
         """Get the topic name to be used for a event related to this metadata
@@ -130,7 +130,7 @@ def isPrimitive(obj):
         float,
         str,
         unicode,
-        )
+    )
     is_primitive = isinstance(obj, primitives)
     return is_primitive
 
@@ -191,28 +191,28 @@ eventMetadataDict[EVENT_TYPE_HOST_CONNECTED] = \
     EventMetaData(EVENT_TYPE_HOST_CONNECTED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s connected'),
                   _('Healthnmon service can successfully connect to VM Host %(name)s'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_HOST_DISCONNECTED] = \
     EventMetaData(EVENT_TYPE_HOST_DISCONNECTED,
                   EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s disconnected'),
                   _('Healthnmon service lost connection to the host %(name)s'
-                  ), notifier_api.CRITICAL)
+                    ), notifier_api.CRITICAL)
 eventMetadataDict[EVENT_TYPE_HOST_ADDED] = \
     EventMetaData(EVENT_TYPE_HOST_ADDED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s added'),
                   _('A new VM Host %(name)s is added for healthnmon service monitoring'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_HOST_UPDATED] = \
     EventMetaData(EVENT_TYPE_HOST_UPDATED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s updated'),
                   _('VM Host %(name)s has been updated'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_HOST_REMOVED] = \
     EventMetaData(EVENT_TYPE_HOST_REMOVED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s removed'),
                   _('VM Host %(name)s is removed from healthnmon service'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 
 eventMetadataDict[EVENT_TYPE_VM_STARTED] = \
     EventMetaData(EVENT_TYPE_VM_STARTED, EVENT_CATEGORY_LIFECYCLE,
@@ -249,7 +249,7 @@ eventMetadataDict[EVENT_TYPE_VM_RECONFIGURED] = \
     EventMetaData(EVENT_TYPE_VM_RECONFIGURED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM %(name)s reconfigured'),
                   _('VM %(name)s reconfigured. Changed attributes are %(changed_attributes)s'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 
 eventMetadataDict[EVENT_TYPE_STORAGE_ADDED] = \
     EventMetaData(EVENT_TYPE_STORAGE_ADDED, EVENT_CATEGORY_LIFECYCLE,
@@ -277,7 +277,7 @@ eventMetadataDict[EVENT_TYPE_NETWORK_ADDED] = \
     EventMetaData(EVENT_TYPE_NETWORK_ADDED, EVENT_CATEGORY_LIFECYCLE,
                   _('Host network %(name)s added'),
                   _('A new host network %(name)s added to host %(host_id)s'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_NETWORK_DELETED] = \
     EventMetaData(EVENT_TYPE_NETWORK_DELETED, EVENT_CATEGORY_LIFECYCLE,
                   _('Host network %(name)s deleted'),
@@ -298,19 +298,19 @@ eventMetadataDict[EVENT_TYPE_PORTGROUP_ADDED] = \
     EventMetaData(EVENT_TYPE_PORTGROUP_ADDED, EVENT_CATEGORY_LIFECYCLE,
                   _('Port group %(name)s added'),
                   _('Port group %(name)s added to virtual switch %(virtualSwitchId)s'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_PORTGROUP_DELETED] = \
     EventMetaData(EVENT_TYPE_PORTGROUP_DELETED,
                   EVENT_CATEGORY_LIFECYCLE,
                   _('Port group %(name)s deleted'),
                   _('Port group %(name)s removed from virtual switch %(virtualSwitchId)s'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_PORTGROUP_RECONFIGURED] = \
     EventMetaData(EVENT_TYPE_PORTGROUP_RECONFIGURED,
                   EVENT_CATEGORY_LIFECYCLE,
                   _('Port group %(name)s reconfigured'),
                   _(' Port group %(name)s attached to virtual switch %(virtualSwitchId)s reconfigured. Changed attributes are %(changed_attributes)s'
-                  ), notifier_api.INFO)
+                    ), notifier_api.INFO)
 
 
 def get_EventMetaData(event_type):

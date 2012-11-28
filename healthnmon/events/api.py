@@ -40,7 +40,7 @@ def notify(event_type, obj, **kwargs):
 
     eventmetadata_obj = event_metadata.get_EventMetaData(event_type)
     payload = payload_generator.generate_payload(eventmetadata_obj,
-            obj, **kwargs)
+                                                 obj, **kwargs)
 
     # Set publisher_id as <nova-scheduler-service.host>.healthnmon
 
@@ -57,19 +57,19 @@ def notify(event_type, obj, **kwargs):
     else:
         if len(scheduler_services) > 1:
             LOG.warn(_('More than 1 entry for Scheduler service found.'
-                     ))
+                       ))
         scheduler_service = scheduler_services[0]
         scheduler_service_host = scheduler_service['host']
         if scheduler_service_host is None \
-            or len(scheduler_service_host) < 1:
+                or len(scheduler_service_host) < 1:
             LOG.warn(_('Invalid host name for Scheduler service entry : '
-                      + str(scheduler_service_host)))
+                       + str(scheduler_service_host)))
         else:
             publisher_id = scheduler_service_host + '.' + 'healthnmon'
     if publisher_id is None:
         publisher_id = 'healthnmon'
         LOG.warn(_('Could not determine host name of nova scheduler service. Using default publisher id %s'
-                  % publisher_id))
+                   % publisher_id))
 
     # Send message to notifier api
 
@@ -79,10 +79,12 @@ def notify(event_type, obj, **kwargs):
 
 
 def notify_host_update(event_type, vmHost, **kwargs):
-    resource_utilization = InventoryCacheManager.get_compute_conn_driver(vmHost.get_id(),
-                Constants.VmHost).get_resource_utilization(vmHost.get_id(),
-                Constants.VmHost, 5)
+    resource_utilization = InventoryCacheManager.get_compute_conn_driver(
+        vmHost.get_id(),
+        Constants.VmHost).get_resource_utilization(vmHost.get_id(),
+                                                   Constants.VmHost, 5)
     # update the host event payload with utilization data and notify
     vmHost.set_utilization(resource_utilization)
-    LOG.audit(_('Host with (UUID, host name) - (%s, %s) got updated') % (vmHost.get_id(), vmHost.get_name()))
+    LOG.audit(_('Host with (UUID, host name) - (%s, %s) got updated') %
+              (vmHost.get_id(), vmHost.get_name()))
     notify(event_type, vmHost, **kwargs)

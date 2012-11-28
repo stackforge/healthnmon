@@ -17,11 +17,11 @@
 """ Healthnmon notification driver which sends message to rabbitmq
 """
 
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import rpc
 from nova import context as req_context
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 def notify(context, message):
@@ -30,7 +30,7 @@ def notify(context, message):
         context = req_context.get_admin_context()
 
     priority = message.get('priority',
-                           FLAGS.healthnmon_default_notification_level)
+                           CONF.healthnmon_default_notification_level)
     priority = priority.lower()
 
     # Construct topic name

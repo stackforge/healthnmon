@@ -29,7 +29,7 @@ from healthnmon.tests import FakeLibvirt as libvirt
 from healthnmon.virt.libvirt import connection
 from healthnmon.virt.libvirt.connection import LibvirtConnection
 from healthnmon.events import api as event_api
-from nova import flags
+from nova.openstack.common import cfg
 from nova.db import api as nova_db
 from nova import db as novadb
 from healthnmon.virt import fake
@@ -56,11 +56,11 @@ class test_LibvirtVM(unittest.TestCase):
                              rmUserName='openstack',
                              rmPassword='password')
         self.mock = mox.Mox()
-        flags.FLAGS.set_override('healthnmon_notification_drivers',
-                                 ['healthnmon.notifier.log_notifier'])
+        cfg.CONF.set_override('healthnmon_notification_drivers',
+                              ['healthnmon.notifier.log_notifier'])
 
     def tearDown(self):
-        flags.FLAGS.set_override('healthnmon_notification_drivers', None)
+        cfg.CONF.set_override('healthnmon_notification_drivers', None)
         self.mock.stubs.UnsetAll()
 
     def test_ProcessUpdates(self):
@@ -75,14 +75,17 @@ class test_LibvirtVM(unittest.TestCase):
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVM.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVM.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
         self.mock.ReplayAll()
         self.assertEquals(self.libvirtVM.processUpdates(), None)
-        vm = InventoryCacheManager.get_object_from_cache("25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
+        vm = InventoryCacheManager.get_object_from_cache(
+            "25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
 #        self.assertEquals("TestVirtMgrVM7", vm.get_name())
         self.assertEquals("1048576", str(vm.get_memorySize()))
         self.assertEquals("hd", str(vm.get_bootOrder()).strip())
@@ -100,15 +103,19 @@ class test_LibvirtVM(unittest.TestCase):
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVM.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVM.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
         self.mock.ReplayAll()
         domainObj = libvirt.virDomain()
-        self.assertEquals(self.libvirtVM.process_updates_for_updated_VM(domainObj), None)
-        vm = InventoryCacheManager.get_object_from_cache("25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
+        self.assertEquals(
+            self.libvirtVM.process_updates_for_updated_VM(domainObj), None)
+        vm = InventoryCacheManager.get_object_from_cache(
+            "25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
 #        self.assertEquals("TestVirtMgrVM7", vm.get_name())
         self.assertEquals("1048576", str(vm.get_memorySize()))
         self.assertEquals("hd", str(vm.get_bootOrder()).strip())
@@ -134,11 +141,13 @@ class test_LibvirtVM(unittest.TestCase):
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVM.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVM.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
         mock_libvirtVm = LibvirtVM(self.connection, '1')
         self.mock.StubOutWithMock(mock_libvirtVm, 'processVmDeletes')
         mock_libvirtVm.processVmDeletes([], []).AndRaise(Exception)
@@ -155,11 +164,12 @@ class test_LibvirtVM(unittest.TestCase):
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(self.libvirtVM._processVm(libvirt.virDomain()),
                           None)
-        vm = InventoryCacheManager.get_object_from_cache("25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
+        vm = InventoryCacheManager.get_object_from_cache(
+            "25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
         #self.assertEquals('Disconnected', vm.get_connectionState())
 #        self.assertEquals('TestVirtMgrVM7', str(vm.get_name()))
         self.assertEquals("1048576", str(vm.get_memorySize()))
@@ -175,16 +185,19 @@ class test_LibvirtVM(unittest.TestCase):
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVM.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVM.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
         self.mock.ReplayAll()
         self.assertEquals(self.libvirtVM._processVm(libvirt.virDomain()),
                           None)
         self.libvirtVM.processUpdates()
-        vm = InventoryCacheManager.get_object_from_cache("25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
+        vm = InventoryCacheManager.get_object_from_cache(
+            "25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
         ipProfileList = vm.get_ipAddresses()
         self.assertTrue(ipProfileList is not None)
         self.assertTrue(ipProfileList[0].get_ipAddress() == '10.1.1.19')
@@ -202,7 +215,7 @@ class test_LibvirtVM(unittest.TestCase):
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache'
                                   )
         deleted_vm_id = '25f04dd3-e924-02b2-9eac-876e3c943123'
@@ -210,7 +223,7 @@ class test_LibvirtVM(unittest.TestCase):
         deleted_vm.id = deleted_vm_id
 
         InventoryCacheManager.get_object_from_cache(deleted_vm_id,
-                Constants.Vm).AndReturn(deleted_vm)
+                                                    Constants.Vm).AndReturn(deleted_vm)
         self.mock.ReplayAll()
         cachedList = ['25f04dd3-e924-02b2-9eac-876e3c943262',
                       deleted_vm_id]
@@ -228,9 +241,10 @@ class test_LibvirtVmHost(unittest.TestCase):
         vmHost = VmHost()
         vmHost.set_virtualMachineIds([])
 
-        rm_context = ComputeRMContext(rmType='QEMU', rmIpAddress='10.10.155.165',
-                        rmUserName='openstack',
-                        rmPassword='password')
+        rm_context = ComputeRMContext(
+            rmType='QEMU', rmIpAddress='10.10.155.165',
+            rmUserName='openstack',
+            rmPassword='password')
 
         InventoryCacheManager.update_object_in_cache('1', vmHost)
         InventoryCacheManager.get_all_compute_inventory()['1'] = \
@@ -238,11 +252,12 @@ class test_LibvirtVmHost(unittest.TestCase):
 
         self.connection._wrapped_conn = libvirt.open('qemu:///system')
         libvirtEvents = LibvirtEvents()
-        self.libvirtVmHost = LibvirtVmHost(self.connection._wrapped_conn, '1', libvirtEvents)
+        self.libvirtVmHost = LibvirtVmHost(
+            self.connection._wrapped_conn, '1', libvirtEvents)
         self.connection.compute_rmcontext = rm_context
         self.mock = mox.Mox()
-        flags.FLAGS.set_override('healthnmon_notification_drivers',
-                                 ['healthnmon.notifier.log_notifier'])
+        cfg.CONF.set_override('healthnmon_notification_drivers',
+                              ['healthnmon.notifier.log_notifier'])
 
     def test_ProcessUpdates(self):
         self.mock.StubOutWithMock(api, 'vm_host_save')
@@ -251,8 +266,10 @@ class test_LibvirtVmHost(unittest.TestCase):
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(self.libvirtVmHost.processUpdates(), None)
-        host = InventoryCacheManager.get_object_from_cache('1', Constants.VmHost)
-        self.assertEquals('34353438-3934-434e-3738-313630323543', host.get_uuid())
+        host = InventoryCacheManager.get_object_from_cache(
+            '1', Constants.VmHost)
+        self.assertEquals(
+            '34353438-3934-434e-3738-313630323543', host.get_uuid())
         self.assertEquals('1', host.get_id())
         self.assertEquals('ubuntu164.vmm.hp.com', host.get_name())
         self.mock.stubs.UnsetAll()
@@ -272,7 +289,7 @@ class test_LibvirtVmHost(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def tearDown(self):
-        flags.FLAGS.set_override('healthnmon_notification_drivers', None)
+        cfg.CONF.set_override('healthnmon_notification_drivers', None)
 
 
 class test_LibvirtVmHostDisconnected(unittest.TestCase):
@@ -291,17 +308,18 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
                              rmUserName='openstack',
                              rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['1'] = \
-                        ComputeInventory(self.connection.compute_rmcontext)
+            ComputeInventory(self.connection.compute_rmcontext)
         self.mock.StubOutWithMock(LibvirtConnection, '_connect')
 
         self.connection._connect(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
+                                 mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
         self.mock.ReplayAll()
         self.inventoryMonitor = LibvirtInventoryMonitor()
         libvirtEvents = LibvirtEvents()
-        self.libvirtVmHost = LibvirtVmHost(self.connection._wrapped_conn, '1', libvirtEvents)
-        flags.FLAGS.set_override('healthnmon_notification_drivers',
-                                 ['healthnmon.notifier.log_notifier'])
+        self.libvirtVmHost = LibvirtVmHost(
+            self.connection._wrapped_conn, '1', libvirtEvents)
+        cfg.CONF.set_override('healthnmon_notification_drivers',
+                              ['healthnmon.notifier.log_notifier'])
 
     def testProcessUpdatesNoOp(self):
         self.mock.StubOutWithMock(api, 'vm_host_save')
@@ -319,10 +337,12 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
 
         api.vm_host_save(mox.IgnoreArg(),
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVmHost.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVmHost.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
         self.mock.ReplayAll()
         self.assertEquals(self.libvirtVmHost.processUpdates(), None)
         self.assertEquals(self.libvirtVmHost.vmHost.get_connectionState(),
@@ -335,25 +355,32 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
         vmHost.set_connectionState(Constants.VMHOST_CONNECTED)
         InventoryCacheManager.update_object_in_cache('1', vmHost)
         self.mock.StubOutWithMock(api, 'vm_host_save')
-        api.vm_host_save(mox.IgnoreArg(), mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.vm_host_save(
+            mox.IgnoreArg(), mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVmHost.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVmHost.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
 
-        fake_computes = [{'id': '1', 'service': {'created_at':'created', 'updated_at':'updated'}}]
+        fake_computes = [{'id': '1', 'service': {'created_at':
+                                                 'created', 'updated_at':'updated'}}]
         self.mock.StubOutWithMock(novadb, 'compute_node_get_all')
         novadb.compute_node_get_all(mox.IgnoreArg()).AndReturn(fake_computes)
 
         self.mock.StubOutWithMock(hnm_utils, 'is_service_alive')
-        hnm_utils.is_service_alive(mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(False)
+        hnm_utils.is_service_alive(
+            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(False)
 
         self.mock.StubOutWithMock(event_api, 'notify_host_update')
-        event_api.notify_host_update(mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(None)
+        event_api.notify_host_update(
+            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
 
         self.assertEquals(self.libvirtVmHost.processUpdates(), None)
-        self.assertEquals(self.libvirtVmHost.cachedvmHost.get_connectionState(), 'Disconnected')
+        self.assertEquals(self.libvirtVmHost.cachedvmHost.get_connectionState(
+        ), 'Disconnected')
         self.mock.stubs.UnsetAll()
 
     def testProcessUpdates_compute_stopped_exception(self):
@@ -362,28 +389,34 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
         vmHost.set_connectionState(Constants.VMHOST_CONNECTED)
         InventoryCacheManager.update_object_in_cache('1', vmHost)
         self.mock.StubOutWithMock(api, 'vm_host_save')
-        api.vm_host_save(mox.IgnoreArg(), mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.vm_host_save(
+            mox.IgnoreArg(), mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_compute_conn_driver')
-        InventoryCacheManager.get_compute_conn_driver(self.libvirtVmHost.compute_id,
-                Constants.VmHost).AndReturn(fake.get_connection())
+        self.mock.StubOutWithMock(
+            InventoryCacheManager, 'get_compute_conn_driver')
+        InventoryCacheManager.get_compute_conn_driver(
+            self.libvirtVmHost.compute_id,
+            Constants.VmHost).AndReturn(fake.get_connection())
 
-        fake_computes = [{'id': '1', 'service': {'created_at': 'created', 'updated_at':'updated'}}]
+        fake_computes = [{'id': '1', 'service': {'created_at':
+                                                 'created', 'updated_at':'updated'}}]
         self.mock.StubOutWithMock(novadb, 'compute_node_get_all')
         novadb.compute_node_get_all(mox.IgnoreArg()).AndReturn(fake_computes)
 
         self.mock.StubOutWithMock(hnm_utils, 'is_service_alive')
-        hnm_utils.is_service_alive(mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(False)
+        hnm_utils.is_service_alive(
+            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(False)
 
         self.mock.StubOutWithMock(event_api, 'notify_host_update')
-        event_api.notify_host_update(mox.IgnoreArg(), mox.IgnoreArg()).AndRaise(Exception())
+        event_api.notify_host_update(
+            mox.IgnoreArg(), mox.IgnoreArg()).AndRaise(Exception())
         self.mock.ReplayAll()
 
         self.assertEquals(self.libvirtVmHost.processUpdates(), None)
         self.mock.stubs.UnsetAll()
 
     def tearDown(self):
-        flags.FLAGS.set_override('healthnmon_notification_drivers', None)
+        cfg.CONF.set_override('healthnmon_notification_drivers', None)
 
 
 class test_LibvirtStorage(unittest.TestCase):
@@ -406,28 +439,31 @@ class test_LibvirtStorage(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
         api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
-        defaultInstancesPath = flags.FLAGS.instances_path
-        flags.FLAGS.set_override('instances_path',
-                                 '/var/lib/nova/instances')
+        defaultInstancesPath = cfg.CONF.instances_path
+        cfg.CONF.set_override('instances_path',
+                              '/var/lib/nova/instances')
         self.assertEquals(self.LibvirtStorageVolume.processUpdates(),
                           None)
-        host = InventoryCacheManager.get_object_from_cache('1', Constants.VmHost)
+        host = InventoryCacheManager.get_object_from_cache(
+            '1', Constants.VmHost)
         self.assertEquals(self.LibvirtStorageVolume._createNovaPool(),
                           None)
-        storage = InventoryCacheManager.get_object_from_cache('95f7101b-892c-c388-867a-8340e5fea27x', Constants.StorageVolume)
-        self.assertTrue('95f7101b-892c-c388-867a-8340e5fea27x', host.get_storageVolumeIds())
-        self.assertTrue(storage != None)
+        storage = InventoryCacheManager.get_object_from_cache(
+            '95f7101b-892c-c388-867a-8340e5fea27x', Constants.StorageVolume)
+        self.assertTrue('95f7101b-892c-c388-867a-8340e5fea27x',
+                        host.get_storageVolumeIds())
+        self.assertTrue(storage is not None)
         self.assertEquals('inactivePool', storage.get_name())
-        flags.FLAGS.set_override('instances_path', defaultInstancesPath)
+        cfg.CONF.set_override('instances_path', defaultInstancesPath)
         self.mock.stubs.UnsetAll()
 
     def test_processUpdatesException(self):
         self.mock.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
         api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         mock_libvirtSV = LibvirtStorageVolume(self.connection, '1')
         self.mock.StubOutWithMock(mock_libvirtSV, 'processStorageDeletes')
         mock_libvirtSV.processStorageDeletes([], []).AndRaise(Exception)
@@ -441,35 +477,42 @@ class test_LibvirtStorage(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'storage_volume_save')
 
         api.storage_volume_save(mox.IgnoreArg(),
-            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(
-         self.LibvirtStorageVolume._processStorage(libvirt.virStoragePool()),
-                          None)
-        host = InventoryCacheManager.get_object_from_cache('1', Constants.VmHost)
-        storage = InventoryCacheManager.get_object_from_cache('95f7101b-892c-c388-867a-8340e5fea27a', Constants.StorageVolume)
-        self.assertTrue('95f7101b-892c-c388-867a-8340e5fea27a', host.get_storageVolumeIds())
-        self.assertTrue(storage != None)
+            self.LibvirtStorageVolume._processStorage(
+                libvirt.virStoragePool()),
+            None)
+        host = InventoryCacheManager.get_object_from_cache(
+            '1', Constants.VmHost)
+        storage = InventoryCacheManager.get_object_from_cache(
+            '95f7101b-892c-c388-867a-8340e5fea27a', Constants.StorageVolume)
+        self.assertTrue('95f7101b-892c-c388-867a-8340e5fea27a',
+                        host.get_storageVolumeIds())
+        self.assertTrue(storage is not None)
         self.assertEquals('default', storage.get_name())
-        self.assertEquals('34353438-3934-434e-3738-313630323543', storage.get_resourceManagerId())
+        self.assertEquals('34353438-3934-434e-3738-313630323543',
+                          storage.get_resourceManagerId())
         self.mock.stubs.UnsetAll()
 
     def test_processStorageDeletes(self):
         self.mock.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
         api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         cachedList = ['3fbfbefb-17dd-07aa-2dac-13afbedf3be3',
                       '3fbfbefb-17dd-07aa-2dac-13afbedf1234',
                       '3fbfbefb-17dd-07aa-2dac-13afbedf4321']
         updatedList = ['3fbfbefb-17dd-07aa-2dac-13afbedf1234']
         self.assertEquals(
-         self.LibvirtStorageVolume.processStorageDeletes(cachedList,
-                          updatedList), None)
-        storage = InventoryCacheManager.get_object_from_cache('3fbfbefb-17dd-07aa-2dac-13afbedf3be3', Constants.StorageVolume)
-        host = InventoryCacheManager.get_object_from_cache('1', Constants.VmHost)
-        self.assertTrue(storage == None)
+            self.LibvirtStorageVolume.processStorageDeletes(cachedList,
+                                                            updatedList), None)
+        storage = InventoryCacheManager.get_object_from_cache(
+            '3fbfbefb-17dd-07aa-2dac-13afbedf3be3', Constants.StorageVolume)
+        host = InventoryCacheManager.get_object_from_cache(
+            '1', Constants.VmHost)
+        self.assertTrue(storage is None)
         self.assertTrue('3fbfbefb-17dd-07aa-2dac-13afbedf1234' not in host.get_storageVolumeIds())
         self.mock.stubs.UnsetAll()
 
@@ -499,8 +542,8 @@ class test_LibvirtNetwork(unittest.TestCase):
                              rmPassword='password')
         self.LibvirtNetwork = LibvirtNetwork(self.connection, '1')
         self.mock = mox.Mox()
-        flags.FLAGS.set_override('healthnmon_notification_drivers',
-                                 ['healthnmon.notifier.log_notifier'])
+        cfg.CONF.set_override('healthnmon_notification_drivers',
+                              ['healthnmon.notifier.log_notifier'])
 
     def test_processUpdates(self):
         self.mock.StubOutWithMock(api, 'vm_host_save')
@@ -511,16 +554,19 @@ class test_LibvirtNetwork(unittest.TestCase):
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.subnet_delete_by_ids(mox.IgnoreArg(),
-            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.subnet_save(mox.IgnoreArg(),
                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         self.mock.ReplayAll()
         self.assertEquals(self.LibvirtNetwork.processUpdates(), None)
-        host = InventoryCacheManager.get_object_from_cache('1', Constants.VmHost)
-        self.assertEquals('52:54:00:34:14:AE', host.get_virtualSwitches()[0].get_id())
-        self.assertEquals('nat', host.get_virtualSwitches()[0].get_switchType())
+        host = InventoryCacheManager.get_object_from_cache(
+            '1', Constants.VmHost)
+        self.assertEquals(
+            '52:54:00:34:14:AE', host.get_virtualSwitches()[0].get_id())
+        self.assertEquals(
+            'nat', host.get_virtualSwitches()[0].get_switchType())
         self.assertEquals('default', host.get_virtualSwitches()[0].get_name())
 
         self.mock.stubs.UnsetAll()
@@ -534,12 +580,13 @@ class test_LibvirtNetwork(unittest.TestCase):
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.subnet_delete_by_ids(mox.IgnoreArg(),
-            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.subnet_save(mox.IgnoreArg(),
                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         mock_libvirtNetwork = LibvirtNetwork(self.connection, '1')
-        self.mock.StubOutWithMock(mock_libvirtNetwork, '_processNetworkDeletes')
+        self.mock.StubOutWithMock(
+            mock_libvirtNetwork, '_processNetworkDeletes')
         mock_libvirtNetwork._processNetworkDeletes([], [],).AndRaise(Exception)
         self.mock.ReplayAll()
         self.assertEquals(self.LibvirtNetwork.processUpdates(), None)
@@ -550,13 +597,14 @@ class test_LibvirtNetwork(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'subnet_delete_by_ids')
 
         api.subnet_delete_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(self.LibvirtNetwork._processNetworkInterface(
-                                    libvirt.virLibvirtInterfaceEth0()),
-                                    None)
-        host = InventoryCacheManager.get_object_from_cache('1', Constants.VmHost)
-        self.assertTrue(host.get_ipAddresses != None)
+            libvirt.virLibvirtInterfaceEth0()),
+            None)
+        host = InventoryCacheManager.get_object_from_cache(
+            '1', Constants.VmHost)
+        self.assertTrue(host.get_ipAddresses is not None)
         self.mock.stubs.UnsetAll()
 
     def testProcessNetwork(self):
@@ -566,10 +614,11 @@ class test_LibvirtNetwork(unittest.TestCase):
                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(self.LibvirtNetwork._processVirtualNetwork(
-                                    libvirt.virLibvirtNetwork()),
-                                    None)
-        subnet = InventoryCacheManager.get_object_from_cache('Subnet_52:54:00:34:14:AE', Constants.Network)
-        self.assertTrue(subnet != None)
+            libvirt.virLibvirtNetwork()),
+            None)
+        subnet = InventoryCacheManager.get_object_from_cache(
+            'Subnet_52:54:00:34:14:AE', Constants.Network)
+        self.assertTrue(subnet is not None)
         self.assertFalse(subnet.get_isBootNetwork())
         self.assertEquals('default', subnet.get_name())
         self.mock.stubs.UnsetAll()
@@ -578,7 +627,7 @@ class test_LibvirtNetwork(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'subnet_delete_by_ids')
 
         api.subnet_delete_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
 #        cachedSwitchList = ['52:54:00:34:14:AC',
 #                            '52:54:00:34:14:AB',
@@ -593,17 +642,19 @@ class test_LibvirtNetwork(unittest.TestCase):
         self.assertEquals(self.LibvirtNetwork._processNetworkDeletes(
                           cachedSubnetList,
                           updatedSubnetList), None)
-        subnet = InventoryCacheManager.get_object_from_cache('Subnet_52:54:00:34:14:AE', Constants.Network)
-        self.assertTrue(subnet != None)
-        subnet = InventoryCacheManager.get_object_from_cache('Subnet_52:54:00:34:14:AG', Constants.Network)
+        subnet = InventoryCacheManager.get_object_from_cache(
+            'Subnet_52:54:00:34:14:AE', Constants.Network)
+        self.assertTrue(subnet is not None)
+        subnet = InventoryCacheManager.get_object_from_cache(
+            'Subnet_52:54:00:34:14:AG', Constants.Network)
         self.assertTrue(subnet is None)
         self.mock.stubs.UnsetAll()
 
     def testGetIpType(self):
         self.assertEquals(self.LibvirtNetwork._getIpType('10.10.155.63'
-                          ), 'IPV4')
+                                                         ), 'IPV4')
         self.assertEquals(self.LibvirtNetwork._getIpType('g3:1d:1a:63:5e:a3'
-                          ), 'IPV6')
+                                                         ), 'IPV6')
         self.assertEquals(self.LibvirtNetwork._getIpType(''),
                           'UNSPECIFIED')
         self.mock.stubs.UnsetAll()
@@ -624,16 +675,16 @@ class test_LibvirtInventoryMonitor(unittest.TestCase):
                              rmUserName='openstack',
                              rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['1'] = \
-                        ComputeInventory(self.connection.compute_rmcontext)
+            ComputeInventory(self.connection.compute_rmcontext)
         self.mock.StubOutWithMock(LibvirtConnection, '_connect')
 
         self.connection._connect(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
+                                 mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
         self.mock.ReplayAll()
         self.inventoryMonitor = LibvirtInventoryMonitor()
 #        self.libvirtVmHost = LibvirtVmHost(self.connection, '1')
-        flags.FLAGS.set_override('healthnmon_notification_drivers',
-                                 ['healthnmon.notifier.log_notifier'])
+        cfg.CONF.set_override('healthnmon_notification_drivers',
+                              ['healthnmon.notifier.log_notifier'])
         self.libvirtInventoryMonitor = LibvirtInventoryMonitor()
 
     def test_collectInventory(self):
@@ -641,7 +692,8 @@ class test_LibvirtInventoryMonitor(unittest.TestCase):
         api.vm_host_save(mox.IgnoreArg(),
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
-        self.libvirtInventoryMonitor.collectInventory(self.connection._wrapped_conn, '1')
+        self.libvirtInventoryMonitor.collectInventory(
+            self.connection._wrapped_conn, '1')
         self.mock.stubs.UnsetAll()
 
     def test_collectInventory_conn_none(self):
@@ -665,7 +717,8 @@ class test_XMLUtils(unittest.TestCase):
         self.ip_profile_list.append(self.ipProfile)
 
     def test_is_profile_in_list(self):
-        result = self.utils.is_profile_in_list(self.ipProfile, self.ip_profile_list)
+        result = self.utils.is_profile_in_list(
+            self.ipProfile, self.ip_profile_list)
         self.assertTrue(result)
 
     def test_getNodeXML(self):

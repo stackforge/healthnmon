@@ -37,7 +37,7 @@ class MethodSpec(object):
         source='',
         class_names='',
         class_names_compiled=None,
-        ):
+    ):
         """MethodSpec -- A specification of a method.
         Member variables:
             name -- The method name
@@ -127,7 +127,7 @@ getallmems_method_spec = MethodSpec(name='get_all_members',
             member_items.update(%(class_name)s.superclass.get_all_members())
         return member_items
 ''',
-                            class_names=r'^.*$')  # Attach to all classes
+                                    class_names=r'^.*$')  # Attach to all classes
 
 # Method specification for adding reconstructor method
 

@@ -13,18 +13,17 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from nova import flags
 from nova.openstack.common import cfg
 
 notifier_opts = [cfg.StrOpt('healthnmon_default_notification_level',
-                 default='INFO',
-                 help='Default notification level for healthnmon notifications'
-                 ),
+                            default='INFO',
+                            help='Default notification level for \
+                            healthnmon notifications'
+                            ),
                  cfg.ListOpt('healthnmon_notification_drivers',
-                 default=[
-                 'healthnmon.notifier.rabbit_notifier',
-                  ],
-                help='Default notification drivers for healthnmon notifications')]
+                             default=['healthnmon.notifier.rabbit_notifier', ],
+                             help='Default notification drivers for \
+                             healthnmon notifications')]
 
-FLAGS = flags.FLAGS
-FLAGS.register_opts(notifier_opts)
+CONF = cfg.CONF
+CONF.register_opts(notifier_opts)

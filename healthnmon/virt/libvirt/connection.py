@@ -31,7 +31,6 @@ from healthnmon import libvirt_inventorymonitor
 from healthnmon.perfmon import libvirt_perfdata
 from healthnmon.virt import driver
 from healthnmon import log as logging
-from nova import flags
 from nova.openstack.common import cfg
 import traceback
 
@@ -40,17 +39,17 @@ libvirt = None
 LOG = logging.getLogger('healthnmon.virt.libvirt.connection')
 
 conn_opts = [
-cfg.StrOpt('libvirt_type',
-            default='kvm',
-            help='Libvirt domain type (valid options are: '
+    cfg.StrOpt('libvirt_type',
+               default='kvm',
+               help='Libvirt domain type (valid options are: '
                     'kvm, lxc, qemu, uml, xen)'),
-cfg.StrOpt('libvirt_uri',
-            default='',
-            help='Override the default libvirt URI (which is dependent'
-                    ' on libvirt_type)')
-    ]
-FLAGS = flags.FLAGS
-FLAGS.register_opts(conn_opts)
+    cfg.StrOpt('libvirt_uri',
+               default='',
+               help='Override the default libvirt URI (which is dependent'
+               ' on libvirt_type)')
+]
+CONF = cfg.CONF
+CONF.register_opts(conn_opts)
 
 
 def get_connection(read_only):
@@ -102,21 +101,21 @@ class LibvirtConnection(driver.ComputeInventoryDriver):
         except libvirt.libvirtError, e:
             if e.get_error_code() == libvirt.VIR_ERR_SYSTEM_ERROR \
                 and e.get_error_domain() in (libvirt.VIR_FROM_REMOTE,
-                    libvirt.VIR_FROM_RPC):
+                                             libvirt.VIR_FROM_RPC):
                 LOG.debug(_('Connection to libvirt broke'))
                 return False
             raise
 
     @property
     def uri(self):
-        if FLAGS.libvirt_type == 'uml':
-            uri = FLAGS.libvirt_uri or 'uml:///system'
-        elif FLAGS.libvirt_type == 'xen':
-            uri = FLAGS.libvirt_uri or 'xen:///'
-        elif FLAGS.libvirt_type == 'lxc':
-            uri = FLAGS.libvirt_uri or 'lxc:///'
+        if CONF.libvirt_type == 'uml':
+            uri = CONF.libvirt_uri or 'uml:///system'
+        elif CONF.libvirt_type == 'xen':
+            uri = CONF.libvirt_uri or 'xen:///'
+        elif CONF.libvirt_type == 'lxc':
+            uri = CONF.libvirt_uri or 'lxc:///'
         else:
-            uri = FLAGS.libvirt_uri or 'qemu+ssh://' \
+            uri = CONF.libvirt_uri or 'qemu+ssh://' \
                 + self.compute_rmcontext.rmUserName + '@' \
                 + self.compute_rmcontext.rmIpAddress + '/system' \
                 + '?no_tty=1?no_verify=1'
@@ -163,14 +162,14 @@ class LibvirtConnection(driver.ComputeInventoryDriver):
         uuid,
         perfmon_type,
         window_minutes,
-        ):
+    ):
         """
-        Returns the performance data of VM Host, VMs for specified window minutes.
-        Default value of window minutes is 5 minutes """
+        Returns the performance data of VM Host, VMs for specified
+        window minutes. Default value of window minutes is 5 minutes """
 
         if self.libvirt_perfmon is not None:
-            return self.libvirt_perfmon.get_resource_utilization(uuid,
-                    perfmon_type, window_minutes)
+            return self.libvirt_perfmon. \
+                get_resource_utilization(uuid, perfmon_type, window_minutes)
 
     def get_inventory_monitor(self):
         if self.libvirt_invmonitor is not None:

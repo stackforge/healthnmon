@@ -155,7 +155,7 @@ class virConnect:
             2,
             2,
             1,
-            ]
+        ]
 
     def getHostname(self):
         return 'ubuntu164.vmm.hp.com'
@@ -384,7 +384,7 @@ class virDomain:
             30L,
             0L,
             0L,
-            )
+        )
 
     def info(self):
         return [1, 2097152L, 2097152L, 1, 372280000000L]

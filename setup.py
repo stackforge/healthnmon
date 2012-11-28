@@ -68,7 +68,7 @@ def find_data_files(destdir, srcdir):
     for d in glob.glob('%s/*' % (srcdir,)):
         if os.path.isdir(d):
             package_data += find_data_files(os.path.join(destdir,
-                    os.path.basename(d)), d)
+                                                         os.path.basename(d)), d)
         else:
             files += [d]
     package_data += [(destdir, files)]
@@ -88,4 +88,4 @@ setup(
     test_suite='nose.collector',
     scripts=['bin/healthnmon', 'bin/healthnmon-manage'],
     py_modules=[],
-    )
+)

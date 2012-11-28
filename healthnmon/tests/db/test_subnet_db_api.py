@@ -50,19 +50,27 @@ class SubnetDbApiTestCase(test.TestCase):
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
         return subnet
 
-    def _create_ip_range_from_xml(self, subnet_id, network_name, ip_address, start_ip, end_ip):
+    def _create_ip_range_from_xml(self, subnet_id, network_name,
+                                  ip_address, start_ip, end_ip):
         lib_utils = XMLUtils()
-        net_xml = '<network><name>' + network_name + '</name><forward mode=\'nat\'/><ip address=\' ' + ip_address + '\' netmask=\'255.255.255.0\'><dhcp><range start=\'' + start_ip + '\' end=\'' + end_ip + '\'/>''</dhcp></ip></network>'
+        net_xml = '<network><name>' + \
+            network_name + '</name><forward mode=\'nat\'/><ip address=\' ' + \
+            ip_address + \
+            '\' netmask=\'255.255.255.0\'><dhcp><range start=\'' + \
+            start_ip + '\' end=\'' + end_ip + '\'/>''</dhcp></ip></network>'
+
         ipRange = IpAddressRange()
-        if lib_utils.parseXML(net_xml, '//network/ip/dhcp') != None:
+        if lib_utils.parseXML(net_xml, '//network/ip/dhcp') is not None:
                 startIpAddress = IpAddress()
-                startIpAddress.set_address(lib_utils.parseXMLAttributes(net_xml, '//network/ip/dhcp/range', 'start'))
+                startIpAddress.set_address(lib_utils.parseXMLAttributes(
+                    net_xml, '//network/ip/dhcp/range', 'start'))
                 ipRange.set_id(startIpAddress.get_address())
                 startIpAddress.set_id(startIpAddress.get_address())
                 startIpAddress.set_allocationType('DHCP')
                 ipRange.set_startAddress(startIpAddress)
                 endIpAddress = IpAddress()
-                endIpAddress.set_address(lib_utils.parseXMLAttributes(net_xml, '//network/ip/dhcp/range', 'end'))
+                endIpAddress.set_address(lib_utils.parseXMLAttributes(
+                    net_xml, '//network/ip/dhcp/range', 'end'))
                 endIpAddress.set_id(endIpAddress.get_address())
                 endIpAddress.set_allocationType('DHCP')
                 ipRange.set_endAddress(endIpAddress)
@@ -109,14 +117,15 @@ class SubnetDbApiTestCase(test.TestCase):
         userIp.set_id('10.10.20.1')
         userIp.set_address('10.10.20.1')
         subnet.add_usedIpAddresses(userIp)
-        ipRange = self._create_ip_range_from_xml(subnet.get_id(), 'network1', '10.10.10.1', '10.10.10.1', '10.10.10.2')
+        ipRange = self._create_ip_range_from_xml(subnet.get_id(
+        ), 'network1', '10.10.10.1', '10.10.10.1', '10.10.10.2')
         subnet.add_ipAddressRanges(ipRange)
 
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
         subnets = \
             healthnmon_db_api.subnet_get_by_ids(self.admin_context,
-                ['subnet-01'])
-        self.assertFalse(subnets == None,
+                                                ['subnet-01'])
+        self.assertFalse(subnets is None,
                          'subnet all returned a none list')
         self.assertTrue(len(subnets) == 1,
                         'subnet all returned invalid number of list')
@@ -127,44 +136,74 @@ class SubnetDbApiTestCase(test.TestCase):
                 indexOfThesubnet = subnets.index(subn)
                 break
 
-        self.assertTrue(subnets[indexOfThesubnet].get_id() == 'subnet-01', 'Subnet id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_name() == 'subnet-01', 'Subnet name mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_id()
+                        == 'subnet-01', 'Subnet id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_name()
+                        == 'subnet-01', 'Subnet name mismatch')
 
         groupIdType = subnets[indexOfThesubnet].get_groupIdTypes()[0]
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[0] == 'MAPPED', 'Network Type mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[1] == 'TUNNEL', 'Network Type mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[0] == 'MAPPED', 'Network Type mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[1] == 'TUNNEL', 'Network Type mismatch')
 
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress() == '1.1.1.1', 'Network Address mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkMask() == '255.255.255.0', 'Subnet mask mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkSources()[0] == 'VS_NETWORK', 'Network Sources mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ipType() == 'IPV4', 'Ip Type mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isPublic() == True, 'Subnet isPublic returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_isShareable() == True, 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers()[0] == 'test-dns01', 'DnsServer mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain() == 'test_Domain', 'DnsDomain mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress(
+        ) == '1.1.1.1', 'Network Address mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkMask(
+        ) == '255.255.255.0', 'Subnet mask mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkSources(
+        )[0] == 'VS_NETWORK', 'Network Sources mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ipType()
+                        == 'IPV4', 'Ip Type mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isPublic(),
+                        'Subnet isPublic returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_isShareable(),
+                        'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers(
+        )[0] == 'test-dns01', 'DnsServer mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain(
+        ) == 'test_Domain', 'DnsDomain mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes()[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways()[0] == 'defaultGateways', 'defaultGateways mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName() == 'msDomainName', 'msDomainName mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType() == 'DOMAIN', 'DOMAIN mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes(
+        )[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways(
+        )[0] == 'defaultGateways', 'defaultGateways mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName(
+        ) == 'msDomainName', 'msDomainName mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType(
+        ) == 'DOMAIN', 'DOMAIN mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_winsServers()[0] == 'winsServers', 'winsServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers()[0] == 'ntpDateServers', 'ntpDateServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_winsServers(
+        )[0] == 'winsServers', 'winsServers mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers(
+        )[0] == 'ntpDateServers', 'ntpDateServers mismatch')
+        self.assertTrue(
+            subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork() == True, 'IsbootNetwork returned False')
-        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices()[0] == 'deploymentServices', 'deploymentServices mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork(),
+                        'IsbootNetwork returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices(
+        )[0] == 'deploymentServices', 'deploymentServices mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_parentIds()[0] == 'parentIds', 'parentIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0] == 'childIds', 'childIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk() == True, 'IsTrunk returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_parentIds(
+        )[0] == 'parentIds', 'parentIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0]
+                        == 'childIds', 'childIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk(),
+                        'IsTrunk returned False')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds()[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId() == 'redundancyMasterId', 'redundancyMasterId mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isNativeVlan() == False, 'IsNativePlan should be false')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds(
+        )[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId(
+        ) == 'redundancyMasterId', 'redundancyMasterId mismatch')
+        self.assertFalse(subnets[indexOfThesubnet].get_isNativeVlan(),
+                         'IsNativePlan should be false')
 
     def test_subnet_save_update(self):
         subnet = Subnet()
@@ -179,18 +218,21 @@ class SubnetDbApiTestCase(test.TestCase):
         userIp1.set_address('10.10.20.1')
         subnet.add_usedIpAddresses(userIp1)
         range_id_R1 = subnet.get_id() + "_R1"
-        ipRange_R1 = self._create_ip_range_from_xml(range_id_R1, 'network1', '10.10.10.1', '10.10.10.1', '10.10.10.2')
+        ipRange_R1 = self._create_ip_range_from_xml(
+            range_id_R1, 'network1', '10.10.10.1', '10.10.10.1', '10.10.10.2')
         subnet.add_ipAddressRanges(ipRange_R1)
         userIp2 = IpAddress()
         userIp2.set_id('10.10.20.5')
         userIp2.set_address('10.10.20.5')
         subnet.add_usedIpAddresses(userIp2)
         range_id_R2 = subnet.get_id() + "_R2"
-        ipRange_R2 = self._create_ip_range_from_xml(range_id_R2, 'network2', '10.10.10.5', '10.10.10.5', '10.10.10.7')
+        ipRange_R2 = self._create_ip_range_from_xml(
+            range_id_R2, 'network2', '10.10.10.5', '10.10.10.5', '10.10.10.7')
         subnet.add_ipAddressRanges(ipRange_R2)
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
 
-        subnet = healthnmon_db_api.subnet_get_by_ids(self.admin_context, [subnet.id])[0]
+        subnet = healthnmon_db_api.subnet_get_by_ids(
+            self.admin_context, [subnet.id])[0]
         groupIdType = GroupIdType()
         groupIdType.set_id('groupId-01')
         groupIdType.add_networkTypes('MAPPED')
@@ -223,7 +265,11 @@ class SubnetDbApiTestCase(test.TestCase):
         subnet.set_usedIpAddresses(usedIps)
 
         range_id_R3 = subnet.get_id() + "_R3"
-        ipRange_R3 = self._create_ip_range_from_xml(range_id_R3, 'network3', '10.10.10.11', '10.10.10.11', '10.10.10.12')
+        ipRange_R3 = \
+            self._create_ip_range_from_xml(range_id_R3,
+                                           'network3',
+                                           '10.10.10.11',
+                                           '10.10.10.11', '10.10.10.12')
         ipRanges = [ipRange_R2, ipRange_R3]
         subnet.set_ipAddressRanges([])
         subnet.set_ipAddressRanges(ipRanges)
@@ -231,9 +277,9 @@ class SubnetDbApiTestCase(test.TestCase):
 
         subnets = \
             healthnmon_db_api.subnet_get_by_ids(self.admin_context,
-                ['subnet-01'])  # for update
+                                                ['subnet-01'])  # for update
 
-        self.assertFalse(subnets == None,
+        self.assertFalse(subnets is None,
                          'subnet all returned a none list')
         self.assertTrue(len(subnets) == 1,
                         'subnet all returned invalid number of list')
@@ -244,45 +290,76 @@ class SubnetDbApiTestCase(test.TestCase):
                 indexOfThesubnet = subnets.index(subn)
                 break
 
-        self.assertTrue(subnets[indexOfThesubnet].get_id() == 'subnet-01', 'Subnet id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_name() == 'subnet-01', 'Subnet name mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_id()
+                        == 'subnet-01', 'Subnet id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_name()
+                        == 'subnet-01', 'Subnet name mismatch')
 
         groupIdType = subnets[indexOfThesubnet].get_groupIdTypes()[0]
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[0] == 'MAPPED', 'Network Type mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[1] == 'TUNNEL', 'Network Type mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[0] == 'MAPPED', 'Network Type mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[1] == 'TUNNEL', 'Network Type mismatch')
 
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress() == '1.1.1.1', 'Network Address mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkMask() == '255.255.255.0', 'Subnet mask mismatch')
-        self.assertFalse(len(subnets[indexOfThesubnet].get_networkSources()) == 0, 'Network Sources didn\'t get updated')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkSources()[0] == 'VS_NETWORK', 'Network Sources mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers()[0] == 'test-dns01', 'DnsServer mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ipType() == 'IPV4', 'Ip Type mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isPublic() == True, 'Subnet isPublic returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_isShareable() == True, 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain() == 'test_Domain', 'DnsDomain mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress(
+        ) == '1.1.1.1', 'Network Address mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkMask(
+        ) == '255.255.255.0', 'Subnet mask mismatch')
+        self.assertFalse(len(subnets[indexOfThesubnet].get_networkSources(
+        )) == 0, 'Network Sources didn\'t get updated')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkSources(
+        )[0] == 'VS_NETWORK', 'Network Sources mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers(
+        )[0] == 'test-dns01', 'DnsServer mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ipType()
+                        == 'IPV4', 'Ip Type mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isPublic(),
+                        'Subnet isPublic returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_isShareable(),
+                        'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain(
+        ) == 'test_Domain', 'DnsDomain mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes()[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways()[0] == 'defaultGateways', 'defaultGateways mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName() == 'msDomainName', 'msDomainName mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType() == 'DOMAIN', 'DOMAIN mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes(
+        )[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways(
+        )[0] == 'defaultGateways', 'defaultGateways mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName(
+        ) == 'msDomainName', 'msDomainName mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType(
+        ) == 'DOMAIN', 'DOMAIN mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_winsServers()[0] == 'winsServers', 'winsServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers()[0] == 'ntpDateServers', 'ntpDateServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_winsServers(
+        )[0] == 'winsServers', 'winsServers mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers(
+        )[0] == 'ntpDateServers', 'ntpDateServers mismatch')
+        self.assertTrue(
+            subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork() == True, 'IsbootNetwork returned False')
-        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices()[0] == 'deploymentServices', 'deploymentServices mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork(),
+                        'IsbootNetwork returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices(
+        )[0] == 'deploymentServices', 'deploymentServices mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_parentIds()[0] == 'parentIds', 'parentIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0] == 'childIds', 'childIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk() == True, 'IsTrunk returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_parentIds(
+        )[0] == 'parentIds', 'parentIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0]
+                        == 'childIds', 'childIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk(),
+                        'IsTrunk returned False')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds()[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId() == 'redundancyMasterId', 'redundancyMasterId mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isNativeVlan() == False, 'IsNativePlan should be false')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds(
+        )[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId(
+        ) == 'redundancyMasterId', 'redundancyMasterId mismatch')
+        self.assertFalse(subnets[indexOfThesubnet].get_isNativeVlan(),
+                         'IsNativePlan should be false')
 
     def test_subnet_get_all(self):
         subnet = Subnet()
@@ -319,7 +396,7 @@ class SubnetDbApiTestCase(test.TestCase):
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
         subnets = healthnmon_db_api.subnet_get_all(self.admin_context)
 
-        self.assertFalse(subnets == None,
+        self.assertFalse(subnets is None,
                          'subnet all returned a none list')
         self.assertTrue(len(subnets) == 1,
                         'subnet all returned invalid number of list')
@@ -330,45 +407,76 @@ class SubnetDbApiTestCase(test.TestCase):
                 indexOfThesubnet = subnets.index(subn)
                 break
 
-        self.assertTrue(subnets[indexOfThesubnet].get_id() == 'subnet-01', 'Subnet id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_name() == 'subnet-01', 'Subnet name mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_id()
+                        == 'subnet-01', 'Subnet id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_name()
+                        == 'subnet-01', 'Subnet name mismatch')
 
         groupIdType = subnets[indexOfThesubnet].get_groupIdTypes()[0]
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[0] == 'MAPPED', 'Network Type mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[1] == 'TUNNEL', 'Network Type mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[0] == 'MAPPED', 'Network Type mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[1] == 'TUNNEL', 'Network Type mismatch')
 
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress() == '1.1.1.1', 'Network Address mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkMask() == '255.255.255.0', 'Subnet mask mismatch')
-        self.assertFalse(len(subnets[indexOfThesubnet].get_networkSources()) == 0, 'Network Sources didn\'t get updated')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkSources()[0] == 'VS_NETWORK', 'Network Sources mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ipType() == 'IPV4', 'Ip Type mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isPublic() == True, 'Subnet isPublic returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_isShareable() == True, 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers()[0] == 'test-dns01', 'DnsServer mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain() == 'test_Domain', 'DnsDomain mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress(
+        ) == '1.1.1.1', 'Network Address mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkMask(
+        ) == '255.255.255.0', 'Subnet mask mismatch')
+        self.assertFalse(len(subnets[indexOfThesubnet].get_networkSources(
+        )) == 0, 'Network Sources didn\'t get updated')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkSources(
+        )[0] == 'VS_NETWORK', 'Network Sources mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ipType()
+                        == 'IPV4', 'Ip Type mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isPublic(),
+                        'Subnet isPublic returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_isShareable(),
+                        'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers(
+        )[0] == 'test-dns01', 'DnsServer mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain(
+        ) == 'test_Domain', 'DnsDomain mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes()[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways()[0] == 'defaultGateways', 'defaultGateways mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName() == 'msDomainName', 'msDomainName mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType() == 'DOMAIN', 'DOMAIN mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes(
+        )[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways(
+        )[0] == 'defaultGateways', 'defaultGateways mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName(
+        ) == 'msDomainName', 'msDomainName mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType(
+        ) == 'DOMAIN', 'DOMAIN mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_winsServers()[0] == 'winsServers', 'winsServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers()[0] == 'ntpDateServers', 'ntpDateServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_winsServers(
+        )[0] == 'winsServers', 'winsServers mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers(
+        )[0] == 'ntpDateServers', 'ntpDateServers mismatch')
+        self.assertTrue(
+            subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork() == True, 'IsbootNetwork returned False')
-        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices()[0] == 'deploymentServices', 'deploymentServices mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork(),
+                        'IsbootNetwork returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices(
+        )[0] == 'deploymentServices', 'deploymentServices mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_parentIds()[0] == 'parentIds', 'parentIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0] == 'childIds', 'childIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk() == True, 'IsTrunk returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_parentIds(
+        )[0] == 'parentIds', 'parentIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0]
+                        == 'childIds', 'childIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk(),
+                        'IsTrunk returned False')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds()[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId() == 'redundancyMasterId', 'redundancyMasterId mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isNativeVlan() == False, 'IsNativePlan should be false')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds(
+        )[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId(
+        ) == 'redundancyMasterId', 'redundancyMasterId mismatch')
+        self.assertFalse(subnets[indexOfThesubnet].get_isNativeVlan(),
+                         'IsNativePlan should be false')
 
     def test_subnet_get_by_id(self):
         subnet = Subnet()
@@ -405,8 +513,8 @@ class SubnetDbApiTestCase(test.TestCase):
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
         subnets = \
             healthnmon_db_api.subnet_get_by_ids(self.admin_context,
-                [subnet.id])
-        self.assertFalse(subnets == None,
+                                                [subnet.id])
+        self.assertFalse(subnets is None,
                          'subnet all returned a none list')
         self.assertTrue(len(subnets) == 1,
                         'subnet all returned invalid number of list')
@@ -417,45 +525,76 @@ class SubnetDbApiTestCase(test.TestCase):
                 indexOfThesubnet = subnets.index(subn)
                 break
 
-        self.assertTrue(subnets[indexOfThesubnet].get_id() == 'subnet-01', 'Subnet id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_name() == 'subnet-01', 'Subnet name mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_id()
+                        == 'subnet-01', 'Subnet id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_name()
+                        == 'subnet-01', 'Subnet name mismatch')
 
         groupIdType = subnets[indexOfThesubnet].get_groupIdTypes()[0]
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[0] == 'MAPPED', 'Network Type mismatch')
-        self.assertTrue(groupIdType.get_networkTypes()[1] == 'TUNNEL', 'Network Type mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[0] == 'MAPPED', 'Network Type mismatch')
+        self.assertTrue(groupIdType.get_networkTypes(
+        )[1] == 'TUNNEL', 'Network Type mismatch')
 
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress() == '1.1.1.1', 'Network Address mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkMask() == '255.255.255.0', 'Subnet mask mismatch')
-        self.assertFalse(len(subnets[indexOfThesubnet].get_networkSources()) == 0, 'Network Sources didn\'t get updated')
-        self.assertTrue(subnets[indexOfThesubnet].get_networkSources()[0] == 'VS_NETWORK', 'Network Sources mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ipType() == 'IPV4', 'Ip Type mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isPublic() == True, 'Subnet isPublic returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_isShareable() == True, 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers()[0] == 'test-dns01', 'DnsServer mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain() == 'test_Domain', 'DnsDomain mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(
+            groupIdType.get_id() == 'groupId-01', 'Group id mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkAddress(
+        ) == '1.1.1.1', 'Network Address mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkMask(
+        ) == '255.255.255.0', 'Subnet mask mismatch')
+        self.assertFalse(len(subnets[indexOfThesubnet].get_networkSources(
+        )) == 0, 'Network Sources didn\'t get updated')
+        self.assertTrue(subnets[indexOfThesubnet].get_networkSources(
+        )[0] == 'VS_NETWORK', 'Network Sources mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ipType()
+                        == 'IPV4', 'Ip Type mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isPublic(),
+                        'Subnet isPublic returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_isShareable(),
+                        'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsServers(
+        )[0] == 'test-dns01', 'DnsServer mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsDomain(
+        ) == 'test_Domain', 'DnsDomain mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes()[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
-        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways()[0] == 'defaultGateways', 'defaultGateways mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName() == 'msDomainName', 'msDomainName mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType() == 'DOMAIN', 'DOMAIN mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_dnsSearchSuffixes(
+        )[0] == 'dnsSearchSuffixes', 'Subnet isShareable returned false')
+        self.assertTrue(subnets[indexOfThesubnet].get_defaultGateways(
+        )[0] == 'defaultGateways', 'defaultGateways mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainName(
+        ) == 'msDomainName', 'msDomainName mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_msDomainType(
+        ) == 'DOMAIN', 'DOMAIN mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_winsServers()[0] == 'winsServers', 'winsServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers()[0] == 'ntpDateServers', 'ntpDateServers mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_winsServers(
+        )[0] == 'winsServers', 'winsServers mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_ntpDateServers(
+        )[0] == 'ntpDateServers', 'ntpDateServers mismatch')
+        self.assertTrue(
+            subnets[indexOfThesubnet].get_vlanId() == '1', 'vlanId mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork() == True, 'IsbootNetwork returned False')
-        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices()[0] == 'deploymentServices', 'deploymentServices mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isBootNetwork(),
+                        'IsbootNetwork returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_deploymentServices(
+        )[0] == 'deploymentServices', 'deploymentServices mismatch')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_parentIds()[0] == 'parentIds', 'parentIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0] == 'childIds', 'childIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk() == True, 'IsTrunk returned False')
+        self.assertTrue(subnets[indexOfThesubnet].get_parentIds(
+        )[0] == 'parentIds', 'parentIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_childIds()[0]
+                        == 'childIds', 'childIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_isTrunk(),
+                        'IsTrunk returned False')
 
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds()[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId() == 'redundancyMasterId', 'redundancyMasterId mismatch')
-        self.assertTrue(subnets[indexOfThesubnet].get_isNativeVlan() == False, 'IsNativePlan should be false')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyPeerIds(
+        )[0] == 'redundancyPeerIds', 'redundancyPeerIds mismatch')
+        self.assertTrue(subnets[indexOfThesubnet].get_redundancyMasterId(
+        ) == 'redundancyMasterId', 'redundancyMasterId mismatch')
+        self.assertFalse(subnets[indexOfThesubnet].get_isNativeVlan(),
+                         'IsNativePlan should be false')
 
     def test_subnet_delete(self):
         subnet = Subnet()
@@ -488,7 +627,8 @@ class SubnetDbApiTestCase(test.TestCase):
         userIp.set_id('10.10.20.1')
         userIp.set_address('10.10.20.1')
         subnet.add_usedIpAddresses(userIp)
-        ipRange = self._create_ip_range_from_xml(subnet.get_id(), 'network1', '10.10.10.1', '10.10.10.1', '10.10.10.2')
+        ipRange = self._create_ip_range_from_xml(subnet.get_id(
+        ), 'network1', '10.10.10.1', '10.10.10.1', '10.10.10.2')
         subnet.add_ipAddressRanges(ipRange)
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
 
@@ -503,28 +643,28 @@ class SubnetDbApiTestCase(test.TestCase):
         vSwitch.add_subnetIds('subnet-01')
         vSwitch.add_subnetIds('subnet-02')
         healthnmon_db_api.virtual_switch_save(self.admin_context,
-                vSwitch)
-
-#        subnets = healthnmon_db_api.subnet_get_by_ids(self.admin_context, [subnet.id])
-
+                                              vSwitch)
         healthnmon_db_api.subnet_delete_by_ids(self.admin_context,
-                [subnet.id])
-        subnets = \
-            healthnmon_db_api.subnet_get_by_ids(self.admin_context,
-                [subnet.id])
+                                               [subnet.id])
+        subnets = healthnmon_db_api.subnet_get_by_ids(self.admin_context,
+                                                      [subnet.id])
 
-        self.assertTrue(subnets == None or len(subnets) == 0,
+        self.assertTrue(subnets is None or len(subnets) == 0,
                         'subnet deleted')
 
     def test_subnet_save_none(self):
-        self.assertTrue(healthnmon_db_api.subnet_save(self.admin_context, None) == None, 'No subnet should be saved')
+        self.assertTrue(healthnmon_db_api.subnet_save(
+            self.admin_context, None) is None, 'No subnet should be saved')
 
     def test_subnet_get_by_id_none(self):
-        self.assertTrue(healthnmon_db_api.subnet_get_by_ids(self.admin_context, None) == None, 'No subnet should be returned')
+        self.assertTrue(healthnmon_db_api.subnet_get_by_ids(
+            self.admin_context, None) is None, 'No subnet should be returned')
 
     def test_subnet_delete_none(self):
-        self.assertTrue(healthnmon_db_api.subnet_delete_by_ids(self.admin_context,
-                None) == None, 'No subnet to be deleted')
+        self.assertTrue(
+            healthnmon_db_api.subnet_delete_by_ids(
+                self.admin_context,
+                None) is None, 'No subnet to be deleted')
 
     def test_subnet_save_throw_exception(self):
         self.assertRaises(Exception, healthnmon_db_api.subnet_save,
@@ -569,9 +709,9 @@ class SubnetDbApiTestCase(test.TestCase):
             self.__create_subnet(id=subnet_ids[i], name=subnet_names[i])
         # Query with filter
         filters = {'name': subnet_names[1]}
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context, filters,
+                                      'id', DbConstants.ORDER_ASC)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 1)
         self.assert_(subnets[0] is not None)
@@ -584,12 +724,13 @@ class SubnetDbApiTestCase(test.TestCase):
         for i in range(len(subnet_ids)):
             self.__create_subnet(id=subnet_ids[i], name=subnet_names[i])
         # Delete one subnet
-        healthnmon_db_api.subnet_delete_by_ids(self.admin_context, [subnet_ids[0]])
+        healthnmon_db_api.subnet_delete_by_ids(
+            self.admin_context, [subnet_ids[0]])
         # Query with filter
         filters = {'deleted': 'true'}
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context, filters,
+                                      'id', DbConstants.ORDER_ASC)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 1)
         self.assert_(subnets[0] is not None)
@@ -602,12 +743,13 @@ class SubnetDbApiTestCase(test.TestCase):
         for i in range(len(subnet_ids)):
             self.__create_subnet(id=subnet_ids[i], name=subnet_names[i])
         # Delete one subnet
-        healthnmon_db_api.subnet_delete_by_ids(self.admin_context, [subnet_ids[0]])
+        healthnmon_db_api.subnet_delete_by_ids(
+            self.admin_context, [subnet_ids[0]])
         # Query with filter
         filters = {'deleted': False}
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context, filters,
+                                      'id', DbConstants.ORDER_ASC)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 1)
         self.assert_(subnets[0] is not None)
@@ -622,17 +764,18 @@ class SubnetDbApiTestCase(test.TestCase):
         created_time = long(time.time() * 1000L)
         # Wait for 1 sec and update second subnet and delete third subnet
         time.sleep(1)
-        second_subnet = healthnmon_db_api.subnet_get_by_ids(
-                                self.admin_context, [subnet_ids[1]])[0]
+        second_subnet = healthnmon_db_api. \
+            subnet_get_by_ids(self.admin_context, [subnet_ids[1]])[0]
         second_subnet.name = 'New name'
         healthnmon_db_api.subnet_save(self.admin_context, second_subnet)
-        healthnmon_db_api.subnet_delete_by_ids(self.admin_context, [subnet_ids[2]])
+        healthnmon_db_api.subnet_delete_by_ids(
+            self.admin_context, [subnet_ids[2]])
         # Query with filter
         expected_updated_ids = [subnet_ids[1], subnet_ids[2]]
         filters = {'changes-since': created_time}
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, filters,
-                                None, None)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context, filters,
+                                      None, None)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 2)
         for subnet in subnets:
@@ -646,9 +789,9 @@ class SubnetDbApiTestCase(test.TestCase):
         for i in range(len(subnet_ids)):
             self.__create_subnet(id=subnet_ids[i], name=subnet_names[i])
         # Query with sort
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, None,
-                                'name', DbConstants.ORDER_ASC)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context, None,
+                                      'name', DbConstants.ORDER_ASC)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 2)
         self.assert_(subnets[0] is not None)
@@ -663,9 +806,10 @@ class SubnetDbApiTestCase(test.TestCase):
         for i in range(len(subnet_ids)):
             self.__create_subnet(id=subnet_ids[i], name=subnet_names[i])
         # Query with sort
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, {'name': subnet_names},
-                                'name', DbConstants.ORDER_DESC)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context,
+                                      {'name': subnet_names},
+                                      'name', DbConstants.ORDER_DESC)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 2)
         self.assert_(subnets[0] is not None)
@@ -683,9 +827,11 @@ class SubnetDbApiTestCase(test.TestCase):
             self.__create_subnet(id=subnet_ids[i], name=subnet_names[i],
                                  networkSources=subnet_net_sources[i])
         # Query with sort
-        subnets = healthnmon_db_api.subnet_get_all_by_filters(
-                                self.admin_context, {'networkSources': ('VS_NETWORK', 'CLOUD_NETWORK')},
-                                'id', DbConstants.ORDER_ASC)
+        subnets = healthnmon_db_api. \
+            subnet_get_all_by_filters(self.admin_context,
+                                      {'networkSources':
+                                      ('VS_NETWORK', 'CLOUD_NETWORK')},
+                                      'id', DbConstants.ORDER_ASC)
         self.assert_(subnets is not None)
         self.assert_(len(subnets) == 2)
         self.assert_(subnets[0] is not None)
@@ -695,7 +841,8 @@ class SubnetDbApiTestCase(test.TestCase):
 
     def test_timestamp_columns(self):
         """
-            Test the time stamp columns createEpoch, modifiedEpoch and deletedEpoch
+            Test the time stamp columns createEpoch, modifiedEpoch
+            and deletedEpoch
         """
         subnet = Subnet()
         subnet.set_id('subnet-01')
@@ -703,9 +850,10 @@ class SubnetDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.subnet_save(self.admin_context, subnet)
         epoch_after = utils.get_current_epoch_ms()
-        subnet_queried = healthnmon_db_api.subnet_get_by_ids(self.admin_context, [subnet.get_id()])[0]
+        subnet_queried = healthnmon_db_api. \
+            subnet_get_by_ids(self.admin_context, [subnet.get_id()])[0]
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, subnet_queried.get_createEpoch()))
+            epoch_before, epoch_after, subnet_queried.get_createEpoch()))
         # Check for lastModifiedEpoch
         subnet_modified = subnet_queried
         test_utils.unset_timestamp_fields(subnet_modified)
@@ -713,7 +861,9 @@ class SubnetDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.subnet_save(self.admin_context, subnet_modified)
         epoch_after = utils.get_current_epoch_ms()
-        subnet_queried = healthnmon_db_api.subnet_get_by_ids(self.admin_context, [subnet.get_id()])[0]
-        self.assert_(subnet_modified.get_createEpoch() == subnet_queried.get_createEpoch())
+        subnet_queried = healthnmon_db_api.subnet_get_by_ids(
+            self.admin_context, [subnet.get_id()])[0]
+        self.assert_(subnet_modified.get_createEpoch() ==
+                     subnet_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, subnet_queried.get_lastModifiedEpoch()))
+            epoch_before, epoch_after, subnet_queried.get_lastModifiedEpoch()))

@@ -55,7 +55,7 @@ class ResourceModelDiff(object):
 
         res = None
         if old_obj.__class__.__module__.startswith('healthnmon.resourcemodel.healthnmonResourceModel'
-                ):
+                                                   ):
             res_dict = self.diff_resourcemodel(old_obj, new_obj)
             if len(res_dict) > 0:
                 res = res_dict
@@ -73,7 +73,7 @@ class ResourceModelDiff(object):
             # and string type in the newly created object,
             # both having the same values
             if ((type(old_obj) in [str, unicode]) and
-                (type(new_obj) in [str, unicode])):
+                    (type(new_obj) in [str, unicode])):
                 primitive_diff = self._diff_primitives(old_obj, new_obj)
                 if primitive_diff is not None:
                     res = primitive_diff
@@ -104,7 +104,7 @@ class ResourceModelDiff(object):
         old,
         new,
         name=None,
-        ):
+    ):
         """
         Method to check diff of primitive types
         """
@@ -123,7 +123,7 @@ class ResourceModelDiff(object):
 
         result = {'_add': {}, '_delete': {}, '_update': {}}
 
-        if len(old_list) > 0 and hasattr(old_list[0], 'id') == True:
+        if len(old_list) > 0 and hasattr(old_list[0], 'id'):
             addlistindex = 0
             removelistindex = 0
             updatelistindex = 0
@@ -134,17 +134,17 @@ class ResourceModelDiff(object):
                             == getattr(new_list[new_idx], 'id'):
                         obj_not_in_new_list = False
                         res = self._diff_objects(old_list[old_idx],
-                                new_list[new_idx])
+                                                 new_list[new_idx])
                         if res is not None:
                             result['_update'
                                    ][getattr(new_list[new_idx], 'id'
-                                    )] = res
+                                             )] = res
                             updatelistindex += 1
                         break
 
-                if obj_not_in_new_list == True:
+                if obj_not_in_new_list:
                     result['_delete'][getattr(old_list[old_idx], 'id'
-                            )] = old_list[old_idx]
+                                              )] = old_list[old_idx]
                     removelistindex += 1
 
             for new_idx in range(len(new_list)):
@@ -155,7 +155,7 @@ class ResourceModelDiff(object):
                         obj_not_in_old_list = False
                         break
 
-                if obj_not_in_old_list == True:
+                if obj_not_in_old_list:
                     result['_add'][getattr(new_list[new_idx], 'id')] = \
                         new_list[new_idx]
                     addlistindex += 1
@@ -208,7 +208,7 @@ class ResourceModelDiff(object):
                     old_obj[attribute_name]
             else:
                 res = self._diff_objects(old_obj[attribute_name],
-                        new_obj[attribute_name])
+                                         new_obj[attribute_name])
                 if res is not None:
                     result['_update'][attribute_name] = res
 
@@ -245,17 +245,17 @@ class ResourceModelDiff(object):
 
             if attribute_name not in old_keys:
                 result['_add'][attribute_name] = getattr(new_obj,
-                        attribute_name)
+                                                         attribute_name)
             elif attribute_name not in new_keys:
 
             # new_obj is missing
 
                 result['_delete'][attribute_name] = getattr(old_obj,
-                        attribute_name)
+                                                            attribute_name)
             else:
                 res = self._diff_objects(getattr(old_obj,
-                        attribute_name), getattr(new_obj,
-                        attribute_name))
+                                                 attribute_name), getattr(new_obj,
+                                                                          attribute_name))
                 if res is not None:
                     result['_update'][attribute_name] = res
 

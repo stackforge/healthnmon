@@ -34,7 +34,7 @@ class ComputeRMContext(object):
         rmUserName=None,
         rmPassword=None,
         rmPort=None,
-        ):
+    ):
         self.rmType = rmType
         self.rmIpAddress = rmIpAddress
         self.rmUserName = rmUserName

@@ -47,7 +47,7 @@ class SubnetTest(unittest.TestCase):
         self.config_drive = None
         self.mock = mox.Mox()
         self.admin_context = context.RequestContext('admin', '',
-                is_admin=True)
+                                                    is_admin=True)
 
     def tearDown(self):
         self.mock.stubs.UnsetAll()
@@ -56,12 +56,12 @@ class SubnetTest(unittest.TestCase):
         subnet_list = self.get_subnet_list()
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnet_list)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().index(request)
         self.assertNotEqual(resp, None, 'Return json string')
@@ -72,12 +72,12 @@ class SubnetTest(unittest.TestCase):
         subnet_list = self.get_subnet_list()
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnet_list)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().index(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -88,13 +88,13 @@ class SubnetTest(unittest.TestCase):
         subnet_list = self.get_subnet_list()
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnet_list)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets/detail.xml?'
-        'limit=1&marker=subnet-01',
-                base_url='http://localhost:8774/v2.0/')
+                                      'limit=1&marker=subnet-01',
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().detail(request)
         self.assertEqual(resp.body, self.expected_limited_detail_xml)
@@ -103,12 +103,12 @@ class SubnetTest(unittest.TestCase):
         subnet_list = self.get_subnet_list()
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnet_list)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().detail(request)
         self.assertEqual(resp.body, self.expected_detail_xml)
@@ -117,12 +117,12 @@ class SubnetTest(unittest.TestCase):
         subnet_list = None
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnet_list)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -131,12 +131,12 @@ class SubnetTest(unittest.TestCase):
         subnets = self.get_subnet_list()
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnets)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnets)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/xml'
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().index(request)
@@ -148,12 +148,12 @@ class SubnetTest(unittest.TestCase):
         subnets = self.get_subnet_list()
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(subnets)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(subnets)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/json'
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().index(request)
@@ -165,12 +165,12 @@ class SubnetTest(unittest.TestCase):
     def test_list_subnets_none_check(self):
         self.mock.StubOutWithMock(api, 'subnet_get_all_by_filters')
         api.subnet_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(None)
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg(),
+                                      mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().index(request)
         self.assertEqual(resp.body, '{"subnets": []}',
@@ -184,7 +184,7 @@ class SubnetTest(unittest.TestCase):
                               mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnet/subnet-01.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().show(request, 'subnet-01')
         self.assertNotEqual(resp, None,
@@ -199,7 +199,7 @@ class SubnetTest(unittest.TestCase):
                               mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets/subnet-01.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().show(request, 'subnet-01')
         self.assertNotEqual(resp, None,
@@ -215,7 +215,7 @@ class SubnetTest(unittest.TestCase):
                               mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets/subnet-01.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().show(request, 'subnet-01')
         self.assertNotEqual(resp, None,
@@ -227,14 +227,14 @@ class SubnetTest(unittest.TestCase):
         xml_utils = util
         self.mock.StubOutWithMock(xml_utils, 'xml_to_dict')
         xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(IndexError('Test index'
-                ))
+                                                                   ))
         self.mock.StubOutWithMock(api, 'subnet_get_by_ids')
 
         api.subnet_get_by_ids(mox.IgnoreArg(),
                               mox.IgnoreArg()).AndReturn(subnet_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/subnets/subnet-01.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().show(request, 'subnet-01')
         self.assertTrue(isinstance(resp, HTTPNotFound))
@@ -248,9 +248,9 @@ class SubnetTest(unittest.TestCase):
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(
-                    '/v2.0/subnets/subnet-01.json?fields=id,name', \
-                    base_url='http://localhost:8774/v2.0/'
-                                )
+                '/v2.0/subnets/subnet-01.json?fields=id,name',
+                base_url='http://localhost:8774/v2.0/'
+            )
         request.environ['nova.context'] = self.admin_context
         resp = SubnetController().show(request, 'subnet-01')
         self.assertNotEqual(resp, None,

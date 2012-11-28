@@ -18,7 +18,7 @@ import os
 import sys
 
 from nova import exception
-from nova import flags
+from nova.openstack.common import cfg
 
 from migrate.versioning import api as versioning_api
 
@@ -34,7 +34,7 @@ except ImportError:
     except ImportError:
         sys.exit(_('python-migrate is not installed. Exiting.'))
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 def db_sync(version=None):
@@ -47,18 +47,18 @@ def db_sync(version=None):
     current_version = db_version()
     repo_path = _find_migrate_repo()
     if version is None or version > current_version:
-        return versioning_api.upgrade(FLAGS.sql_connection, repo_path,
-                version)
+        return versioning_api.upgrade(CONF.sql_connection, repo_path,
+                                      version)
     else:
-        return versioning_api.downgrade(FLAGS.sql_connection,
-                repo_path, version)
+        return versioning_api.downgrade(CONF.sql_connection,
+                                        repo_path, version)
 
 
 def db_version():
     repo_path = _find_migrate_repo()
     try:
-        return versioning_api.db_version(FLAGS.sql_connection,
-                repo_path)
+        return versioning_api.db_version(CONF.sql_connection,
+                                         repo_path)
     except versioning_exceptions.DatabaseNotControlledError:
 
         # and set up version_control appropriately
@@ -68,7 +68,7 @@ def db_version():
 
 def db_version_control(version=None):
     repo_path = _find_migrate_repo()
-    versioning_api.version_control(FLAGS.sql_connection, repo_path,
+    versioning_api.version_control(CONF.sql_connection, repo_path,
                                    version)
     return version
 

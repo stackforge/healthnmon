@@ -34,7 +34,8 @@ import mox
 
 def _create_Compute(compute_id=1, compute_service=None):
     if compute_service is None:
-        compute_service = dict(host='host1', created_at=timeutils.utcnow(), updated_at=timeutils.utcnow(), binary='healthnmon')
+        compute_service = dict(host='host1', created_at=timeutils.utcnow(
+        ), updated_at=timeutils.utcnow(), binary='healthnmon')
     return dict(id=compute_id, hypervisor_type='fake',
                 service=compute_service)
 
@@ -73,7 +74,7 @@ class InventoryManagerTestCase(test.TestCase):
         subNet = Subnet()
         subNet.set_id('net1')
         api.vm_host_get_all(mox.IgnoreArg()).AndReturn([vmhost,
-                    vmhost1])
+                                                        vmhost1])
         self.mox.StubOutWithMock(api, 'vm_get_all')
         api.vm_get_all(mox.IgnoreArg()).AndReturn([vm, vm1])
         self.mox.StubOutWithMock(api, 'storage_volume_get_all')
@@ -94,8 +95,8 @@ class InventoryManagerTestCase(test.TestCase):
 
         self.mox.ReplayAll()
         self.assertEquals(im.update(None), None)
-        self.assertTrue(im.green_pool != None)
-        self.assertTrue(im._compute_inventory != None)
+        self.assertTrue(im.green_pool is not None)
+        self.assertTrue(im._compute_inventory is not None)
         eventlet.sleep(2)
         self.mox.VerifyAll()
 
@@ -109,8 +110,10 @@ class InventoryManagerTestCase(test.TestCase):
         self.mox.ReplayAll()
         eventlet.sleep(2)
         self.mox.VerifyAll()
-        self.assertTrue(InventoryCacheManager.get_object_from_cache('uuid', Constants.VmHost) is None)
-        self.assertTrue(InventoryCacheManager.get_object_from_cache('uuid1', Constants.VmHost) != None)
+        self.assertTrue(InventoryCacheManager.get_object_from_cache(
+            'uuid', Constants.VmHost) is None)
+        self.assertTrue(InventoryCacheManager.get_object_from_cache(
+            'uuid1', Constants.VmHost) is not None)
         self.mox.UnsetStubs()
 
     def test_updateInventory(self):
@@ -120,8 +123,10 @@ class InventoryManagerTestCase(test.TestCase):
         self.mox.ReplayAll()
         eventlet.sleep(2)
         self.mox.VerifyAll()
-        host = InventoryCacheManager.get_object_from_cache('vmhost1', Constants.VmHost)
-        self.assertTrue(InventoryCacheManager.get_object_from_cache('vmhost1', Constants.VmHost) != None)
+        host = InventoryCacheManager.get_object_from_cache(
+            'vmhost1', Constants.VmHost)
+        self.assertTrue(InventoryCacheManager.get_object_from_cache(
+            'vmhost1', Constants.VmHost) is not None)
         self.assertEquals('vmhost1', host.get_id())
         self.mox.UnsetStubs()
 
@@ -131,20 +136,21 @@ class InventoryManagerTestCase(test.TestCase):
         service = compute['service']
         rm_context = \
             rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                ], rmIpAddress=service['host'], rmUserName='ubuntu164',
-                rmPassword='password')
+                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+                                       rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'] = \
             ComputeInventory(rm_context)
 
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'
-                ].get_compute_conn_driver()
+                                                          ].get_compute_conn_driver()
 
         im = self.inv_manager
 
         self.mox.ReplayAll()
         im.poll_perfmon(None)
-        self.assertTrue(im.perf_green_pool != None)
-        self.assertTrue(InventoryCacheManager.get_all_compute_inventory() != None)
+        self.assertTrue(im.perf_green_pool is not None)
+        self.assertTrue(
+            InventoryCacheManager.get_all_compute_inventory() is not None)
         eventlet.sleep(2)
         self.mox.VerifyAll()
 
@@ -156,13 +162,13 @@ class InventoryManagerTestCase(test.TestCase):
         service = compute['service']
         rm_context = \
             rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                ], rmIpAddress=service['host'], rmUserName='ubuntu164',
-                rmPassword='password')
+                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+                                       rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'] = \
             ComputeInventory(rm_context)
 
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'
-                ].get_compute_conn_driver()
+                                                          ].get_compute_conn_driver()
 
         im = self.inv_manager
 
@@ -187,7 +193,7 @@ class InventoryManagerTestCase(test.TestCase):
         self.mox.StubOutWithMock(ComputeInventory, 'update_inventory')
 
         InventoryCacheManager.get_all_compute_inventory()['compute1'
-                ].update_inventory().AndRaise(Exception)
+                                                          ].update_inventory().AndRaise(Exception)
 
         self.mox.ReplayAll()
         im.update(None)
@@ -211,10 +217,10 @@ class InventoryManagerTestCase(test.TestCase):
         im._refresh_from_db(None)
         self.mox.VerifyAll()
 
-        self.assertEquals(len(InventoryCacheManager.get_all_compute_inventory()), 1)
-        self.assertIn('compute1', InventoryCacheManager.get_all_compute_inventory())
-
-        # self.assertEquals(im._compute_inventory['compute1'], 'fake')
+        self.assertEquals(
+            len(InventoryCacheManager.get_all_compute_inventory()), 1)
+        self.assertIn(
+            'compute1', InventoryCacheManager.get_all_compute_inventory())
 
         self.mox.UnsetStubs()
 
@@ -225,7 +231,8 @@ class InventoryManagerTestCase(test.TestCase):
         compute2 = _create_Compute(compute_id='compute2')
         compute2['service'] = None
         self.mox.StubOutWithMock(db, 'compute_node_get_all')
-        db.compute_node_get_all(mox.IgnoreArg()).AndReturn([compute1, compute2])
+        db.compute_node_get_all(
+            mox.IgnoreArg()).AndReturn([compute1, compute2])
 
         im = self.inv_manager
         self.assertEquals(len(im._compute_inventory), 0)
@@ -234,9 +241,12 @@ class InventoryManagerTestCase(test.TestCase):
         im._refresh_from_db(None)
         self.mox.VerifyAll()
 
-        self.assertEquals(len(InventoryCacheManager.get_all_compute_inventory()), 1)
-        self.assertIn('compute1', InventoryCacheManager.get_all_compute_inventory())
-        self.assertNotIn('compute2', InventoryCacheManager.get_all_compute_inventory())
+        self.assertEquals(
+            len(InventoryCacheManager.get_all_compute_inventory()), 1)
+        self.assertIn(
+            'compute1', InventoryCacheManager.get_all_compute_inventory())
+        self.assertNotIn(
+            'compute2', InventoryCacheManager.get_all_compute_inventory())
 
     def test_refresh_from_db_for_service_disabled_updated(self):
         self._createInvCache()
@@ -255,8 +265,10 @@ class InventoryManagerTestCase(test.TestCase):
         im._refresh_from_db(None)
         self.mox.VerifyAll()
 
-        self.assertEquals(len(InventoryCacheManager.get_all_compute_inventory()), 0)
-        self.assertNotIn('compute1', InventoryCacheManager.get_all_compute_inventory())
+        self.assertEquals(
+            len(InventoryCacheManager.get_all_compute_inventory()), 0)
+        self.assertNotIn(
+            'compute1', InventoryCacheManager.get_all_compute_inventory())
 
     def test_refresh_from_db_for_service_disabled_created(self):
         self._createInvCache()
@@ -274,8 +286,10 @@ class InventoryManagerTestCase(test.TestCase):
         im._refresh_from_db(None)
         self.mox.VerifyAll()
 
-        self.assertEquals(len(InventoryCacheManager.get_all_compute_inventory()), 0)
-        self.assertNotIn('compute1', InventoryCacheManager.get_all_compute_inventory())
+        self.assertEquals(
+            len(InventoryCacheManager.get_all_compute_inventory()), 0)
+        self.assertNotIn(
+            'compute1', InventoryCacheManager.get_all_compute_inventory())
 
     def test_get_inventory_cache(self):
         self._createInvCache()
@@ -285,7 +299,7 @@ class InventoryManagerTestCase(test.TestCase):
     def test_getObjectFromCache(self):
         self._createInvCache()
         vmhost = InventoryCacheManager.get_object_from_cache('vmhost1',
-                Constants.VmHost)
+                                                             Constants.VmHost)
         self.assertNotEquals(vmhost, None)
         self.assertEquals('vmhost1', vmhost.get_id())
         self.assertTrue('vm1' in vmhost.get_virtualMachineIds())
@@ -294,19 +308,19 @@ class InventoryManagerTestCase(test.TestCase):
     def test_getObjectFromCacheForWrongUUid(self):
         self._createInvCache()
         vmhost = InventoryCacheManager.get_object_from_cache('vmhost3',
-                Constants.VmHost)
+                                                             Constants.VmHost)
         self.assertEquals(vmhost, None)
         self.mox.UnsetStubs()
 
     def test_delete_object_in_cache(self):
         self._createInvCache()
         vmhost = InventoryCacheManager.get_object_from_cache('vmhost1',
-                Constants.VmHost)
+                                                             Constants.VmHost)
         self.assertNotEquals(vmhost, None)
         InventoryCacheManager.delete_object_in_cache('vmhost1',
-                Constants.VmHost)
+                                                     Constants.VmHost)
         vmhost = InventoryCacheManager.get_object_from_cache('vmhost1',
-                Constants.VmHost)
+                                                             Constants.VmHost)
         self.assertEquals(vmhost, None)
         # self.assertEquals(len(self.inv_manager_cls._inventoryCache[Constants.VmHost]), 2)
         self.mox.UnsetStubs()
@@ -317,14 +331,14 @@ class InventoryManagerTestCase(test.TestCase):
         service = compute['service']
         rm_context = \
             rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                ], rmIpAddress=service['host'], rmUserName='ubuntu164',
-                rmPassword='password')
+                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+                                       rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory().clear()
         InventoryCacheManager.get_all_compute_inventory()['compute1'] = \
             ComputeInventory(rm_context)
 
         InventoryCacheManager.get_all_compute_inventory()['compute1'
-                ].update_compute_info(rm_context, compute)
+                                                          ].update_compute_info(rm_context, compute)
         compute_info = self.inv_manager.get_compute_list()
         self.assertEquals(compute_info[0]['hypervisor_type'], 'fake')
         self.mox.UnsetStubs()
@@ -337,26 +351,28 @@ class InventoryManagerTestCase(test.TestCase):
         db.compute_node_get_all(mox.IgnoreArg()).AndReturn(compute)
 
         im = self.inv_manager
-        self.assertEquals(len(InventoryCacheManager.get_all_compute_inventory()), 0)
+        self.assertEquals(
+            len(InventoryCacheManager.get_all_compute_inventory()), 0)
 
         compute = _create_Compute(compute_id='vmhost1')
         service = compute['service']
         rm_context = \
             rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                ], rmIpAddress=service['host'], rmUserName='ubuntu164',
-                rmPassword='password')
+                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+                                       rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'] = \
             ComputeInventory(rm_context)
 
         vmhost = VmHost()
         vmhost.set_id('vmhost1')
         vmhost.set_name('vmhost1')
-        InventoryCacheManager.get_all_compute_inventory()['vmhost1'].update_compute_info(rm_context, vmhost)
+        InventoryCacheManager.get_all_compute_inventory(
+        )['vmhost1'].update_compute_info(rm_context, vmhost)
 
         self.mox.StubOutWithMock(api, 'vm_host_delete_by_ids')
 
         api.vm_host_delete_by_ids(mox.IgnoreArg(),
-         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                  mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         self.mox.StubOutWithMock(event_api, 'notify_host_update')
         event_api.notify_host_update(mox.IgnoreArg(), mox.IgnoreArg())
@@ -366,7 +382,9 @@ class InventoryManagerTestCase(test.TestCase):
         im._refresh_from_db(None)
         self.mox.VerifyAll()
         self.mox.stubs.UnsetAll()
-        self.assertEquals(len(InventoryCacheManager.get_all_compute_inventory()), 0)
-        self.assertTrue(InventoryCacheManager.get_all_compute_inventory().get('compute1') is None)
+        self.assertEquals(
+            len(InventoryCacheManager.get_all_compute_inventory()), 0)
+        self.assertTrue(InventoryCacheManager.get_all_compute_inventory(
+        ).get('compute1') is None)
 
         self.mox.UnsetStubs()

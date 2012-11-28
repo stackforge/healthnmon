@@ -81,7 +81,7 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
     def test_vm_created_event(self):
         domainObj = libvirt.virDomain()
@@ -89,18 +89,19 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(None)
+                                                    Constants.Vm).AndReturn(None)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_VM_CREATED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_CREATED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -115,10 +116,11 @@ class VmEventsTest(test.TestCase):
         deleted_vm_id = '25f04dd3-e924-02b2-9eac-876e3c943123'
         deleted_vm = Vm()
         deleted_vm.id = deleted_vm_id
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(deleted_vm_id,
-                Constants.Vm).AndReturn(deleted_vm)
+                                                    Constants.Vm).AndReturn(deleted_vm)
         self.mox.ReplayAll()
         cachedList = ['25f04dd3-e924-02b2-9eac-876e3c943262',
                       deleted_vm_id]
@@ -129,7 +131,7 @@ class VmEventsTest(test.TestCase):
         self.assertTrue(msg is not None)
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
+            event_metadata.get_EventMetaData(
                 event_metadata.EVENT_TYPE_VM_DELETED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
@@ -146,18 +148,19 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(cachedVm)
+                                                    Constants.Vm).AndReturn(cachedVm)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_VM_RECONFIGURED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_RECONFIGURED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -173,21 +176,22 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(cachedVm)
+                                                    Constants.Vm).AndReturn(cachedVm)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
         msg = \
             self._getEventMsgForEventType(event_metadata.EVENT_TYPE_VM_STARTED,
-                test_notifier.NOTIFICATIONS)
+                                          test_notifier.NOTIFICATIONS)
         self.assertTrue(msg is not None)
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_VM_STARTED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_STARTED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -205,21 +209,22 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(cachedVm)
+                                                    Constants.Vm).AndReturn(cachedVm)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
         msg = \
             self._getEventMsgForEventType(event_metadata.EVENT_TYPE_VM_RESUMED,
-                test_notifier.NOTIFICATIONS)
+                                          test_notifier.NOTIFICATIONS)
         self.assertTrue(msg is not None)
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                        event_metadata.EVENT_TYPE_VM_RESUMED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_RESUMED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -237,24 +242,25 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(cachedVm)
+                                                    Constants.Vm).AndReturn(cachedVm)
         self.mox.StubOutWithMock(domainObj, 'state')
         domainObj.state(0).AndReturn([4])
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
         msg = \
-            self._getEventMsgForEventType(\
-                        event_metadata.EVENT_TYPE_VM_SHUTDOWN,
+            self._getEventMsgForEventType(
+                event_metadata.EVENT_TYPE_VM_SHUTDOWN,
                 test_notifier.NOTIFICATIONS)
         self.assertTrue(msg is not None)
         self.assertEquals(msg['priority'], notifier_api.WARN)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_VM_SHUTDOWN)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_SHUTDOWN)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -272,10 +278,11 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(cachedVm)
+                                                    Constants.Vm).AndReturn(cachedVm)
         self.mox.StubOutWithMock(domainObj, 'state')
         domainObj.state(0).AndReturn([5])
         self.mox.ReplayAll()
@@ -283,12 +290,12 @@ class VmEventsTest(test.TestCase):
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
         msg = \
             self._getEventMsgForEventType(event_metadata.EVENT_TYPE_VM_STOPPED,
-                test_notifier.NOTIFICATIONS)
+                                          test_notifier.NOTIFICATIONS)
         self.assertTrue(msg is not None)
         self.assertEquals(msg['priority'], notifier_api.WARN)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_VM_STOPPED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_STOPPED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
@@ -306,24 +313,25 @@ class VmEventsTest(test.TestCase):
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
 
         InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                Constants.Vm).AndReturn(cachedVm)
+                                                    Constants.Vm).AndReturn(cachedVm)
         self.mox.StubOutWithMock(domainObj, 'state')
         domainObj.state(0).AndReturn([3])
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
         msg = \
-            self._getEventMsgForEventType(\
+            self._getEventMsgForEventType(
                 event_metadata.EVENT_TYPE_VM_SUSPENDED,
                 test_notifier.NOTIFICATIONS)
         self.assertTrue(msg is not None)
         self.assertEquals(msg['priority'], notifier_api.WARN)
         event_type = \
-            event_metadata.get_EventMetaData(\
-                        event_metadata.EVENT_TYPE_VM_SUSPENDED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_SUSPENDED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']

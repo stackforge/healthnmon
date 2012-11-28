@@ -51,8 +51,8 @@ class CommonDbApiTestCase(test.TestCase):
         # Query with invalid changes-since
         filters = {'changes-since': 'invalid-value'}
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, filters,
-                                None, None)
+            self.admin_context, filters,
+            None, None)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 1)
         self.assert_(vmhosts[0] is not None)
@@ -70,7 +70,7 @@ class CommonDbApiTestCase(test.TestCase):
         now = long(time.time() * 1000L)
         filters = {'changes-since': now}
         query = healthnmon_alchemy_api._create_filtered_ordered_query(
-                        self.db_session, OsProfile, filters=filters)
+            self.db_session, OsProfile, filters=filters)
         os_profiles = query.all()
         self.assert_(os_profiles is not None)
         self.assert_(len(os_profiles) == 1)
@@ -88,7 +88,7 @@ class CommonDbApiTestCase(test.TestCase):
         # Query with deleted
         filters = {'deleted': False}
         query = healthnmon_alchemy_api._create_filtered_ordered_query(
-                        self.db_session, OsProfile, filters=filters)
+            self.db_session, OsProfile, filters=filters)
         os_profiles = query.all()
         self.assert_(os_profiles is not None)
         self.assert_(len(os_profiles) == 1)
@@ -106,7 +106,7 @@ class CommonDbApiTestCase(test.TestCase):
         # Query with invalidFilterField
         filters = {'invalidFilterField': 'SomeValue'}
         query = healthnmon_alchemy_api._create_filtered_ordered_query(
-                        self.db_session, OsProfile, filters=filters)
+            self.db_session, OsProfile, filters=filters)
         os_profiles = query.all()
         self.assert_(os_profiles is not None)
         self.assert_(len(os_profiles) == 1)
@@ -120,8 +120,8 @@ class CommonDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_host_save(self.admin_context, vmhost)
         # Query with invalid sort key
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, None,
-                                'invalidSortField', DbConstants.ORDER_ASC)
+            self.admin_context, None,
+            'invalidSortField', DbConstants.ORDER_ASC)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 1)
         self.assert_(vmhosts[0] is not None)

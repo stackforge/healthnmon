@@ -18,20 +18,20 @@
 heathnmon Service default driver - Manage communication with compute nodes and collects inventory and monitoring info
 """
 
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import importutils
 from nova.openstack.common import cfg
 from healthnmon import log as logging
 
 LOG = logging.getLogger('healthnmon.driver')
 driver_opts = [
-cfg.StrOpt('healthnmon_inventory_manager',
-            default='healthnmon.inventory_manager.InventoryManager',
-            help='The healthnmon inventory manager class to use'),
-    ]
+    cfg.StrOpt('healthnmon_inventory_manager',
+               default='healthnmon.inventory_manager.InventoryManager',
+               help='The healthnmon inventory manager class to use'),
+]
 
-FLAGS = flags.FLAGS
-FLAGS.register_opts(driver_opts)
+CONF = cfg.CONF
+CONF.register_opts(driver_opts)
 
 
 class Healthnmon(object):
@@ -40,7 +40,7 @@ class Healthnmon(object):
 
     def __init__(self):
         self.inventory_manager = \
-            importutils.import_object(FLAGS.healthnmon_inventory_manager)
+            importutils.import_object(CONF.healthnmon_inventory_manager)
 
     def get_compute_list(self):
         """Get a list of hosts from the InventoryManager."""
@@ -63,8 +63,8 @@ class Healthnmon(object):
         uuid,
         perfmon_type,
         window_minutes,
-        ):
+    ):
         """ Return performance data for requested host/vm for last windowMinutes."""
 
         return self.inventory_manager.get_resource_utilization(context,
-                uuid, perfmon_type, window_minutes)
+                                                               uuid, perfmon_type, window_minutes)

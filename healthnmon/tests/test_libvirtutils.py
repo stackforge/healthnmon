@@ -24,23 +24,27 @@ class XMLUtilsTest(unittest.TestCase):
         self.utils = XMLUtils()
 
     def test_parseXML(self):
-        self.assertEqual(self.utils.parseXML(\
-                "<outer><inner a='90'>mytext1</inner><inner>mytext2</inner></outer>",
-                "//outer/inner"),
-                         ['mytext1', 'mytext2'])
-        self.assertEqual(self.utils.parseXML(\
-                "<outer><inner>mytext1</inner></outer>", "//outer/inner"),
-                         'mytext1')
+        self.assertEqual(self.utils.parseXML(
+            "<outer><inner a='90'>mytext1</inner><inner>mytext2</inner></outer>",
+            "//outer/inner"),
+            ['mytext1', 'mytext2'])
+        self.assertEqual(self.utils.parseXML(
+            "<outer><inner>mytext1</inner></outer>", "//outer/inner"),
+            'mytext1')
 
     def test_parseXMLAttributes(self):
         xml = "<outer><inner>mytext1</inner><inner b='23'>mytext2</inner></outer>"
-        self.assertEqual(self.utils.parseXMLAttributes(xml, '//outer/inner', 'b'), None)
-        self.assertEqual(self.utils.parseXMLAttributes(xml, '//outer/inner', 'b', True), ['23'])
+        self.assertEqual(
+            self.utils.parseXMLAttributes(xml, '//outer/inner', 'b'), None)
+        self.assertEqual(self.utils.parseXMLAttributes(
+            xml, '//outer/inner', 'b', True), ['23'])
 
     def test_getNodeXML(self):
         xml = "<outer><inner>mytext1</inner><inner b='23'>mytext2</inner><a><b>88</b><b>87</b></a><b>89</b></outer>"
-        self.assertEquals(self.utils.getNodeXML(xml, "//outer/b"), ['<b>89</b>'])
-        self.assertEquals(self.utils.getNodeXML(xml, "//outer/a/b"), ['<b>88</b>', '<b>87</b>'])
+        self.assertEquals(
+            self.utils.getNodeXML(xml, "//outer/b"), ['<b>89</b>'])
+        self.assertEquals(self.utils.getNodeXML(
+            xml, "//outer/a/b"), ['<b>88</b>', '<b>87</b>'])
 
         xml = "<outer xmlns=\"http://namespace\"><inner>mytext1</inner><inner b='23'>mytext2</inner><a><b>88</b><b>87</b></a><b>89</b></outer>"
         namespaces = {'a': 'http://namespace'}
@@ -48,5 +52,6 @@ class XMLUtilsTest(unittest.TestCase):
                                                 "//a:outer/a:b",
                                                 namespaces),
                           ['<b xmlns="http://namespace">89</b>'])
-        self.assertEquals(self.utils.getNodeXML(xml, "//a:outer/a:a/a:b", namespaces),
-                          ['<b xmlns="http://namespace">88</b>', '<b xmlns="http://namespace">87</b>'])
+        self.assertEquals(
+            self.utils.getNodeXML(xml, "//a:outer/a:a/a:b", namespaces),
+            ['<b xmlns="http://namespace">88</b>', '<b xmlns="http://namespace">87</b>'])

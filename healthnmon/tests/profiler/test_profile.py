@@ -32,8 +32,8 @@ class CPUProfileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_cpu.profile_cputime_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
 
         self.assertEqual(3, decorator_method(1, 2))
 
@@ -44,8 +44,8 @@ class CPUProfileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_cpu.profile_cputime_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
 
         self.assertEqual(3, decorator_method(1, 2))
 
@@ -56,8 +56,8 @@ class CPUProfileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_cpu.profile_cputime_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
 
         self.assertEqual(3, decorator_method(1, 2))
 
@@ -66,8 +66,8 @@ class CPUProfileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_cpu.profile_cputime_decorator(
-                            'dummy_method',
-                             example_method)
+            'dummy_method',
+            example_method)
 
         self.assertEqual(3, decorator_method(1, 2))
 
@@ -88,6 +88,7 @@ class CPUProfileTestCase(test.TestCase):
 
     def tearDown(self):
         profile_cpu.modules = []
+        super(CPUProfileTestCase, self).tearDown()
 
 
 class MemorymemprofileTestCase(test.TestCase):
@@ -109,8 +110,8 @@ class MemorymemprofileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_mem.profile_memory_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
 
         profile_mem.modules_profiling_status['example_method'] = True
 
@@ -125,8 +126,8 @@ class MemorymemprofileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_mem.profile_memory_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
 
         profile_mem.modules_profiling_status['example_method'] = True
 
@@ -141,8 +142,8 @@ class MemorymemprofileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_mem.profile_memory_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
         profile_mem.modules_profiling_status['example_method'] = True
 
         rt = decorator_method(1, 2)
@@ -153,26 +154,16 @@ class MemorymemprofileTestCase(test.TestCase):
     def test_memprofile_throwException(self):
         def example_method(arg1, arg2):
             return arg1 + arg2
-
-        decorator_method = profile_mem.profile_memory_decorator(
-                            'example_method',
-                             example_method)
-        profile_mem.modules_profiling_status['example_method'] = True
-
-        self.mox.StubOutWithMock(self.hpy_class, 'heap')
-        self.h.heap().AndRaise(Exception)
-
-        rt = decorator_method(1, 2)
-
-        self.assertEqual(3, rt)
+        self.assertRaises(Exception, profile_mem.profile_memory_decorator(
+            'example_method', example_method))
 
     def test_disable_memprofile_by_decorator(self):
         def example_method(arg1, arg2):
             return arg1 + arg2
 
         decorator_method = profile_mem.profile_memory_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
         profile_mem.modules_profiling_status['example_method'] = False
 
         rt = decorator_method(1, 2)
@@ -187,8 +178,8 @@ class MemorymemprofileTestCase(test.TestCase):
             return arg1 + arg2
 
         decorator_method = profile_mem.profile_memory_decorator(
-                            'example_method',
-                             example_method)
+            'example_method',
+            example_method)
         profile_mem.modules_profiling_status['example_method'] = True
 
         rt = decorator_method(1, 2)
@@ -198,5 +189,5 @@ class MemorymemprofileTestCase(test.TestCase):
     def tearDown(self):
         if(os.path.isfile(self.path_to_file)):
             os.remove(self.path_to_file)
-        self.mox.UnsetStubs()
         profile_mem.h = None
+        super(MemorymemprofileTestCase, self).tearDown()

@@ -15,35 +15,35 @@
 #    under the License.
 
 import unittest
-from nova import flags
+from nova.openstack.common import cfg
 import os
 from healthnmon.db.sqlalchemy import manage_healthnmon_db
 from sqlalchemy.engine import create_engine
 
-FLAGS = flags.FLAGS
-FLAGS.set_default('sqlite_db', 'tests.sqlite')
-FLAGS.set_default('sqlite_synchronous', False)
+CONF = cfg.CONF
+CONF.set_default('sqlite_db', 'tests.sqlite')
+CONF.set_default('sqlite_synchronous', False)
 
 
 class ManageDbTestCase(unittest.TestCase):
 
     def test_upgrade_downgrade(self):
-        testdb = os.path.join(FLAGS.state_path, FLAGS.sqlite_db)
+        testdb = os.path.join(CONF.state_path, CONF.sqlite_db)
 
         # Recreate the DB
 
         if os.path.exists(testdb):
             os.remove(testdb)
         open(testdb, 'w').close()
-        engine = create_engine(FLAGS.sql_connection)
+        engine = create_engine(CONF.sql_connection)
 
-        # manage_healthnmon_db.main(FLAGS.sql_connection)
+        # manage_healthnmon_db.main(CONF.sql_connection)
 
         manage_healthnmon_db.upgrade(engine)
         tableExists = manage_healthnmon_db.VmHost.exists(engine)
         self.assertTrue(tableExists, 'Db upgrade failed')
 
-        # manage_healthnmon_db.main(FLAGS.sql_connection, "downgrade")
+        # manage_healthnmon_db.main(CONF.sql_connection, "downgrade")
 
         manage_healthnmon_db.downgrade(engine)
         tableExistsAfterDowngrade = \
@@ -52,7 +52,7 @@ class ManageDbTestCase(unittest.TestCase):
                          'Db downgrade failed')
 
     def test_upgrade_downgrade_exception(self):
-        testdb = os.path.join(FLAGS.state_path, FLAGS.sqlite_db)
+        testdb = os.path.join(CONF.state_path, CONF.sqlite_db)
 
         # Recreate the DB
 

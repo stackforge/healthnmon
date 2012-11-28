@@ -34,20 +34,22 @@ class APiTest(test.TestCase):
         self.vm = Vm()
         self.vm.set_id('12345')
         self.vm.set_name('TestVm')
-        self.flags(healthnmon_notification_drivers=['nova.openstack.common.notifier.test_notifier'
-                   ])
+        self.flags(healthnmon_notification_drivers=[
+            'nova.openstack.common.notifier.test_notifier'])
         test_notifier.NOTIFICATIONS = []
 
     def testNotify(self):
 
         scheduler_services = [{'host': 'testhost'}]
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
+        nova_db. \
+            service_get_all_by_topic(
+                mox.IgnoreArg(),
                 mox.IgnoreArg()).AndReturn(scheduler_services)
         self.mox.ReplayAll()
         self.assertEquals(events_api.notify(
-                        event_metadata.EVENT_TYPE_VM_DELETED,
-                          self.vm), None)
+            event_metadata.EVENT_TYPE_VM_DELETED,
+            self.vm), None)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
@@ -66,12 +68,13 @@ class APiTest(test.TestCase):
 
         scheduler_services = None
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
+        nova_db. \
+            service_get_all_by_topic(
+                mox.IgnoreArg(),
                 mox.IgnoreArg()).AndReturn(scheduler_services)
         self.mox.ReplayAll()
         self.assertEquals(events_api.notify(
-                        event_metadata.EVENT_TYPE_VM_DELETED,
-                          self.vm), None)
+            event_metadata.EVENT_TYPE_VM_DELETED, self.vm), None)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
@@ -90,12 +93,12 @@ class APiTest(test.TestCase):
 
         scheduler_services = []
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(scheduler_services)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(scheduler_services)
         self.mox.ReplayAll()
         self.assertEquals(events_api.notify(
-                        event_metadata.EVENT_TYPE_VM_DELETED,
-                          self.vm), None)
+            event_metadata.EVENT_TYPE_VM_DELETED, self.vm), None)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
@@ -113,14 +116,14 @@ class APiTest(test.TestCase):
     def testNotifyMultipleScheduler(self):
 
         scheduler_services = [{'host': 'testhost'}, {'host': 'testhost2'
-                              }]
+                                                     }]
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(scheduler_services)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(scheduler_services)
         self.mox.ReplayAll()
         self.assertEquals(events_api.notify(
-                    event_metadata.EVENT_TYPE_VM_DELETED,
-                          self.vm), None)
+            event_metadata.EVENT_TYPE_VM_DELETED, self.vm), None)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
@@ -139,12 +142,12 @@ class APiTest(test.TestCase):
 
         scheduler_services = [{'host': None}]
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(scheduler_services)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(scheduler_services)
         self.mox.ReplayAll()
         self.assertEquals(events_api.notify(
-                    event_metadata.EVENT_TYPE_VM_DELETED,
-                          self.vm), None)
+            event_metadata.EVENT_TYPE_VM_DELETED, self.vm), None)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
         event_type = \
@@ -161,16 +164,14 @@ class APiTest(test.TestCase):
 
     def testNotifyExceptionScheduler(self):
         nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndRaise(Exception())
+                                         mox.IgnoreArg()).AndRaise(Exception())
         self.mox.ReplayAll()
         self.assertEquals(events_api.notify(
-                        event_metadata.EVENT_TYPE_VM_DELETED,
-                          self.vm), None)
+            event_metadata.EVENT_TYPE_VM_DELETED, self.vm), None)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = \
-            event_metadata.get_EventMetaData(
-                event_metadata.EVENT_TYPE_VM_DELETED)
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_VM_DELETED)
         self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         self.assertEquals(msg['publisher_id'],

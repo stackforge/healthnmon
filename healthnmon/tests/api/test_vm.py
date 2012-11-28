@@ -48,14 +48,14 @@ class VMTest(unittest.TestCase):
         self.config_drive = None
         self.mock = mox.Mox()
         self.admin_context = context.RequestContext('admin', '',
-                is_admin=True)
+                                                    is_admin=True)
 
     def tearDown(self):
         self.mock.stubs.UnsetAll()
 
     def test_list_vm_json(self):
         expected_out_json = \
-        '{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
+            '{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}], "name": "vm-01"}, {"id": "vm-02", "links": \
         [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}], "name": "vm-02"}]}'
@@ -68,7 +68,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(vm_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualmachines.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().index(request)
         self.assertNotEqual(resp, None, 'Return json string')
@@ -87,7 +87,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(vms)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualmachines/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -102,7 +102,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(vms)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualmachines/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -117,7 +117,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(vms)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualmachines/detail',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().detail(request)
         self.assertNotEqual(resp, None, 'Return json string')
@@ -125,7 +125,7 @@ class VMTest(unittest.TestCase):
 
     def test_list_vm_xml(self):
         expected_out_xml = \
-        '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+            '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
         <vm id="vm-01" name="vm-01"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/>\
         <atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/></vm>\
         <vm id="vm-02" name="vm-02"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" rel="self"/>\
@@ -140,7 +140,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(vm_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().index(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -157,7 +157,7 @@ class VMTest(unittest.TestCase):
                           mox.IgnoreArg()).AndReturn(vm_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm/vm-01.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().show(request, 'vm-01')
         self.assertNotEqual(resp, None, 'Return xml response for vm-01')
@@ -165,7 +165,7 @@ class VMTest(unittest.TestCase):
 
     def test_list_vm_xml_header(self):
         expected_out_xml = \
-        '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+            '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
         <vm id="vm-01" name="vm-01"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/>\
         <atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/></vm>\
         <vm id="vm-02" name="vm-02"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" rel="self"/>\
@@ -180,7 +180,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(virtualmachines)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/xml'
         request.environ['nova.context'] = self.admin_context
         resp = VMController().index(request)
@@ -192,7 +192,7 @@ class VMTest(unittest.TestCase):
 
     def test_list_vm_json_header(self):
         expected_out_json = \
-        '{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
+            '{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}], "name": "vm-01"}, \
         {"id": "vm-02", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}], "name": "vm-02"}]}'
@@ -205,7 +205,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(virtualmachines)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/json'
         request.environ['nova.context'] = self.admin_context
         resp = VMController().index(request)
@@ -224,7 +224,7 @@ class VMTest(unittest.TestCase):
                                   mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualmachines',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().index(request)
         self.assertEqual(resp.body, '{"virtualmachines": []}',
@@ -232,7 +232,7 @@ class VMTest(unittest.TestCase):
 
     def test_vm_details_json(self):
         expected_out_json = \
-        '{"Vm": {"vmDisks": [{"storagevolumes": [{"id": "datastore-939", \
+            '{"Vm": {"vmDisks": [{"storagevolumes": [{"id": "datastore-939", \
         "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/datastore-939", "rel": "self"}, \
         {"href": "http://localhost:8774/storagevolumes/datastore-939", "rel": "bookmark"}]}], "id": "disk-01"}, \
         {"storagevolumes": [{"id": "datastore-439", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/datastore-439", "rel": "self"}, \
@@ -247,7 +247,7 @@ class VMTest(unittest.TestCase):
                           mox.IgnoreArg()).AndReturn(vm_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm/vm-01.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().show(request, 'vm-01')
         self.assertNotEqual(resp, None, 'Return json response for vm-01'
@@ -257,7 +257,7 @@ class VMTest(unittest.TestCase):
 
     def test_vm_details_xml(self):
         expected_out_xml = \
-        '<Vm><id>vm-01</id><name>vm-01</name>\
+            '<Vm><id>vm-01</id><name>vm-01</name>\
         <vmDisks><id>disk-01</id><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="datastore-939">\
         <atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-939" rel="self"/>\
         <atom:link href="http://localhost:8774/storagevolumes/datastore-939" rel="bookmark"/>\
@@ -275,7 +275,7 @@ class VMTest(unittest.TestCase):
                           mox.IgnoreArg()).AndReturn(vm_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm/vm-01.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().show(request, 'vm-01')
         self.assertNotEqual(resp, None, 'Return xml response for vm-01')
@@ -287,22 +287,22 @@ class VMTest(unittest.TestCase):
         xml_utils = util
         self.mock.StubOutWithMock(xml_utils, 'xml_to_dict')
         xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(IndexError('Test index'
-                ))
+                                                                   ))
         self.mock.StubOutWithMock(api, 'vm_get_by_ids')
 
         api.vm_get_by_ids(mox.IgnoreArg(),
                           mox.IgnoreArg()).AndReturn(vm_list)
         self.mock.ReplayAll()
-        request = webob.Request.blank(\
-                '/v2.0/virtualmachines/vm-01.json', \
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/virtualmachines/vm-01.json',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().show(request, 'vm-01')
         self.assertTrue(isinstance(resp, HTTPNotFound))
 
     def test_query_field_key(self):
         expected_out_json = \
-        '{"Vm": {"id": "vm-01", "name": "vm-01"}}'
+            '{"Vm": {"id": "vm-01", "name": "vm-01"}}'
 
         vm_list = self.get_single_vm()
         self.mock.StubOutWithMock(api, 'vm_get_by_ids')
@@ -335,10 +335,10 @@ class VMTest(unittest.TestCase):
                  mox.IgnoreArg()).AndReturn(self.get_resource_utilization())
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank(\
-                '/v2.0/vm/vm-01.xml?fields=utilization', \
+            webob.Request.blank(
+                '/v2.0/vm/vm-01.xml?fields=utilization',
                 base_url='http://localhost:8774/v2.0/'
-                                )
+            )
         request.environ['nova.context'] = self.admin_context
         resp = VMController().show(request, 'vm-01')
         self.assertNotEqual(resp, None, 'Return xml response for vm-01')
@@ -355,14 +355,15 @@ class VMTest(unittest.TestCase):
                  mox.IgnoreArg()).AndReturn(self.get_resource_utilization())
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/vm/vm-01.xml?utilization',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VMController().show(request, 'vm-01')
         self.assertNotEqual(resp, None, 'Return xml response for vm-01')
 
     def test_vm_identifier_json(self):
-        request = webob.Request.blank('/v2.0/virtualmachines/vm-01?fields=name',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/virtualmachines/vm-01?fields=name',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         item_list = self.get_vm_list()
         self.assertEquals(VMController()._show(request, item_list[0]).body,
@@ -371,8 +372,9 @@ class VMTest(unittest.TestCase):
                           self.expected_identifier_detail_json)
 
     def test_vm_identifier_xml(self):
-        request = webob.Request.blank('/v2.0/virtualmachines/vm-01.xml?fields=vmDisks',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/virtualmachines/vm-01.xml?fields=vmDisks',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         item_list = self.get_vm_list()
         self.assertEquals(VMController()._show(request, item_list[0]).body,
@@ -435,7 +437,7 @@ class VMTest(unittest.TestCase):
             'reservedSystemMemory': 38929823983,
             'maximumSystemMemory': 2398293832,
             'memoryRelativeWeight': 89239823,
-            }
+        }
         return dict(ResourceUtilization=resource_dict)
 
     def compare_xml(self, expected, actual):

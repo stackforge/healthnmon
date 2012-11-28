@@ -37,7 +37,7 @@ class HealthnMonTestCase(test.TestCase):
         self.mox.ReplayAll()
         self.driver = self.driver_cls()
         self.context = context.RequestContext('fake_user',
-                'fake_project')
+                                              'fake_project')
 
     def _createCache(self):
         self.mox.StubOutWithMock(api, 'vm_host_get_all')
@@ -75,8 +75,9 @@ class HealthnMonTestCase(test.TestCase):
         self.driver.inventory_manager.update(mox.IgnoreArg())
         self.mox.ReplayAll()
         self.driver.poll_compute_nodes(self.context)
-        self.assertTrue(self.driver.inventory_manager != None)
-        self.assertTrue(InventoryCacheManager.get_all_compute_inventory() != None)
+        self.assertTrue(self.driver.inventory_manager is not None)
+        self.assertTrue(
+            InventoryCacheManager.get_all_compute_inventory() is not None)
         self.mox.VerifyAll()
         self.mox.UnsetStubs()
 
@@ -87,8 +88,10 @@ class HealthnMonTestCase(test.TestCase):
 
         self.mox.ReplayAll()
         self.driver.poll_compute_perfmon(self.context)
-        self.assertTrue(self.driver.inventory_manager.perf_green_pool != None)
-        self.assertTrue(InventoryCacheManager.get_all_compute_inventory() != None)
+        self.assertTrue(
+            self.driver.inventory_manager.perf_green_pool is not None)
+        self.assertTrue(
+            InventoryCacheManager.get_all_compute_inventory() is not None)
         self.mox.VerifyAll()
         self.mox.UnsetStubs()
 
@@ -99,11 +102,11 @@ class HealthnMonTestCase(test.TestCase):
                                  'get_resource_utilization')
 
         self.driver.inventory_manager.get_resource_utilization(mox.IgnoreArg(),
-                mox.IgnoreArg(), mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(expected)
+                                                               mox.IgnoreArg(), mox.IgnoreArg(),
+                                                               mox.IgnoreArg()).AndReturn(expected)
 
         self.mox.ReplayAll()
         result = self.driver.get_resource_utilization(self.context,
-                'uuid', Constants.VmHost, 5)
+                                                      'uuid', Constants.VmHost, 5)
         self.assertEqual(result, expected)
         self.mox.UnsetStubs()

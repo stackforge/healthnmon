@@ -82,7 +82,7 @@ class StatsTestCase(unittest.TestCase):
             'system': '4',
             'idle': '3',
             'total': '10',
-            }
+        }
 
         # self.perfstats.cpuStats.set_cycles(cycles_dict)
 

@@ -54,37 +54,40 @@ class LibvirtInventoryMonitor:
         '''Handles the Host Updates '''
 
         LOG.info(_('Entering collectInventory for host uuid '
-                  + compute_id))
+                   + compute_id))
         libvirtVmHost = LibvirtVmHost(conn, compute_id, self.libvirtEvents)
         libvirtVmHost.processUpdates()
-        if libvirtVmHost.libvirtconn != None:
-            #libvirtVmHost = LibvirtVmHost(conn, compute_id, self.libvirtEvents)
-            #Only if connection to host is available, inventory will be collected for other entities
+        if libvirtVmHost.libvirtconn is not None:
+            #Only if connection to host is available, inventory will be
+            #collected for other entities
             self.hostUUID = libvirtVmHost.uuid
-            if self.hostUUID != None:
+            if self.hostUUID is not None:
                 #libvirtVmHost.processUpdates()
-                LOG.info(_('***************Handling updates of Storage volumes on host '
-                           + self.hostUUID + '*****************'))
+                LOG.info(_('***************Handling updates of Storage ' +
+                           'volumes on host ' +
+                           self.hostUUID + '*****************'))
 
                 libvirtStoragePool = \
                     LibvirtStorageVolume(conn, compute_id)
                 libvirtStoragePool.processUpdates()
 
-                LOG.info(_('***************Handling updates of Networks  on host '
-                           + self.hostUUID + '*****************'))
+                LOG.info(_('***************Handling updates of Networks ' +
+                           'on host ' +
+                           self.hostUUID + '*****************'))
 
                 libvirtNetwork = LibvirtNetwork(conn, compute_id)
                 libvirtNetwork.processUpdates()
 
                 if self.libvirtEvents.first_poll:
-                    LOG.info(_('***************Handling updates of Vms on host for the first poll '
-                           + self.hostUUID + '*****************'))
+                    LOG.info(_('***************Handling updates of Vms ' +
+                               'on host for the first poll ' +
+                               self.hostUUID + '*****************'))
                     libvirtVm = LibvirtVM(conn, compute_id)
                     libvirtVm.processUpdates()
                     self.libvirtEvents.first_poll = False
 
         LOG.info(_('Exiting collectInventory for host uuid '
-                  + compute_id))
+                   + compute_id))
 
 
 class LibvirtVmHost:
@@ -94,14 +97,15 @@ class LibvirtVmHost:
         connection,
         compute_id,
         libvirtEvents
-        ):
+    ):
         self.utils = XMLUtils()
         self.compute_id = compute_id
         self.libvirtEvents = libvirtEvents
         self.uuid = None
         self.vmHost = None
         try:
-            self.rmContext = InventoryCacheManager.get_compute_inventory(compute_id).compute_rmcontext
+            self.rmContext = InventoryCacheManager.get_compute_inventory(
+                compute_id).compute_rmcontext
             self.libvirtconn = connection
             self.uuid = self.getUuid()
         except Exception:
@@ -116,23 +120,34 @@ class LibvirtVmHost:
             if computeId == self.compute_id:
                 service = compute['service']
                 if service is not None:
-                    compute_alive = hnm_utils.is_service_alive(service['updated_at'], service['created_at'])
+                    compute_alive = hnm_utils.is_service_alive(
+                        service['updated_at'], service['created_at'])
         return compute_alive
 
     """This method will set the host as disconnected
     """
     def _set_host_as_disconnected(self):
         try:
-            LOG.debug(_('Entering _set_host_as_disconnected for compute id: %s') % self.compute_id)
-            if self.cachedvmHost.get_connectionState() == Constants.VMHOST_CONNECTED:
-                self.cachedvmHost.set_connectionState(Constants.VMHOST_DISCONNECTED)
-                InventoryCacheManager.update_object_in_cache(self.compute_id, self.cachedvmHost)
+            LOG.debug(_('Entering _set_host_as_disconnected for ' +
+                        'compute id: %s') % self.compute_id)
+            if self.cachedvmHost.get_connectionState() == \
+                    Constants.VMHOST_CONNECTED:
+                self.cachedvmHost.set_connectionState(
+                    Constants.VMHOST_DISCONNECTED)
+                InventoryCacheManager.update_object_in_cache(
+                    self.compute_id, self.cachedvmHost)
                 api.vm_host_save(get_admin_context(), self.cachedvmHost)
-                LOG.audit(_('Host with (UUID, host name) - (%s, %s) got disconnected') % (self.compute_id, self.cachedvmHost.get_name()))
-                event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_DISCONNECTED, self.cachedvmHost)
-            LOG.info(_(' The compute id %s is in the disconnected state') % self.compute_id)
+                LOG.audit(_('Host with (UUID, host name) - (%s, %s) got ' +
+                            'disconnected') % (self.compute_id,
+                                               self.cachedvmHost.get_name()))
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_DISCONNECTED,
+                    self.cachedvmHost)
+            LOG.info(_(' The compute id %s is in the disconnected state')
+                     % self.compute_id)
         except Exception:
-            LOG.error(_(' Exception while setting the compute to disconnected state. id  %s') % self.compute_id)
+            LOG.error(_(' Exception while setting the compute to ' +
+                        'disconnected state. id  %s') % self.compute_id)
             LOG.error(_(traceback.format_exc()))
 
     def processUpdates(self):
@@ -146,20 +161,27 @@ class LibvirtVmHost:
             """Check whether the compute is running else exit from polling"""
             compute_alive = self._get_compute_running_status()
             if not compute_alive:
-                LOG.debug(_('De-registering the host with compute_id %s for events ' % str(self.compute_id)))
+                LOG.debug(_('De-registering the host with ' +
+                            'compute_id %s for events ' % 
+                            str(self.compute_id)))
                 self.libvirtEvents.deregister_libvirt_events()
                 self._set_host_as_disconnected()
                 self.libvirtconn = None
                 return
             if not self.libvirtEvents.registered:
-                LOG.debug(_('Registering host with compute_id %s for events ' % str(self.compute_id)))
+                LOG.debug(_('Registering host with ' +
+                            'compute_id %s for events ' % 
+                            str(self.compute_id)))
                 self.libvirtEvents.compute_id = self.compute_id
                 self.libvirtEvents.register_libvirt_events()
                 self.libvirtEvents.first_poll = True
             # Below are the scenarios in which the cachedvmHost would be None
-            # 1. SSH not setup before attempting to collect inventory for the first time
-            # 2. SSH setup, but libvirt service is down, before attempting to collect inventory for the first time
-            # If inventory has been collected atleast once,cachedvmHost will not be None and the host connection state will be updated as disconnected
+            # 1. SSH not setup before attempting to collect 
+            #    inventory for the first time
+            # 2. SSH setup, but libvirt service is down, before attempting 
+            #    to collect inventory for the first time
+            # If inventory has been collected atleast once,cachedvmHost 
+            # will not be None and the host connection state will be updated as disconnected
             if (self.libvirtconn == None and self.cachedvmHost == None):
                 return
 
@@ -169,20 +191,23 @@ class LibvirtVmHost:
             self._mapHostProperties()
 
             if self.cachedvmHost is not None:
-                self.vmHost.set_virtualMachineIds(self.cachedvmHost.get_virtualMachineIds())
-                self.vmHost.set_storageVolumeIds(self.cachedvmHost.get_storageVolumeIds())
-                self.vmHost.set_virtualSwitches(self.cachedvmHost.get_virtualSwitches())
+                self.vmHost.set_virtualMachineIds(
+                    self.cachedvmHost.get_virtualMachineIds())
+                self.vmHost.set_storageVolumeIds(
+                    self.cachedvmHost.get_storageVolumeIds())
+                self.vmHost.set_virtualSwitches(
+                    self.cachedvmHost.get_virtualSwitches())
                 self.vmHost.set_portGroups(self.cachedvmHost.get_portGroups())
-                self.vmHost.set_ipAddresses(self.cachedvmHost.get_ipAddresses())
+                self.vmHost.set_ipAddresses(
+                    self.cachedvmHost.get_ipAddresses())
 
             if self.utils.getdiff(self.cachedvmHost, self.vmHost)[0]:
                 # Perist the Vm in cache and in DB
-#                if self.libvirtNetwork != None:
-#                    self.libvirtNetwork.processNetworkEvents(self.cachedvmHost, self.vmHost)
                 InventoryCacheManager.update_object_in_cache(self.compute_id,
-                        self.vmHost)
-                InventoryCacheManager.get_compute_inventory(self.compute_id).update_compute_info(self.rmContext,
-                        self.vmHost)
+                                                             self.vmHost)
+                InventoryCacheManager.get_compute_inventory(
+                    self.compute_id).update_compute_info(self.rmContext,
+                                                         self.vmHost)
                 self._persist()
                 if self.cachedvmHost is not None:
                     cachedHoststate = \
@@ -190,23 +215,33 @@ class LibvirtVmHost:
                     currentHostState = self.vmHost.get_connectionState()
                     if cachedHoststate != currentHostState:
                         if currentHostState == Constants.VMHOST_CONNECTED:
-                            LOG.audit(_('Host with (UUID, host name) - (%s, %s) got connected') % (self.uuid, self.vmHost.get_name()))
-                            event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_CONNECTED,
-                                    self.vmHost)
+                            LOG.audit(_('Host with (UUID, host name) - ' +
+                                        '(%s, %s) got connected') %
+                                      (self.uuid, self.vmHost.get_name()))
+                            event_api.notify_host_update(
+                                event_metadata.EVENT_TYPE_HOST_CONNECTED,
+                                self.vmHost)
                         elif currentHostState \
-                            == Constants.VMHOST_DISCONNECTED:
-                            LOG.audit(_('Host with (UUID, host name) - (%s, %s) got disconnected') % (self.uuid, self.vmHost.get_name()))
-                            event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_DISCONNECTED,
-                                    self.vmHost)
+                                == Constants.VMHOST_DISCONNECTED:
+                            LOG.audit(_('Host with (UUID, host name) - ' +
+                                        '(%s, %s) got disconnected') %
+                                      (self.uuid, self.vmHost.get_name()))
+                            event_api.notify_host_update(
+                                event_metadata.EVENT_TYPE_HOST_DISCONNECTED,
+                                self.vmHost)
                             LOG.debug(_('Un-registering the host for events'))
                             self.libvirtEvents.deregister_libvirt_events()
                 else:
                     # Generate Host Added Event
-                    LOG.audit(_('Host with (UUID, host name) - (%s, %s) got added') % (self.uuid, self.vmHost.get_name()))
-                    event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_ADDED,
-                                     self.vmHost)
+                    LOG.audit(_('Host with (UUID, host name) - ' +
+                                '(%s, %s) got added') %
+                              (self.uuid, self.vmHost.get_name()))
+                    event_api.notify_host_update(
+                        event_metadata.EVENT_TYPE_HOST_ADDED,
+                        self.vmHost)
         except Exception:
-            LOG.error(_('Could not proceed with process updates of VmHost with id ' + self.compute_id))
+            LOG.error(_('Could not proceed with process updates of ' +
+                        'VmHost with id ' + self.compute_id))
             self.utils.log_error(traceback.format_exc())
         LOG.debug(_('Exiting processUpdates for host uuid '
                   + self.compute_id))
@@ -216,7 +251,7 @@ class LibvirtVmHost:
 
         LOG.debug(_('Entering _mapHostProperties for host uuid '
                   + self.compute_id))
-        if self.libvirtconn != None:
+        if self.libvirtconn is not None:
             self.vmHost.set_connectionState(Constants.VMHOST_CONNECTED)
             hostCapXml = self.libvirtconn.getCapabilities()
             hostSysXml = self.libvirtconn.getSysinfo(0)
@@ -225,17 +260,10 @@ class LibvirtVmHost:
             self._mapHostSystemInfo(hostSysXml)
             self._mapHostOsInfo()
             self._mapHostInfo()
-#            LOG.info(_('***************Handling updates of Networks on host '
-#                       + self.uuid + '*****************'))
-#
-#            self.libvirtNetwork = LibvirtNetwork(self.connection, self.compute_id, self.vmHost)
-#            self.libvirtNetwork.processUpdates()
         else:
-            if self.cachedvmHost != None:
+            if self.cachedvmHost is not None:
                 self.vmHost = copy.deepcopy(self.cachedvmHost)
             self.vmHost.set_connectionState(Constants.VMHOST_DISCONNECTED)
-
-#        LOG.debug(_("Connection state set as  " + self.vmHost.get_connectionState()  + " for host " +  self.rmContext.rmIpAddress ))
 
         LOG.debug(_('Exiting _mapHostProperties for host uuid '
                   + self.compute_id))
@@ -261,8 +289,7 @@ class LibvirtVmHost:
         if model:
                 self.vmHost.set_model(model.strip())
 
-        serialNumber = self.utils.parseXML(hostSysXml, '//system/entry'
-                )[3]
+        serialNumber = self.utils.parseXML(hostSysXml, '//system/entry')[3]
         if serialNumber:
                 self.vmHost.set_serialNumber(serialNumber.strip())
         LOG.debug(_('Exiting _mapHostSystemInfo for host uuid '
@@ -272,7 +299,7 @@ class LibvirtVmHost:
         LOG.debug(_('Entering _mapHostOsInfo for host uuid '
                   + self.compute_id))
         os = self.vmHost.get_os()
-        if os == None:
+        if os is None:
             os = OsProfile()
         os.set_resourceId(self.vmHost.get_id())
         os.set_osName(self.libvirtconn.getType())
@@ -290,11 +317,13 @@ class LibvirtVmHost:
         self.vmHost.set_memorySize(self.host_memory_size())
         self.vmHost.set_name(self.libvirtconn.getHostname())
         self.vmHost.set_memoryConsumed(self.get_memory_consumed())
-        self.vmHost.set_processorCount(self.libvirtconn.getInfo()[5] * self.libvirtconn.getInfo()[7])
+        self.vmHost.set_processorCount(
+            self.libvirtconn.getInfo()[5] * self.libvirtconn.getInfo()[7])
         self.vmHost.set_processorCoresCount(self.libvirtconn.getInfo()[2])
         self.vmHost.set_processorSpeedMhz(self.libvirtconn.getInfo()[3])
-        self.vmHost.set_processorSpeedTotalMhz(\
-         self.libvirtconn.getInfo()[3] * self.vmHost.get_processorCoresCount())
+        self.vmHost.set_processorSpeedTotalMhz(
+            self.libvirtconn.getInfo()[3] *
+            self.vmHost.get_processorCoresCount())
         self.vmHost.set_hyperThreadEnabled(False)
         if (self.libvirtconn.getInfo()[7] > 1):
             self.vmHost.set_hyperThreadEnabled(True)
@@ -320,7 +349,6 @@ class LibvirtVmHost:
         api.vm_host_save(get_admin_context(), self.vmHost)
         LOG.debug(_('Exiting _persist for host uuid '
                   + self.compute_id))
-
 
 class LibvirtVM:
 

@@ -36,13 +36,14 @@ class RabbitNotifierTest(test.TestCase):
             'event_type': 'LifeCycle.Vm.Reconfigured',
             'payload': {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'},
             'message_id': '409e109d-41c0-4b75-9019-04aa3329c67b',
-            }
+        }
 
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
-                 mox.IgnoreArg()).AndReturn(None)
+                   mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
-                          None)
+        self.assertEquals(
+            healthnmon.notifier.rabbit_notifier.notify(self.context, message),
+            None)
 
     def testNotifyEvent_TypeNone(self):
         message = {
@@ -50,13 +51,14 @@ class RabbitNotifierTest(test.TestCase):
             'event_type': None,
             'payload': {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'},
             'message_id': '409e109d-41c0-4b75-9019-04aa3329c67b',
-            }
+        }
 
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
-                 mox.IgnoreArg()).AndReturn(None)
+                   mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
-                          None)
+        self.assertEquals(
+            healthnmon.notifier.rabbit_notifier.notify(self.context, message),
+            None)
 
     def testNotifyPayloadNone(self):
         message = {
@@ -64,13 +66,14 @@ class RabbitNotifierTest(test.TestCase):
             'event_type': 'LifeCycle.Vm.Reconfigured',
             'payload': None,
             'message_id': '409e109d-41c0-4b75-9019-04aa3329c67b',
-            }
+        }
 
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
-                 mox.IgnoreArg()).AndReturn(None)
+                   mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
-                          None)
+        self.assertEquals(
+            healthnmon.notifier.rabbit_notifier.notify(self.context, message),
+            None)
 
     def testNotifyEntity_IdNone(self):
         message = {
@@ -78,13 +81,14 @@ class RabbitNotifierTest(test.TestCase):
             'event_type': 'LifeCycle.Vm.Reconfigured',
             'payload': {'entity_id': None},
             'message_id': '409e109d-41c0-4b75-9019-04aa3329c67b',
-            }
+        }
 
         rpc.notify(mox.IgnoreArg(), 'healthnmon_notification',
-                 mox.IgnoreArg()).AndReturn(None)
+                   mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
-        self.assertEquals(healthnmon.notifier.rabbit_notifier.notify(self.context, message),
-                          None)
+        self.assertEquals(
+            healthnmon.notifier.rabbit_notifier.notify(self.context, message),
+            None)
 
     def tearDown(self):
         super(RabbitNotifierTest, self).tearDown()

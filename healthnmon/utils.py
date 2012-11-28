@@ -17,13 +17,14 @@
 import time
 from lxml import etree
 from healthnmon.resourcemodel import resourcemodel_diff
-from nova import flags, utils
+from nova import utils
+from nova.openstack.common import cfg
 from nova.openstack.common import timeutils
 from healthnmon import log
 
 # including instances_path defined in nova.compute.manager in order to create nova-storage-pool
-flags.DECLARE('instances_path', 'nova.compute.manager')
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
+CONF.import_opt('instances_path', 'nova.compute.manager')
 LOG = log.getLogger(__name__)
 
 
@@ -33,13 +34,13 @@ def get_current_epoch_ms():
 
 def getFlagByKey(key):
     """ Returns the value of the flag queried based on key"""
-    FLAGS = flags.FLAGS
-    return FLAGS.get(key)
+    CONF = cfg.CONF
+    return CONF.get(key)
 
 
 def is_service_alive(updated_at, created_at):
     delta = timeutils.utcnow() - (updated_at or created_at)
-    return abs(utils.total_seconds(delta)) <= FLAGS.service_down_time
+    return abs(utils.total_seconds(delta)) <= CONF.service_down_time
 
 
 class XMLUtils:
@@ -62,7 +63,8 @@ class XMLUtils:
         try:
             root = etree.fromstring(xml,
                                     parser=etree.XMLParser(remove_blank_text=True))
-            nodes = root.xpath(path, smart_strings=False, namespaces=namespaces)
+            nodes = root.xpath(
+                path, smart_strings=False, namespaces=namespaces)
             if nodes is None or len(nodes) == 0:
                 return None
             elif len(nodes) == 1:
@@ -80,7 +82,7 @@ class XMLUtils:
         attribute,
         all_matches=False,
         namespaces=None
-        ):
+    ):
         """ Fetches the attribute from the first element matched. If all_matches
         is enabled, gets a list of attribute values for all elements matched.
         When all_matches is False, if first element matched doesn't
@@ -94,7 +96,8 @@ class XMLUtils:
         try:
             root = etree.fromstring(xml,
                                     parser=etree.XMLParser(remove_blank_text=True))
-            nodes = root.xpath(path, smart_strings=False, namespaces=namespaces)
+            nodes = root.xpath(
+                path, smart_strings=False, namespaces=namespaces)
             if (nodes is not None) and (len(nodes) > 0):
                 if all_matches is False:
                     return nodes[0].get(attribute, None)
@@ -119,7 +122,8 @@ class XMLUtils:
         try:
             root = etree.fromstring(xml,
                                     parser=etree.XMLParser(remove_blank_text=True))
-            nodes = root.xpath(path, smart_strings=False, namespaces=namespaces)
+            nodes = root.xpath(
+                path, smart_strings=False, namespaces=namespaces)
             if len(nodes) == 0:
                 return node_list
             for node in nodes:
@@ -136,10 +140,10 @@ class XMLUtils:
                 Second element : None if the objects are same. Else a dictionary of differences
         """
 
-        if oldObject == None:
+        if oldObject is None:
             return (True, None)
         diff = resourcemodel_diff.ResourceModelDiff(oldObject,
-                newobject)
+                                                    newobject)
         diff_res = diff.diff_resourcemodel()
         if len(diff_res) > 0:
             return (True, diff_res)
@@ -168,6 +172,6 @@ class XMLUtils:
         """
         for prof in ip_profile_list:
             if prof.get_ipAddress() == ip_profile.get_ipAddress() and   \
-                prof.get_hostname() == ip_profile.get_hostname():
+                    prof.get_hostname() == ip_profile.get_hostname():
                 return True
         return False

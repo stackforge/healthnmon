@@ -19,7 +19,7 @@ import __builtin__
 setattr(__builtin__, '_', lambda x: x)
 
 from nova import test
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import cfg
 from healthnmon.db import migration as healthnmon_migration
 from nova.db import migration as nova_migration
@@ -32,29 +32,30 @@ import eventlet
 
 sys.modules['libvirt'] = FakeLibvirt
 
-FLAGS = flags.FLAGS
-FLAGS.set_default('sqlite_db', 'nova.sqlite')
-FLAGS.set_default('sqlite_synchronous', False)
+CONF = cfg.CONF
+CONF.set_default('sqlite_db', 'nova.sqlite')
+CONF.set_default('sqlite_synchronous', False)
 
 
 def setup():
     ''' for nova test.py create a dummy clean.sqlite '''
-    cleandb = os.path.join(FLAGS.state_path, FLAGS.sqlite_clean_db)
+    cleandb = os.path.join(CONF.state_path, CONF.sqlite_clean_db)
     if os.path.exists(cleandb):
         pass
     else:
         open(cleandb, 'w').close()
 
     ''' for healthnmon create db '''
-    healthnmon_path = os.path.abspath(os.path.join(healthnmon.get_healthnmon_location(), '../'))
+    healthnmon_path = os.path.abspath(
+        os.path.join(healthnmon.get_healthnmon_location(), '../'))
     sql_connection_url = "sqlite:///" + str(healthnmon_path) + "/$sqlite_db"
-    FLAGS.set_default("sql_connection", sql_connection_url)
-    testdb = os.path.join(healthnmon_path, FLAGS.sqlite_db)
+    CONF.set_default("sql_connection", sql_connection_url)
+    testdb = os.path.join(healthnmon_path, CONF.sqlite_db)
     if os.path.exists(testdb):
         return
     nova_migration.db_sync()
     healthnmon_migration.db_sync()
-    cleandb = os.path.join(healthnmon_path, FLAGS.sqlite_clean_db)
+    cleandb = os.path.join(healthnmon_path, CONF.sqlite_clean_db)
     shutil.copyfile(testdb, cleandb)
 
 """ Uncomment the line below for running tests through eclipse """

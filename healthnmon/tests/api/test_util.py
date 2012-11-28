@@ -84,7 +84,7 @@ class UtilTest(unittest.TestCase):
                     </Vm>"""
 
         expected_out_xml = \
-       '<Vm><outer><a><storage><id>33</id><name>ESA</name></storage></a></outer>\
+            '<Vm><outer><a><storage><id>33</id><name>ESA</name></storage></a></outer>\
        <storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="88">\
        <atom:link href="http://localhost/v2.0/storage/88" rel="self"/><atom:link href="http://localhost/storage/88" rel="bookmark"/>\
        </storagevolume>\
@@ -101,25 +101,25 @@ class UtilTest(unittest.TestCase):
             'tag_key': 'id',
             'tag_collection_url': 'http://localhost/v2.0/storage',
             'tag_attrib': None,
-            }, {
+        }, {
             'tag': 'vmHostId',
             'tag_replacement': 'vmhosts',
             'tag_key': 'id',
             'tag_collection_url': 'http://localhost/v2.0/vmhosts',
             'tag_attrib': None,
-            }, {
+        }, {
             'tag': 'parent',
             'tag_replacement': 'person',
             'tag_key': 'id',
             'tag_collection_url': 'http://localhost/v2.0/people',
             'tag_attrib': ['name', 'type'],
-            }]
+        }]
 
 #        element = util.replace_with_references(test_xml, dict_tag_props)
 
         out_dict = {}
         replaced_xml = util.replace_with_links(test_xml,
-                dict_tag_props, out_dict)
+                                               dict_tag_props, out_dict)
         self.assertNotEqual(None, replaced_xml)
         self.compare_xml(expected_out_xml, replaced_xml)
 
@@ -137,11 +137,12 @@ class UtilTest(unittest.TestCase):
         <atom:link href="http://localhost/v2.0/people/89" rel="self"/><atom:link href="http://localhost/people/89" rel="bookmark"/>\
         </person></Vm>'
         expected_json = '{"person": {"links": [{"href": "http://localhost/v2.0/people/89", "rel": "self"}, {"href": "http://localhost/people/89", "rel": "bookmark"}]}, "outer": {"a": {"storage": {"id": "33", "name": "ESA"}}}, "storagevolumes": [{"id": "88", "links": [{"href": "http://localhost/v2.0/storage/88", "rel": "self"}, {"href": "http://localhost/storage/88", "rel": "bookmark"}]}, {"id": "89", "links": [{"href": "http://localhost/v2.0/storage/89", "rel": "self"}, {"href": "http://localhost/storage/89", "rel": "bookmark"}]}]}'
-        self.assertEquals(json.dumps(util.xml_to_dict(input_xml)), expected_json)
+        self.assertEquals(
+            json.dumps(util.xml_to_dict(input_xml)), expected_json)
 
     def test_replace_with_links_prefix(self):
         prefix_xml = \
-        '<p:Vm xmlns:p="http://localhost/prefix"><p:outer><p:a><p:storage>\
+            '<p:Vm xmlns:p="http://localhost/prefix"><p:outer><p:a><p:storage>\
         <p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a></p:outer>\
         <p:storageVolumeId>88</p:storageVolumeId>\
         <p:storageVolumeId>89</p:storageVolumeId></p:Vm>'
@@ -152,16 +153,16 @@ class UtilTest(unittest.TestCase):
             'tag_key': 'id',
             'tag_collection_url': 'http://localhost/v2.0/storage',
             'tag_attrib': None,
-            }, {
+        }, {
             'tag': 'vmHostId',
             'tag_replacement': 'vmhosts',
             'tag_key': 'id',
             'tag_collection_url': 'http://localhost/v2.0/vmhosts',
             'tag_attrib': None,
-            }]
+        }]
 
         expected_out_xml = \
-        '<p:Vm xmlns:p="http://localhost/prefix">\
+            '<p:Vm xmlns:p="http://localhost/prefix">\
         <p:outer>\
         <p:a><p:storage><p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a>\
         </p:outer>\
@@ -177,7 +178,7 @@ class UtilTest(unittest.TestCase):
 
         out_dict = {}
         replaced_xml = util.replace_with_links(prefix_xml,
-                dict_tag_props, out_dict)
+                                               dict_tag_props, out_dict)
         self.assertNotEqual(None, replaced_xml)
         self. compare_xml(expected_out_xml, replaced_xml)
 
@@ -226,10 +227,10 @@ class UtilTest(unittest.TestCase):
             'tag_key': 'id',
             'tag_collection_url': 'http://localhost/v2.0/storage',
             'tag_attrib': None,
-            }]
+        }]
 
         replaced_xml = util.replace_with_links(prefix_xml,
-                dict_tag_props, {})
+                                               dict_tag_props, {})
         print replaced_xml
         self.assertNotEqual(None, replaced_xml)
         self.assertEqual(util.replace_with_links(prefix_xml, [None],
@@ -240,7 +241,7 @@ class UtilTest(unittest.TestCase):
             'tag_collection_url': 'http://localhost/v2.0/storage',
             'tag_attrib': None,
             3.23: 32,
-            }]
+        }]
 
         util.replace_with_links(prefix_xml, dict_tag_props, {})
 
@@ -278,7 +279,7 @@ class UtilTest(unittest.TestCase):
             'tag_key': 'key',
             'tag_collection_url': 'http://localhost/v2.0/collection',
             'tag_attrib': None,
-            }]
+        }]
 
         try:
             util.replace_with_links(xml_str, dict_tag_props, {})
@@ -310,16 +311,16 @@ class UtilTest(unittest.TestCase):
                 self.a = 10
                 self.b = None
 
-        self.assertEquals(util.serialize_simple_obj(Test(), 'root', ('a', \
+        self.assertEquals(util.serialize_simple_obj(Test(), 'root', ('a',
                           'b')), '<root><a>10</a><b></b></root>')
         self.assertEquals(util.serialize_simple_obj(Test(), 'root', 'c'
-                          ), '<root><c/></root>')
+                                                    ), '<root><c/></root>')
 
     def test_append_xml_as_child(self):
         xml = '<root>212</root>'
         xml = util.append_xml_as_child(xml, '<sub>23</sub>')
         print xml
-        self.assertEquals(util.append_xml_as_child('<root><a>3</a></root>', \
+        self.assertEquals(util.append_xml_as_child('<root><a>3</a></root>',
                           '<a>4</a>'), '<root><a>3</a><a>4</a></root>'
                           )
 
@@ -346,8 +347,8 @@ xmlns:atom="http://www.w3.org/2005/Atom"><b:entity type="" id="0">\
         entities_dict = dict(entities=entity_list)
         entities_dict['entities_links'] = [
             {
-             'rel': 'next',
-             'href': 'http://markerlink'
+                'rel': 'next',
+                'href': 'http://markerlink'
             }
         ]
         self.assertEquals(util.get_entity_list_xml(entities_dict,
@@ -356,7 +357,7 @@ xmlns:atom="http://www.w3.org/2005/Atom"><b:entity type="" id="0">\
                           'entity', 'b'), expected_list_xml)
         try:
             util.get_entity_list_xml({'a': 23, 'b': 23}, None, None,
-                    None)
+                                     None)
         except Exception, inst:
             self.assertTrue(isinstance(inst, LookupError))
         self.assertEquals(util.get_entity_list_xml(None, None, None,
@@ -392,8 +393,8 @@ xmlns:atom="http://www.w3.org/2005/Atom"><b:entity type="" id="0">\
 
         self.assertEquals('<p:Vm xmlns:p="http://localhost/prefix">\
 <p:outer><p:a><p:storage><p:id>33</p:id>\
-<p:name>ESA</p:name></p:storage></p:a></p:outer></p:Vm>', \
-                          util.get_select_elements_xml(prefix_xml, \
+<p:name>ESA</p:name></p:storage></p:a></p:outer></p:Vm>',
+                          util.get_select_elements_xml(prefix_xml,
                           ['outer']))
 
     def test_get_select_elements_xml_default_field(self):
@@ -412,9 +413,10 @@ xmlns:atom="http://www.w3.org/2005/Atom"><b:entity type="" id="0">\
 <p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a></p:outer>\
 <p:storageVolumeId>88</p:storageVolumeId>\
 <p:storageVolumeId>89</p:storageVolumeId></p:Vm>'
-        self.assertEquals('<p:Vm xmlns:p="http://localhost/prefix"><p:storageVolumeId>88</p:storageVolumeId><p:storageVolumeId>89</p:storageVolumeId><p:outer><p:a><p:storage><p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a></p:outer></p:Vm>', \
-                          util.get_select_elements_xml(prefix_xml, \
-                          ['outer'], 'storageVolumeId'))
+        self.assertEquals(
+            '<p:Vm xmlns:p="http://localhost/prefix"><p:storageVolumeId>88</p:storageVolumeId><p:storageVolumeId>89</p:storageVolumeId><p:outer><p:a><p:storage><p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a></p:outer></p:Vm>',
+            util.get_select_elements_xml(prefix_xml,
+                                         ['outer'], 'storageVolumeId'))
 
     def test_set_select_attributes(self):
         resource_obj = healthnmonResourceModel.ResourceUtilization()
@@ -425,7 +427,7 @@ xmlns:atom="http://www.w3.org/2005/Atom"><b:entity type="" id="0">\
     def test_get_next_xml(self):
         self.assertEquals(util.get_next_xml({'rel': 'next',
                                              'href': 'http://nextlink'}),
-        '<ns0:link xmlns:ns0="http://www.w3.org/2005/Atom" \
+                          '<ns0:link xmlns:ns0="http://www.w3.org/2005/Atom" \
 href="http://nextlink" rel="next"/>')
 
     def compare_xml(self, expected, actual):

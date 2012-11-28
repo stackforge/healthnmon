@@ -22,22 +22,22 @@ from nova.openstack.common import cfg
 from nova.db.sqlalchemy import api as context_api
 from healthnmon.db import api
 from nova.openstack.common import rpc
-from nova import flags
+from nova.openstack.common import cfg
 
 LOG = logging.getLogger('healthnmon.healthnmon_api')
 
 api_opts = [
-cfg.StrOpt('healthnmon_topic',
-            default='healthnmon',
-            help='the topic healthnmon service listen on')
-    ]
+    cfg.StrOpt('healthnmon_topic',
+               default='healthnmon',
+               help='the topic healthnmon service listen on')
+]
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 try:
-    FLAGS.healthnmon_topic
+    CONF.healthnmon_topic
 except cfg.NoSuchOptError:
-    FLAGS.register_opts(api_opts)
+    CONF.register_opts(api_opts)
 
 
 '''def vm_host_get_all(context):
@@ -249,7 +249,7 @@ def get_vm_utilization(context, vm_id):
         context - nova.context.RequestContext object
     """
 
-    return rpc.call(context, FLAGS.healthnmon_topic,
+    return rpc.call(context, CONF.healthnmon_topic,
                     {'method': 'get_vm_utilization',
                     'args': {'uuid': vm_id}})
 
@@ -264,6 +264,6 @@ def get_vmhost_utilization(context, host_id):
         context - nova.context.RequestContext object
     """
 
-    return rpc.call(context, FLAGS.healthnmon_topic,
+    return rpc.call(context, CONF.healthnmon_topic,
                     {'method': 'get_vmhost_utilization',
                     'args': {'uuid': host_id}})

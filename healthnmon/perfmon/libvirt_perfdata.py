@@ -24,13 +24,13 @@ from healthnmon.events import event_metadata
 from healthnmon.constants import Constants
 from healthnmon.perfmon.perf_stats import Stats
 from healthnmon import log
-from nova import flags
+from nova.openstack.common import cfg
 import time
 import datetime
 import paramiko
 
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 LOG = log.getLogger('healthnmon.libvirt_perfdata')
 
 
@@ -72,7 +72,7 @@ class LibvirtPerfMonitor:
         conn,
         uuid,
         perfmon_type,
-        ):
+    ):
         '''Refreshes the performance data  '''
 
         LOG.info(_('Entering refresh_perfdata for uuid :' + uuid))
@@ -83,9 +83,10 @@ class LibvirtPerfMonitor:
         if perfmon_type == Constants.VmHost:
             LibvirtVmHostPerfData(conn, uuid).refresh_perfdata()
             host_obj = InventoryCacheManager.get_object_from_cache(uuid,
-                Constants.VmHost)
+                                                                   Constants.VmHost)
             if host_obj is not None:
-                event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_UPDATED, host_obj)
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_UPDATED, host_obj)
         elif perfmon_type == Constants.Vm:
             LibvirtVmPerfData(conn, uuid).refresh_perfdata()
         LOG.info(_('Exiting refresh_perfdata for uuid :' + uuid))
@@ -95,17 +96,17 @@ class LibvirtPerfMonitor:
         uuid,
         perfmon_type,
         window_minutes,
-        ):
+    ):
         '''Returns the sampled performance data of KVM host '''
 
         LOG.debug(_('Entering get_resource_utilization for uuid '
                   + uuid))
         if perfmon_type == Constants.VmHost:
             return SamplePerfData().sample_host_perfdata(uuid,
-                    window_minutes)
+                                                         window_minutes)
         elif perfmon_type == Constants.Vm:
             return SamplePerfData().sample_vm_perfdata(uuid,
-                    window_minutes)
+                                                       window_minutes)
 
 
 class LibvirtVmHostPerfData:
@@ -135,7 +136,7 @@ class LibvirtVmHostPerfData:
         self.new_stats = self.temp_stats
 
         LibvirtPerfMonitor.update_perfdata_InCache(self.uuid,
-                self.old_stats, self.new_stats)
+                                                   self.old_stats, self.new_stats)
         LOG.debug(_('Exiting refresh_perfdata for vm host '
                   + self.uuid))
 
@@ -143,7 +144,8 @@ class LibvirtVmHostPerfData:
         memstats = {}
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        conn_driver = InventoryCacheManager.get_compute_inventory(self.uuid).get_compute_conn_driver()
+        conn_driver = InventoryCacheManager.get_compute_inventory(
+            self.uuid).get_compute_conn_driver()
         ssh.connect(conn_driver.compute_rmcontext.rmIpAddress,
                     username=conn_driver.compute_rmcontext.rmUserName,
                     password=conn_driver.compute_rmcontext.rmPassword)
@@ -158,10 +160,13 @@ class LibvirtVmHostPerfData:
             for memstat in nodememstats:
                 memstatList = memstat.split()
                 if len(memstatList) > 0:
-                    memstats[memstatList[0]] = memstatList[len(memstatList) - 2]
+                    memstats[memstatList[0]
+                             ] = memstatList[len(memstatList) - 2]
             self.temp_stats.totalMemory = int(memstats['total'])
-            self.temp_stats.freeMemory = int(memstats['free']) + int(memstats['buffers:']) + int(memstats['cached'])
-            LOG.debug(_('Total Memory:' + str(self.temp_stats.totalMemory) + ', Free Memory:' + str(self.temp_stats.freeMemory)))
+            self.temp_stats.freeMemory = int(memstats['free']) + int(
+                memstats['buffers:']) + int(memstats['cached'])
+            LOG.debug(_('Total Memory:' + str(self.temp_stats.totalMemory)
+                      + ', Free Memory:' + str(self.temp_stats.freeMemory)))
         else:
             LOG.debug(_('Error occurred in connecting vmhost via ssh %s')
                       % error)
@@ -191,10 +196,10 @@ class LibvirtVmPerfData:
 
         self.old_stats = \
             LibvirtPerfMonitor.get_perfdata_fromCache(self.uuid,
-                Constants.OLD_STATS)
+                                                      Constants.OLD_STATS)
         self.new_stats = \
             LibvirtPerfMonitor.get_perfdata_fromCache(self.uuid,
-                Constants.NEW_STATS)
+                                                      Constants.NEW_STATS)
         info = None
         vmXML = None
         try:
@@ -202,7 +207,7 @@ class LibvirtVmPerfData:
             vmXML = self.domainObj.XMLDesc(0)
         except Exception, err:
             LOG.error(_("Error reading domain info and XML for '%s': %s"
-                       % (self.domainObj.name(), err)))
+                        % (self.domainObj.name(), err)))
 
         if info is not None and vmXML is not None:
             self._update_cpu_stats(info, vmXML)
@@ -219,7 +224,7 @@ class LibvirtVmPerfData:
         self.new_stats = self.temp_stats
 
         LibvirtPerfMonitor.update_perfdata_InCache(self.uuid,
-                self.old_stats, self.new_stats)
+                                                   self.old_stats, self.new_stats)
         LOG.debug(_('Exiting refresh_perfdata for vm '
                   + self.domainObj.name()))
 
@@ -241,11 +246,11 @@ class LibvirtVmPerfData:
         wr = 0
 
         disksAttached = self.utils.getNodeXML(vmXML,
-                "//domain/devices/disk[@device='disk']")
+                                              "//domain/devices/disk[@device='disk']")
         for disk in disksAttached:
             diskXmlStr = str(disk)
             dev = self.utils.parseXMLAttributes(diskXmlStr,
-                    '//disk/target', 'dev')
+                                                '//disk/target', 'dev')
             try:
                 io = self.domainObj.blockStats(dev)
                 if io:
@@ -253,7 +258,7 @@ class LibvirtVmPerfData:
                     wr += io[3]
             except Exception, err:
                 LOG.error(_("Error reading disk stats for '%s' dev '%s': %s"
-                           % (self.domainObj.name(), dev, err)))
+                            % (self.domainObj.name(), dev, err)))
                 self.temp_stats.status = -1
                 break
 
@@ -270,11 +275,11 @@ class LibvirtVmPerfData:
         tx = 0
 
         vmNetAdapterAttached = self.utils.getNodeXML(vmXML,
-                '//domain/devices/interface')
+                                                     '//domain/devices/interface')
         for netAdapter in vmNetAdapterAttached:
             interfaceXml = str(netAdapter)
             dev = self.utils.parseXMLAttributes(interfaceXml,
-                    '//interface/target', 'dev')
+                                                '//interface/target', 'dev')
 
             try:
                 io = self.domainObj.interfaceStats(dev)
@@ -283,7 +288,7 @@ class LibvirtVmPerfData:
                     tx += io[4]
             except Exception, err:
                 LOG.error(_("Error reading net stats for '%s' dev '%s': %s"
-                           % (self.domainObj.name(), dev, err)))
+                            % (self.domainObj.name(), dev, err)))
                 self.temp_stats.status = -1
                 break
 
@@ -295,7 +300,7 @@ class LibvirtVmPerfData:
 
     def _update_memory_stats(self, vmXML):
         total_memory = long(self.utils.parseXML(vmXML, '//domain/memory'
-                            ))
+                                                ))
         memory_consumed = long(self.utils.parseXML(vmXML,
                                '//domain/currentMemory'))
 
@@ -310,7 +315,7 @@ class SamplePerfData:
 
     def sample_host_perfdata(self, uuid, window_minutes):
         LOG.info(_('Entering sample_host_perfdata for VM Host '
-                  + uuid))
+                   + uuid))
         cpuTime = 0
         prevcpuTime = 0
         diskRead = 0
@@ -327,7 +332,7 @@ class SamplePerfData:
         vm_stats_timestamp = None
         vm_stats_oldtimestamp = None
         host_obj = InventoryCacheManager.get_object_from_cache(uuid,
-                Constants.VmHost)
+                                                               Constants.VmHost)
 
         if host_obj.get_connectionState() == 'Disconnected':
             LOG.info(_('Host ' + uuid + ' is disconnected'))
@@ -336,29 +341,29 @@ class SamplePerfData:
         # Host Performance data is calculated aggregating the performance data collected for VM's'''
         for vm_id in host_obj.get_virtualMachineIds():
             vm_obj = InventoryCacheManager.get_object_from_cache(vm_id,
-                    Constants.Vm)
+                                                                 Constants.Vm)
             # Check if VM is in running state, else skip the performance data for that VM
             if vm_obj.get_powerState() == Constants.VM_POWER_STATES[1]:
                 #Check if VM has old stats for sampling, else performance data is not valid
                 if LibvirtPerfMonitor.get_perfdata_fromCache(vm_id,
-                        Constants.OLD_STATS) is not None:
+                                                             Constants.OLD_STATS) is not None:
                     vm_stats_timestamp = \
                         LibvirtPerfMonitor.get_perfdata_fromCache(vm_id,
-                            Constants.NEW_STATS).timestamp
+                                                                  Constants.NEW_STATS).timestamp
                     vm_stats_oldtimestamp = \
                         LibvirtPerfMonitor.get_perfdata_fromCache(vm_id,
-                            Constants.OLD_STATS).timestamp
+                                                                  Constants.OLD_STATS).timestamp
                     LOG.debug(_('VM last sampled time stamp '
                               + str(vm_stats_timestamp)))
 
                     # Check if the VM performance data is collected in last 5 minutes(considering buffer of 1 minute) and,
                     # status of the VM performance data, else performance data for VM is stale and is not valid
                     if self.timestamp - vm_stats_timestamp \
-                        < FLAGS.perfmon_refresh_interval + 60 \
+                        < CONF.perfmon_refresh_interval + 60 \
                         and LibvirtPerfMonitor.get_perfdata_fromCache(vm_id,
-                            Constants.NEW_STATS).status == 0:
+                                                                      Constants.NEW_STATS).status == 0:
                         LOG.debug(_('Aggregating using performance data of VM '
-                                   + vm_id))
+                                    + vm_id))
                         (vmdiskRead, vmdiskWrite) = \
                             self._sample_disk_stats(vm_id)
                         (vmnetRead, vmnetWrite) = \
@@ -369,12 +374,12 @@ class SamplePerfData:
                         netWrite += vmnetWrite
                         cpuTime += \
                             LibvirtPerfMonitor.get_perfdata_fromCache(vm_id,
-                                Constants.NEW_STATS).cpuStats.cycles['user'
-                                ]
+                                                                      Constants.NEW_STATS).cpuStats.cycles['user'
+                                                                                                           ]
                         prevcpuTime += \
                             LibvirtPerfMonitor.get_perfdata_fromCache(vm_id,
-                                Constants.OLD_STATS).cpuStats.cycles['user'
-                                ]
+                                                                      Constants.OLD_STATS).cpuStats.cycles['user'
+                                                                                                           ]
                         self.resource_utilization.set_status(0)
                     else:
                         LOG.error(_('Performance data of VM '
@@ -388,14 +393,14 @@ class SamplePerfData:
                     break
             else:
                 LOG.info(_('VM ' + vm_id
-                          + ' is not running. Skipping performance data of VM for host perf data'
-                          ))
+                           + ' is not running. Skipping performance data of VM for host perf data'
+                           ))
                 self.resource_utilization.set_status(0)
 
         host_cpus = host_obj.get_processorCoresCount()
         if self.resource_utilization.status == 0:
             if vm_stats_timestamp is not None and vm_stats_oldtimestamp \
-                is not None:
+                    is not None:
                 pcentHostCpu = (cpuTime - prevcpuTime) * 100.0 \
                     / ((vm_stats_timestamp - vm_stats_oldtimestamp)
                        * 1000.0 * 1000.0 * 1000.0)
@@ -414,9 +419,11 @@ class SamplePerfData:
         self.resource_utilization.set_resourceId(uuid)
         self.resource_utilization.set_granularity(window_minutes)
         if (LibvirtPerfMonitor.get_perfdata_fromCache(uuid, Constants.NEW_STATS) is not None) and \
-            (LibvirtPerfMonitor.get_perfdata_fromCache(uuid, Constants.NEW_STATS).status == 0):
-            totalMemory = LibvirtPerfMonitor.get_perfdata_fromCache(uuid, Constants.NEW_STATS).totalMemory
-            freeMemory = LibvirtPerfMonitor.get_perfdata_fromCache(uuid, Constants.NEW_STATS).freeMemory
+                (LibvirtPerfMonitor.get_perfdata_fromCache(uuid, Constants.NEW_STATS).status == 0):
+            totalMemory = LibvirtPerfMonitor.get_perfdata_fromCache(
+                uuid, Constants.NEW_STATS).totalMemory
+            freeMemory = LibvirtPerfMonitor.get_perfdata_fromCache(
+                uuid, Constants.NEW_STATS).freeMemory
         self.resource_utilization.set_totalMemory(totalMemory)
         self.resource_utilization.set_freeMemory(freeMemory)
         self.resource_utilization.set_configuredMemory(totalMemory)
@@ -424,7 +431,8 @@ class SamplePerfData:
         '''While all the VMs are in shutoff state the timestamp being shown is the
         current time stamp '''
         if vm_stats_timestamp is not None:
-            self.resource_utilization.set_timestamp(datetime.datetime.utcfromtimestamp(vm_stats_timestamp))
+            self.resource_utilization.set_timestamp(
+                datetime.datetime.utcfromtimestamp(vm_stats_timestamp))
         else:
             self.resource_utilization.set_timestamp(time.time())
         LOG.info(_('Exiting sample_host_perfdata for VM Host ' + uuid))
@@ -436,23 +444,24 @@ class SamplePerfData:
         self._set_resource_utilization_defaults(uuid)
         vm_stats_timestamp = None
         vm_obj = InventoryCacheManager.get_object_from_cache(uuid,
-                Constants.Vm)
-        host_obj = InventoryCacheManager.get_object_from_cache(vm_obj.get_vmHostId(),
-                Constants.VmHost)
+                                                             Constants.Vm)
+        host_obj = InventoryCacheManager.get_object_from_cache(
+            vm_obj.get_vmHostId(),
+            Constants.VmHost)
         #Check if VM is in running state, else the performance data for that VM is not valid
         if vm_obj.get_powerState() == Constants.VM_POWER_STATES[1]:
             # Check if VM has old stats for sampling, else performance data is not sampled
             if LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                    Constants.OLD_STATS) is not None:
+                                                         Constants.OLD_STATS) is not None:
                 vm_stats_timestamp = \
                     LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                        Constants.NEW_STATS).timestamp
+                                                              Constants.NEW_STATS).timestamp
 
                 # Check the status of VM performance data collected, else the data is not valid
                 if LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                        Constants.NEW_STATS).status == 0 \
+                                                             Constants.NEW_STATS).status == 0 \
                     and LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                        Constants.OLD_STATS).status == 0:
+                                                                  Constants.OLD_STATS).status == 0:
                     (pcentGuestCpu, guestCpus) = \
                         self._sample_cpu_stats(uuid)
                     (diskRead, diskWrite) = \
@@ -460,15 +469,16 @@ class SamplePerfData:
                     (netRead, netWrite) = self._sample_net_stats(uuid)
                     totalMemory = \
                         LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                            Constants.NEW_STATS).totalMemory
+                                                                  Constants.NEW_STATS).totalMemory
                     freeMemory = \
                         LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                            Constants.NEW_STATS).freeMemory
+                                                                  Constants.NEW_STATS).freeMemory
                     host_cpu_speed = host_obj.get_processorSpeedMhz()
                     self.resource_utilization.set_cpuUserLoad(pcentGuestCpu)
                     self.resource_utilization.set_ncpus(guestCpus)
                     self.resource_utilization.set_hostCpuSpeed(host_cpu_speed)
-                    self.resource_utilization.set_hostMaxCpuSpeed(host_cpu_speed)
+                    self.resource_utilization.set_hostMaxCpuSpeed(
+                        host_cpu_speed)
                     self.resource_utilization.set_diskRead(diskRead)
                     self.resource_utilization.set_diskWrite(diskWrite)
                     self.resource_utilization.set_netRead(netRead)
@@ -520,27 +530,27 @@ class SamplePerfData:
         LOG.debug(_('Entering _sample_cpu_stats for uuid ' + uuid))
         prevcpuPerfTime = \
             LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.OLD_STATS).cpuPerfTime
+                                                      Constants.OLD_STATS).cpuPerfTime
         prevCpuTime = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.OLD_STATS).cpuStats.cycles['user']
+                                                                Constants.OLD_STATS).cpuStats.cycles['user']
 
         cpuPerfTime = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).cpuPerfTime
+                                                                Constants.NEW_STATS).cpuPerfTime
         cpuTime = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).cpuStats.cycles['user']
+                                                            Constants.NEW_STATS).cpuStats.cycles['user']
 
         pcentbase = 0.0
         perftime_delta = self._get_delta(cpuPerfTime,
-                prevcpuPerfTime)
+                                         prevcpuPerfTime)
         if perftime_delta > 0:
             pcentbase = self._get_delta(cpuTime, prevCpuTime) \
                 * 100.0 / (perftime_delta * 1000.0 * 1000.0 * 1000.0)
 
         guestcpus = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).ncpus
+                                                              Constants.NEW_STATS).ncpus
         LOG.debug(_('prevcpuPerfTime ' + str(prevcpuPerfTime)
                   + ' prevCpuTime ' + str(prevCpuTime) + ' cpuPerfTime '
-                   + str(cpuPerfTime) + ' cpuTime ' + str(cpuTime)
+                  + str(cpuPerfTime) + ' cpuTime ' + str(cpuTime)
                   + ' guestcpus ' + str(guestcpus)))
 
         pcentGuestCpu = pcentbase / int(guestcpus)
@@ -557,21 +567,21 @@ class SamplePerfData:
         LOG.debug(_('Entering _sample_disk_stats for uuid ' + uuid))
         prevdiskPerfTime = \
             LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.OLD_STATS).diskPerfTime
+                                                      Constants.OLD_STATS).diskPerfTime
         prevdiskReadBytes = \
             LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.OLD_STATS).diskReadBytes
+                                                      Constants.OLD_STATS).diskReadBytes
         prevdiskWriteBytes = \
             LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.OLD_STATS).diskWriteBytes
+                                                      Constants.OLD_STATS).diskWriteBytes
 
         diskPerfTime = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).diskPerfTime
+                                                                 Constants.NEW_STATS).diskPerfTime
         diskReadBytes = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).diskReadBytes
+                                                                  Constants.NEW_STATS).diskReadBytes
         diskWriteBytes = \
             LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).diskWriteBytes
+                                                      Constants.NEW_STATS).diskWriteBytes
 
         LOG.debug(_('prevdiskPerfTime ' + str(prevdiskPerfTime)
                   + ' prevdiskReadBytes ' + str(prevdiskReadBytes)
@@ -580,19 +590,15 @@ class SamplePerfData:
                   + ' diskReadBytes ' + str(diskReadBytes)
                   + ' diskWriteBytes ' + str(diskWriteBytes)))
 
-        diskRead = \
-            self._get_rate(self._get_delta(diskReadBytes,
-                prevdiskReadBytes),
-                self._get_delta(diskPerfTime,
-                prevdiskPerfTime))
-        diskWrite = \
-            self._get_rate(self._get_delta(diskWriteBytes,
-                prevdiskWriteBytes),
-                self._get_delta(diskPerfTime,
-                prevdiskPerfTime))
+        diskRead = self._get_rate(
+            self._get_delta(diskReadBytes, prevdiskReadBytes),
+            self._get_delta(diskPerfTime, prevdiskPerfTime))
+        diskWrite = self._get_rate(
+            self._get_delta(diskWriteBytes, prevdiskWriteBytes),
+            self._get_delta(diskPerfTime, prevdiskPerfTime))
 
-        LOG.debug(_('diskRead ' + str(diskRead) + ' diskWrite '
-                  + str(diskWrite)))
+        LOG.debug(_('diskRead ' + str(diskRead) + ' diskWrite ' +
+                    str(diskWrite)))
 
         LOG.debug(_('Exiting _sample_disk_stats for uuid ' + uuid))
         return (diskRead, diskWrite)
@@ -601,24 +607,26 @@ class SamplePerfData:
         '''net stats'''
 
         LOG.debug(_('Entering _sample_net_stats for uuid ' + uuid))
-        prevnetPerfTime = \
-            LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.OLD_STATS).diskPerfTime
+        prevnetPerfTime = LibvirtPerfMonitor.get_perfdata_fromCache(
+            uuid, Constants.OLD_STATS).diskPerfTime
         prevnetReceivedBytes = \
-            LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
+            LibvirtPerfMonitor.get_perfdata_fromCache(
+                uuid,
                 Constants.OLD_STATS).netReceivedBytes
         prevnetTransmittedBytes = \
-            LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
+            LibvirtPerfMonitor.get_perfdata_fromCache(
+                uuid,
                 Constants.OLD_STATS).netTransmittedBytes
 
-        netPerfTime = LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).diskPerfTime
-        netReceivedBytes = \
-            LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).netReceivedBytes
-        netTransmittedBytes = \
-            LibvirtPerfMonitor.get_perfdata_fromCache(uuid,
-                Constants.NEW_STATS).netTransmittedBytes
+        netPerfTime = LibvirtPerfMonitor.get_perfdata_fromCache(
+            uuid,
+            Constants.NEW_STATS).diskPerfTime
+        netReceivedBytes = LibvirtPerfMonitor.get_perfdata_fromCache(
+            uuid,
+            Constants.NEW_STATS).netReceivedBytes
+        netTransmittedBytes = LibvirtPerfMonitor.get_perfdata_fromCache(
+            uuid,
+            Constants.NEW_STATS).netTransmittedBytes
 
         LOG.debug(_('prevnetPerfTime ' + str(prevnetPerfTime)
                   + ' prevnetReceivedBytes '
@@ -629,14 +637,12 @@ class SamplePerfData:
                   + ' netReceivedBytes ' + str(netReceivedBytes)
                   + ' netTransmittedBytes ' + str(netTransmittedBytes)))
 
-        netRead = \
-            self._get_rate(self._get_delta(netReceivedBytes,
-                prevnetReceivedBytes),
-                self._get_delta(netPerfTime, prevnetPerfTime))
-        netWrite = \
-            self._get_rate(self._get_delta(netTransmittedBytes,
-                prevnetTransmittedBytes),
-                self._get_delta(netPerfTime, prevnetPerfTime))
+        netRead = self._get_rate(
+            self._get_delta(netReceivedBytes, prevnetReceivedBytes),
+            self._get_delta(netPerfTime, prevnetPerfTime))
+        netWrite = self._get_rate(
+            self._get_delta(netTransmittedBytes, prevnetTransmittedBytes),
+            self._get_delta(netPerfTime, prevnetPerfTime))
 
         LOG.debug(_('netRead ' + str(netRead) + ' netWrite '
                   + str(netWrite)))

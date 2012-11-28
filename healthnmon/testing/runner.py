@@ -71,10 +71,10 @@ reldir = os.path.join(os.path.dirname(__file__), '..', '..')
 absdir = os.path.abspath(reldir)
 sys.path.insert(0, absdir)
 
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import log as logging
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 class _AnsiColorizer(object):
@@ -95,7 +95,7 @@ class _AnsiColorizer(object):
         magenta=35,
         cyan=36,
         white=37,
-        )
+    )
 
     def __init__(self, stream):
         self.stream = stream
@@ -164,7 +164,7 @@ class _Win32Colorizer(object):
             'magenta': red | blue | bold,
             'cyan': green | blue | bold,
             'white': red | green | blue | bold,
-            }
+        }
 
     def supported(cls, stream=sys.stdout):
         try:
@@ -176,8 +176,8 @@ class _Win32Colorizer(object):
         import pywintypes
         try:
             screenBuffer.SetConsoleTextAttribute(win32console.FOREGROUND_RED
-                    | win32console.FOREGROUND_GREEN
-                    | win32console.FOREGROUND_BLUE)
+                                                 | win32console.FOREGROUND_GREEN
+                                                 | win32console.FOREGROUND_BLUE)
         except pywintypes.error:
             return False
         else:
@@ -190,7 +190,7 @@ class _Win32Colorizer(object):
         self.screenBuffer.SetConsoleTextAttribute(color)
         self.stream.write(text)
         self.screenBuffer.SetConsoleTextAttribute(self._colors['normal'
-                ])
+                                                               ])
 
 
 class _NullColorizer(object):
@@ -273,7 +273,7 @@ class HealthnmonTestResult(result.TextTestResult):
         color,
         short_result,
         success,
-        ):
+    ):
         if self.showAll:
             self.colorizer.write(long_result, color)
             if self.show_elapsed and success:
@@ -316,7 +316,7 @@ class HealthnmonTestResult(result.TextTestResult):
 
             exc_info = self._exc_info_to_string(err)
         for (cls, (storage, label, isfail)) in \
-            self.errorClasses.items():
+                self.errorClasses.items():
             if result.isclass(ec) and issubclass(ec, cls):
                 if isfail:
                     test.passed = False
@@ -376,7 +376,7 @@ class HealthnmonTestRunner(core.TextTestRunner):
             self.stream.writeln('Slowest %i tests took %.2f secs:'
                                 % (len(slow_tests), slow_total_time))
             for (elapsed_time, test) in sorted(slow_tests,
-                    reverse=True):
+                                               reverse=True):
                 time_str = '%.2f' % elapsed_time
                 self.stream.writeln('    %s %s' % (time_str.ljust(10),
                                     test))
@@ -418,5 +418,6 @@ def run():
 
 
 if __name__ == '__main__':
-    eventlet.monkey_patch(all=False, os=True, select=True, socket=True, thread=False, time=True)
+    eventlet.monkey_patch(
+        all=False, os=True, select=True, socket=True, thread=False, time=True)
     run()

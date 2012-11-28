@@ -23,21 +23,21 @@ import logging
 import logging.handlers
 import cStringIO
 import traceback
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import cfg
 from eventlet import greenthread
 
 
 log_opts = [
     cfg.StrOpt('healthnmon_log_dir',
-            default='/var/log/healthnmon',
-            help='Log directory for healthnmon'),
+               default='/var/log/healthnmon',
+               help='Log directory for healthnmon'),
     cfg.StrOpt('healthnmon_log_config',
-            default='/etc/healthnmon/logging-healthnmon.conf',
-            help='Log configuration file for healthnmon'),
+               default='/etc/healthnmon/logging-healthnmon.conf',
+               help='Log configuration file for healthnmon'),
     cfg.StrOpt('healthnmon_manage_log_config',
-            default='/etc/healthnmon/logging-healthnmon-manage.conf',
-            help='Log configuration file for healthnmon'),
+               default='/etc/healthnmon/logging-healthnmon-manage.conf',
+               help='Log configuration file for healthnmon'),
     cfg.StrOpt('healthnmon_logging_audit_format_string',
                default='%(asctime)s,%(componentId)s,%(orgId)s,%(orgId)s,%(domain)s,%(userId)s,%(loggingId)s,%(taskId)s,%(sourceIp)s,%(result)s,%(action)s,%(severity)s,%(name)s,%(objectDescription)s,%(message)s',
                help='format string to use for logging audit log messages'),
@@ -55,10 +55,10 @@ log_opts = [
     cfg.StrOpt('logging_thread_exception_prefix',
                default='%(asctime)s | TRACE | %(name)s | %(thread)d | ',
                help='prefix each line of exception output with this format'),
-   ]
+]
 
-FLAGS = flags.FLAGS
-FLAGS.register_opts(log_opts)
+CONF = cfg.CONF
+CONF.register_opts(log_opts)
 
 
 # AUDIT level
@@ -103,16 +103,16 @@ class HealthnmonFormatter(logging.Formatter):
     def format(self, record):
         """Uses green thread id if available, otherwise thread id is used ."""
         if 'gthread_id' not in record.__dict__:
-            self._fmt = FLAGS.logging_thread_format_string
+            self._fmt = CONF.logging_thread_format_string
         else:
-            self._fmt = FLAGS.logging_greenthread_format_string
+            self._fmt = CONF.logging_greenthread_format_string
 
         if record.exc_info:
             record.exc_text = self.formatException(record.exc_info, record)
         return logging.Formatter.format(self, record)
 
     def formatException(self, exc_info, record=None):
-        """Format exception output with FLAGS.healthnmon_logging_exception_prefix."""
+        """Format exception output with CONF.healthnmon_logging_exception_prefix."""
         if not record:
             return logging.Formatter.formatException(self, exc_info)
         stringbuffer = cStringIO.StringIO()
@@ -121,9 +121,9 @@ class HealthnmonFormatter(logging.Formatter):
         lines = stringbuffer.getvalue().split('\n')
         stringbuffer.close()
         if 'gthread_id' not in record.__dict__:
-            exception_prefix = FLAGS.logging_thread_exception_prefix
+            exception_prefix = CONF.logging_thread_exception_prefix
         else:
-            exception_prefix = FLAGS.logging_greenthread_exception_prefix
+            exception_prefix = CONF.logging_greenthread_exception_prefix
         if exception_prefix.find('%(asctime)') != -1:
             record.asctime = self.formatTime(record, self.datefmt)
         formatted_lines = []
@@ -144,7 +144,7 @@ class HealthnmonAuditFilter(logging.Filter):
 class HealthnmonAuditFormatter(HealthnmonFormatter):
     """Format audit messages as per the audit logging format"""
     def format(self, record):
-        self._fmt = FLAGS.healthnmon_logging_audit_format_string
+        self._fmt = CONF.healthnmon_logging_audit_format_string
 
         if 'componentId' not in record.__dict__:
             record.__dict__['componentId'] = 'Healthnmon'
@@ -177,12 +177,13 @@ class HealthnmonAuditFormatter(HealthnmonFormatter):
 class HealthnmonAuditHandler(logging.handlers.WatchedFileHandler):
     """"""
     def __init__(self, filename, mode='a', encoding=None, delay=0):
-        logging.handlers.WatchedFileHandler.__init__(self, filename, mode, encoding, delay)
+        logging.handlers.WatchedFileHandler.__init__(
+            self, filename, mode, encoding, delay)
         self.addFilter(HealthnmonAuditFilter())
 
 #def handle_exception(type, value, tb):
 #    extra = {}
-#    if FLAGS.verbose:
+#    if CONF.verbose:
 #        extra['exc_info'] = (type, value, tb)
 #    getLogger().critical(str(value), **extra)
 
@@ -191,9 +192,9 @@ def setup():
     """Setup healthnmon logging."""
     #sys.excepthook = handle_exception
 
-    if FLAGS.healthnmon_log_config:
+    if CONF.healthnmon_log_config:
         try:
-            logging.config.fileConfig(FLAGS.healthnmon_log_config)
+            logging.config.fileConfig(CONF.healthnmon_log_config)
         except Exception:
             traceback.print_exc()
             raise
@@ -203,9 +204,9 @@ def healthnmon_manage_setup():
     """Setup healthnmon logging."""
     #sys.excepthook = handle_exception
 
-    if FLAGS.healthnmon_manage_log_config:
+    if CONF.healthnmon_manage_log_config:
         try:
-            logging.config.fileConfig(FLAGS.healthnmon_manage_log_config)
+            logging.config.fileConfig(CONF.healthnmon_manage_log_config)
         except Exception:
             traceback.print_exc()
             raise

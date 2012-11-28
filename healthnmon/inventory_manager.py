@@ -15,7 +15,8 @@
 #    under the License.
 
 """
-Manage communication with compute nodes and collects inventory and monitoring info
+Manage communication with compute nodes and
+collects inventory and monitoring info
 """
 
 from healthnmon.inventory_cache_manager import InventoryCacheManager
@@ -24,7 +25,7 @@ from eventlet import greenpool
 from healthnmon import rmcontext
 from healthnmon.db import api
 from healthnmon.virt import driver
-from nova import db, flags, utils
+from nova import db, utils
 from healthnmon import utils as hnm_utils
 from healthnmon import log as logging
 from nova.openstack.common import cfg
@@ -39,25 +40,27 @@ import datetime
 import traceback
 
 invman_opts = [
-cfg.IntOpt('compute_db_check_interval',
-            default=60,
-            help='Interval for refresh of inventory from DB'),
-cfg.IntOpt('compute_failures_to_offline',
-            default=3,
-            help='Number of consecutive errors before marking compute_node offline '),
-cfg.StrOpt('_compute_inventory_driver',
-            default='healthnmon.virt.connection',
-            help='connection ')
-    ]
-FLAGS = flags.FLAGS
-FLAGS.register_opts(invman_opts)
+    cfg.IntOpt('compute_db_check_interval',
+               default=60,
+               help='Interval for refresh of inventory from DB'),
+    cfg.IntOpt('compute_failures_to_offline',
+               default=3,
+               help='Number of consecutive errors \
+               before marking compute_node offline '),
+    cfg.StrOpt('_compute_inventory_driver',
+               default='healthnmon.virt.connection',
+               help='connection ')
+]
+CONF = cfg.CONF
+CONF.register_opts(invman_opts)
 
 LOG = logging.getLogger('healthnmon.inventory_manager')
 
 
 class ComputeInventory(object):
 
-    """Holds the compute node inventory for a particular compute node that is being managed in the zone."""
+    """Holds the compute node inventory for a particular compute node
+    that is being managed in the zone."""
 
     def __init__(self, compute_rmcontext):
         self.is_active = True
@@ -68,10 +71,11 @@ class ComputeInventory(object):
         self.compute_rmcontext = compute_rmcontext
         self.compute_info = {}
         inventory_driver = \
-            importutils.import_module(FLAGS._compute_inventory_driver)
+            importutils.import_module(CONF._compute_inventory_driver)
         self.driver = \
-            utils.check_isinstance(inventory_driver.get_connection(self.compute_rmcontext.rmType),
-                                   driver.ComputeInventoryDriver)
+            utils.check_isinstance(
+                inventory_driver.get_connection(self.compute_rmcontext.rmType),
+                driver.ComputeInventoryDriver)
         self.driver.init_rmcontext(compute_rmcontext)
         self.compute_id = None
 
@@ -101,7 +105,7 @@ class ComputeInventory(object):
 #        return None
 
     def get_compute_conn_driver(self):
-        if self.driver != None:
+        if self.driver is not None:
             return self.driver
 
     def log_error(self, exception):
@@ -110,12 +114,13 @@ class ComputeInventory(object):
 
         LOG.error(_('Exception occurred %s ') % exception)
 
-        max_errors = FLAGS.compute_failures_to_offline
+        max_errors = CONF.compute_failures_to_offline
         self.attempt += 1
         if self.attempt >= max_errors:
             self.is_active = False
-            LOG.error(_('No answer from compute_node %(api_url)s after %(max_errors)d attempts. Marking inactive.'
-                      ) % locals())
+            LOG.error(_('No answer from compute_node \
+            %(api_url)s after %(max_errors)d attempts. Marking inactive.')
+                      % locals())
 
     def poll(self):
         """Eventlet worker to poll a self."""
@@ -146,55 +151,73 @@ class InventoryManager(object):
             compute_id = str(compute['id'])
             service = compute['service']
             if service is not None:
-                compute_alive = hnm_utils.is_service_alive(service['updated_at'], service['created_at'])
+                compute_alive = hnm_utils.is_service_alive(
+                    service['updated_at'], service['created_at'])
                 db_keys.append(compute_id)
                 if not compute_alive:
-                    LOG.warn(_('Service %s for host %s is not active') % (service['binary'], service['host']))
+                    LOG.warn(_('Service %s for host %s is not active')
+                             % (service['binary'], service['host']))
                     continue
                 if compute_id not in existing:
                     rm_context = \
-                        rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                            ], rmIpAddress=service['host'],
+                        rmcontext.ComputeRMContext(
+                            rmType=compute['hypervisor_type'],
+                            rmIpAddress=service['host'],
                             rmUserName='user', rmPassword='********')
-                    InventoryCacheManager.get_all_compute_inventory()[compute_id] = \
+                    InventoryCacheManager.\
+                        get_all_compute_inventory()[compute_id] =\
                         ComputeInventory(rm_context)
-                    LOG.audit(
-                    _('New Host with compute_id  %s is obtained') % (compute_id))
-                InventoryCacheManager.get_all_compute_inventory()[compute_id].update_compute_Id(compute_id)
+                    LOG.audit(_('New Host with compute_id  %s is obtained')
+                              % (compute_id))
+                InventoryCacheManager.get_all_compute_inventory(
+                )[compute_id].update_compute_Id(compute_id)
             else:
-                LOG.warn(_(' No services entry found for compute id  %s') % compute_id)
+                LOG.warn(_(' No services entry found for compute id  %s')
+                         % compute_id)
 
         # Cleanup compute_nodes removed from db ...
 
-        keys = InventoryCacheManager.get_all_compute_inventory().keys()  # since we're deleting
+        keys = InventoryCacheManager.get_all_compute_inventory(
+        ).keys()  # since we're deleting
         deletion_list = []
         for compute_id in keys:
             if compute_id not in db_keys:
-                vmHostObj = InventoryCacheManager.get_all_compute_inventory()[compute_id].get_compute_info()
-                if vmHostObj != None:
+                vmHostObj = InventoryCacheManager.get_all_compute_inventory(
+                )[compute_id].get_compute_info()
+                if vmHostObj is not None:
                     deletion_list.append(vmHostObj.get_id())
 
         host_deleted_list = []
         if len(deletion_list) != 0:
             # Delete object from cache
             for _id in deletion_list:
-                host_deleted = InventoryCacheManager.get_object_from_cache(_id,
-                    Constants.VmHost)
+                host_deleted = InventoryCacheManager.get_object_from_cache(
+                    _id, Constants.VmHost)
                 if host_deleted is not None:
-                    host_deleted_list.append(InventoryCacheManager.get_object_from_cache(_id, Constants.VmHost))
+                    host_deleted_list.append(
+                        InventoryCacheManager.get_object_from_cache(
+                            _id, Constants.VmHost))
                 else:
-                    LOG.warn(_("VmHost object for id %s not found in cache") % _id)
+                    LOG.warn(
+                        _("VmHost object for id %s not found in cache") % _id)
 
             # Delete the VmHost from DB
             api.vm_host_delete_by_ids(get_admin_context(), deletion_list)
             # Generate the VmHost Removed Event
             for host_deleted in host_deleted_list:
-                LOG.debug(_('Generating Host Removed event for the host id : %s') % str(host_deleted.get_id()))
-                event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_REMOVED, host_deleted)
-                # VmHost is deleted from compute inventory and inventory cache after notifying the event
-                del InventoryCacheManager.get_all_compute_inventory()[host_deleted.get_id()]
-                InventoryCacheManager.delete_object_in_cache(host_deleted.get_id(), Constants.VmHost)
-                LOG.audit(_('Host with (UUID, host name) - (%s, %s) got removed') % (host_deleted.get_id(), host_deleted.get_name()))
+                LOG.debug(_('Generating Host Removed event \
+                for the host id : %s') % str(host_deleted.get_id()))
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_REMOVED, host_deleted)
+                # VmHost is deleted from compute inventory and inventory
+                # cache after notifying the event
+                del InventoryCacheManager.get_all_compute_inventory(
+                )[host_deleted.get_id()]
+                InventoryCacheManager.delete_object_in_cache(
+                    host_deleted.get_id(), Constants.VmHost)
+                LOG.audit(_('Host with (UUID, host name) \
+                - (%s, %s) got removed') % (host_deleted.get_id(),
+                                            host_deleted.get_name()))
 
     def get_compute_list(self):
         """Return the list of nova-compute_nodes we know about."""
@@ -208,7 +231,8 @@ class InventoryManager(object):
         def _worker(compute_inventory):
             compute_inventory.poll()
 
-        for compute in InventoryCacheManager.get_all_compute_inventory().values():
+        for compute in InventoryCacheManager.\
+                get_all_compute_inventory().values():
             self.green_pool.spawn_n(_worker, compute)
             LOG.debug(_('Free threads available in green pool %d ')
                       % self.green_pool.free())
@@ -219,7 +243,7 @@ class InventoryManager(object):
         """
         self.green_pool.waitall()
         diff = timeutils.utcnow() - self.last_compute_db_check
-        if diff.seconds >= FLAGS.compute_db_check_interval:
+        if diff.seconds >= CONF.compute_db_check_interval:
             LOG.info(_('Updating compute_node cache from db.'))
             self.last_compute_db_check = timeutils.utcnow()
             self._refresh_from_db(context)
@@ -227,7 +251,8 @@ class InventoryManager(object):
 
     def _initCache(self):
 
-        # Read from DB all the vmHost objects and populate the cache for each IP if cache is empty
+        # Read from DB all the vmHost objects and populate
+        # the cache for each IP if cache is empty
 
         LOG.info(_(' Entering into initCache'))
         vmhosts = api.vm_host_get_all(get_admin_context())
@@ -242,44 +267,50 @@ class InventoryManager(object):
         LOG.info(_('Hosts obtained from db ') % vmhosts)
         LOG.info(_('Vms obtained from db ') % vms)
         LOG.info(_('Storage volumes obtained from db ')
-                  % storageVolumes)
+                 % storageVolumes)
 
         LOG.info(_('Completed the initCache method'))
 
     def _updateInventory(self, objlist):
-        if objlist != None:
+        if objlist is not None:
             for obj in objlist:
                 InventoryCacheManager.update_object_in_cache(obj.id, obj)
 
     def poll_perfmon(self, context):
-        """ Periodically polls to refresh the performance data of VmHost and Vm in inventory """
-        LOG.info(_('Polling performance data periodically for Vmhosts and Vms'))
+        """ Periodically polls to refresh the performance data
+        of VmHost and Vm in inventory """
+        LOG.info(
+            _('Polling performance data periodically for Vmhosts and Vms'))
 
         def _worker(uuid, conn_driver, perfmon_type):
             conn_driver.update_perfdata(uuid, perfmon_type)
 
-        for host_id in InventoryCacheManager.get_inventory_cache()[Constants.VmHost].keys():
-            conn_driver = InventoryCacheManager.get_compute_conn_driver(host_id,
-                    Constants.VmHost)
+        for host_id in InventoryCacheManager.\
+                get_inventory_cache()[Constants.VmHost].keys():
+            conn_driver = InventoryCacheManager.get_compute_conn_driver(
+                host_id,
+                Constants.VmHost)
             if conn_driver is not None:
                 self.perf_green_pool.spawn_n(_worker, host_id,
-                        conn_driver, Constants.VmHost)
+                                             conn_driver, Constants.VmHost)
             else:
                 LOG.error(_('Error in monitoring performance data for Host %s '
-                          ) % host_id)
-            host_obj = InventoryCacheManager.get_inventory_cache()[Constants.VmHost][host_id]
+                            ) % host_id)
+            host_obj = InventoryCacheManager.get_inventory_cache(
+            )[Constants.VmHost][host_id]
             for vm_id in host_obj.get_virtualMachineIds():
-                vm_obj = InventoryCacheManager.get_object_from_cache(vm_id, Constants.Vm)
+                vm_obj = InventoryCacheManager.get_object_from_cache(
+                    vm_id, Constants.Vm)
                 if vm_obj.get_powerState() \
-                    == Constants.VM_POWER_STATES[1]:
-                    conn_driver = InventoryCacheManager.get_compute_conn_driver(vm_id,
-                            Constants.Vm)
+                        == Constants.VM_POWER_STATES[1]:
+                    conn_driver = InventoryCacheManager.\
+                        get_compute_conn_driver(vm_id, Constants.Vm)
                     if conn_driver is not None:
                         self.perf_green_pool.spawn_n(_worker, vm_id,
-                                conn_driver, Constants.Vm)
+                                                     conn_driver, Constants.Vm)
                     else:
-                        LOG.error(_('Error in monitoring performance data for VM %s '
-                                  ) % vm_id)
+                        LOG.error(_('Error in monitoring performance \
+                        data for VM %s ') % vm_id)
 
     def get_resource_utilization(
         self,
@@ -287,9 +318,11 @@ class InventoryManager(object):
         uuid,
         perfmon_type,
         window_minutes,
-        ):
-        """ Returns performance data of VMHost and VM via hypervisor connection driver """
+    ):
+        """ Returns performance data of VMHost and VM via
+        hypervisor connection driver """
 
-        return InventoryCacheManager.get_compute_conn_driver(uuid,
-                perfmon_type).get_resource_utilization(uuid,
-                perfmon_type, window_minutes)
+        return InventoryCacheManager.get_compute_conn_driver(
+            uuid, perfmon_type).get_resource_utilization(uuid,
+                                                         perfmon_type,
+                                                         window_minutes)

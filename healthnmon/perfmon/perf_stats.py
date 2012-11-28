@@ -158,7 +158,7 @@ class CPUStats(object):
             'system': None,
             'idle': None,
             'total': None,
-            }
+        }
 
     def get_cycles(self):
         return self.__cycles

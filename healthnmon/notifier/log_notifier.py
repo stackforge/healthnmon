@@ -19,10 +19,10 @@
 
 import json
 
-from nova import flags
+from nova.openstack.common import cfg
 from healthnmon import log as logging
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 def notify(context, message):
@@ -30,7 +30,7 @@ def notify(context, message):
     Log notifications using nova's default logging system"""
 
     priority = message.get('priority',
-                           FLAGS.healthnmon_default_notification_level)
+                           CONF.healthnmon_default_notification_level)
     priority = priority.lower()
     logger = logging.getLogger('healthnmon.notification.%s'
                                % message['event_type'])

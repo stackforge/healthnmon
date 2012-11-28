@@ -28,7 +28,7 @@ from nova.openstack.common import timeutils
 
 from ..api import util
 from ..api import constants
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import log as logging
 from ..constants import DbConstants
 from ..resourcemodel import healthnmonResourceModel
@@ -37,7 +37,7 @@ import calendar
 
 
 LOG = logging.getLogger(__name__)
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 class Controller(common.ViewBuilder):
@@ -82,12 +82,13 @@ class Controller(common.ViewBuilder):
                  'atom': constants.XMLNS_ATOM}
         if util.get_content_accept_type(req) == 'xml':
             return util.create_response('application/xml',
-                    util.get_entity_list_xml(resources_dict, nsmap,
-                                             self._collection_name,
-                                             self._member_name))
+                                        util.get_entity_list_xml(
+                                        resources_dict, nsmap,
+                                        self._collection_name,
+                                        self._member_name))
         else:
             return util.create_response('application/json',
-                    json.dumps(resources_dict))
+                                        json.dumps(resources_dict))
 
     def _detail(self, req, items, collection_links):
         """ List all resources as a detailed list with appropriate
@@ -99,7 +100,7 @@ class Controller(common.ViewBuilder):
         """
         content_type = util.get_content_accept_type(req)
         nsmap = {None: constants.XMLNS_HEALTHNMON_EXTENSION_API,
-         'atom': constants.XMLNS_ATOM}
+                 'atom': constants.XMLNS_ATOM}
         # Create an empty parent xml
         parent_xml = util.get_entity_list_xml({self._collection_name: {}},
                                               nsmap,
@@ -107,7 +108,8 @@ class Controller(common.ViewBuilder):
                                               self._model_name)
         item_list = []
         for item in items:
-            (resource_xml, out_dict) = self._get_resource_xml_with_links(req, item)
+            (resource_xml,
+             out_dict) = self._get_resource_xml_with_links(req, item)
             if content_type == 'xml':
                 parent_xml = util.append_xml_as_child(parent_xml, resource_xml)
             else:
@@ -133,7 +135,7 @@ class Controller(common.ViewBuilder):
             return util.create_response('application/xml', parent_xml)
         else:
             return util.create_response('application/json',
-                    json.dumps(resources_dict))
+                                        json.dumps(resources_dict))
 
     def _get_resource_xml_with_links(self, req, item):
         """ Get item resource as xml updated with
@@ -150,14 +152,14 @@ class Controller(common.ViewBuilder):
         resource_xml = util.dump_resource_xml(item, self._model_name)
         out_dict = {}
         resource_xml_update = util.replace_with_links(resource_xml,
-                self._get_resource_tag_dict_list(req.application_url,
-                                               proj_id),
-                out_dict)
+                                                      self._get_resource_tag_dict_list(req.application_url,
+                                                                                       proj_id),
+                                                      out_dict)
         field_list = util.get_query_fields(req)
-        if field_list != None:
+        if field_list is not None:
             resource_xml_update = \
                 util.get_select_elements_xml(resource_xml_update,
-                    field_list, 'id')
+                                             field_list, 'id')
         return (resource_xml_update, out_dict)
 
     def _get_resource_tag_dict_list(self, application_url, proj_id):
@@ -192,7 +194,7 @@ class Controller(common.ViewBuilder):
             LOG.debug(_('Dict after conversion %s'
                       % str(resource_dict)))
             return util.create_response('application/json',
-                    json.dumps(resource_dict))
+                                        json.dumps(resource_dict))
 
     def get_all_by_filters(self, req, func):
         """
@@ -205,8 +207,9 @@ class Controller(common.ViewBuilder):
         """
         ctx = util.get_project_context(req)[0]
         filters, sort_key, sort_dir = self.get_search_options(req,
-                                            getattr(healthnmonResourceModel,
-                                                          self._model_name))
+                                                              getattr(
+                                                              healthnmonResourceModel,
+                                                              self._model_name))
         try:
             return func(ctx, filters, sort_key, sort_dir)
         except sql_exc.DataError, e:
@@ -279,7 +282,7 @@ class Controller(common.ViewBuilder):
 
         return (filters, sort_key, sort_dir)
 
-    def limited_by_marker(self, items, request, max_limit=FLAGS.osapi_max_limit):
+    def limited_by_marker(self, items, request, max_limit=CONF.osapi_max_limit):
         """
         Return a tuple with slice of items according to the requested marker
         and limit and a set of collection links
@@ -316,21 +319,21 @@ class Controller(common.ViewBuilder):
             pass
         else:
             collection_links.append({
-                    'rel': 'next',
-                    'href': self._get_next_link(request,
-                                        str(items[range_end - 1].get_id()), self._collection_name)
-                })
+                'rel': 'next',
+                'href': self._get_next_link(request,
+                                            str(items[range_end - 1].get_id()), self._collection_name)
+            })
         if prev_index > 0:
             collection_links.append({
-                    'rel': 'previous',
-                    'href': self._get_previous_link(request,
-                                        str(items[prev_index - 1].get_id()), self._collection_name)
-                })
+                'rel': 'previous',
+                'href': self._get_previous_link(request,
+                                                str(items[prev_index - 1].get_id()), self._collection_name)
+            })
         elif prev_index == 0:
             collection_links.append({
-                    'rel': 'previous',
-                    'href': self._get_previous_link(request, None, self._collection_name)
-                })
+                'rel': 'previous',
+                'href': self._get_previous_link(request, None, self._collection_name)
+            })
         return (items[start_index:range_end], collection_links)
 
     def _get_previous_link(self, request, identifier, collection_name):
@@ -347,7 +350,7 @@ class Controller(common.ViewBuilder):
         elif "marker" in params:
             del params["marker"]
         prefix = self._update_link_prefix(request.application_url,
-                                          FLAGS.osapi_compute_link_prefix)
+                                          CONF.osapi_compute_link_prefix)
         url = os.path.join(prefix,
                            request.environ["nova.context"].project_id,
                            collection_name)
@@ -357,13 +360,13 @@ class Controller(common.ViewBuilder):
     def _get_href_link(self, request, identifier, collection_name):
         """Return an href string pointing to this object."""
         prefix = self._update_link_prefix(request.application_url,
-                                          FLAGS.osapi_compute_link_prefix)
+                                          CONF.osapi_compute_link_prefix)
         url = os.path.join(prefix,
-                            request.environ["nova.context"].project_id,
-                            collection_name,
-                            str(identifier))
+                           request.environ["nova.context"].project_id,
+                           collection_name,
+                           str(identifier))
         if 'fields' in request.params:
             return "%s?%s" % (url,
-                common.dict_to_query_str({'fields': request.params['fields']}))
+                              common.dict_to_query_str({'fields': request.params['fields']}))
         else:
             return url

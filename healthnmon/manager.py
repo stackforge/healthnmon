@@ -18,7 +18,7 @@
 heathnmon Service - Manage communication with compute nodes and collects inventory and monitoring info
 """
 
-from nova import flags, manager, utils
+from nova import manager, utils
 from healthnmon.profiler import helper
 from nova.openstack.common import importutils
 from nova.openstack.common import cfg
@@ -31,39 +31,39 @@ import sys
 LOG = logging.getLogger('healthnmon.manager')
 
 manager_opts = [
-cfg.StrOpt('healthnmon_driver',
-            default='healthnmon.driver.Healthnmon',
-            help='Default driver to use for the healthnmon service')
-    ]
+    cfg.StrOpt('healthnmon_driver',
+               default='healthnmon.driver.Healthnmon',
+               help='Default driver to use for the healthnmon service')
+]
 
 perfmon_opts = [
-cfg.IntOpt("perfmon_refresh_interval",
-            default=300,
-            help="performance data refresh period.")
-    ]
+    cfg.IntOpt("perfmon_refresh_interval",
+               default=300,
+               help="performance data refresh period.")
+]
 
 topic_opts = [
-cfg.StrOpt('healthnmon_topic',
-            default='healthnmon',
-            help='the topic healthnmon service listen on')
-    ]
+    cfg.StrOpt('healthnmon_topic',
+               default='healthnmon',
+               help='the topic healthnmon service listen on')
+]
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 def register_flags():
     try:
-        FLAGS.healthnmon_driver
+        CONF.healthnmon_driver
     except cfg.NoSuchOptError:
-        FLAGS.register_opts(manager_opts)
+        CONF.register_opts(manager_opts)
     try:
-        FLAGS.perfmon_refresh_interval
+        CONF.perfmon_refresh_interval
     except cfg.NoSuchOptError:
-        FLAGS.register_opts(perfmon_opts)
+        CONF.register_opts(perfmon_opts)
     try:
-        FLAGS.healthnmon_topic
+        CONF.healthnmon_topic
     except cfg.NoSuchOptError:
-        FLAGS.register_opts(topic_opts)
+        CONF.register_opts(topic_opts)
 
 register_flags()
 
@@ -77,13 +77,15 @@ class HealthnMonManager(manager.Manager):
         healthnmon_driver=None,
         *args,
         **kwargs
-        ):
+    ):
         if not healthnmon_driver:
-            healthnmon_driver = FLAGS.healthnmon_driver
-        LOG.info("Initializing healthnmon. Loading driver %s" % healthnmon_driver)
+            healthnmon_driver = CONF.healthnmon_driver
+        LOG.info(
+            "Initializing healthnmon. Loading driver %s" % healthnmon_driver)
         try:
             self.driver = \
-                utils.check_isinstance(importutils.import_object(healthnmon_driver),
+                utils.check_isinstance(
+                    importutils.import_object(healthnmon_driver),
                     driver.Healthnmon)
         except ImportError, e:
             LOG.error(_('Unable to load the healthnmon driver: %s') % e)
@@ -105,7 +107,7 @@ class HealthnMonManager(manager.Manager):
 
         return self.driver.get_compute_list()
 
-    @manager.periodic_task(ticks_between_runs=FLAGS.perfmon_refresh_interval
+    @manager.periodic_task(ticks_between_runs=CONF.perfmon_refresh_interval
                            / 60 - 1)
     def _poll_compute_perfmon(self, context):
         """Poll compute nodes periodically to refresh performance data details."""
@@ -117,14 +119,14 @@ class HealthnMonManager(manager.Manager):
         context,
         uuid,
         windowMinutes=5,
-        ):
+    ):
         """ Gets sampled performance data of requested VmHost """
 
         LOG.info(_('Received the message for VM Host Utilization for uuid : %s'
-                 ) % uuid)
+                   ) % uuid)
         resource_utilization = \
             self.driver.get_resource_utilization(context, uuid,
-                Constants.VmHost, windowMinutes)
+                                                 Constants.VmHost, windowMinutes)
         LOG.info(_('VM Host Resource Utilization: %s')
                  % resource_utilization.__dict__)
         return dict(ResourceUtilization=resource_utilization.__dict__)
@@ -134,14 +136,14 @@ class HealthnMonManager(manager.Manager):
         context,
         uuid,
         windowMinutes=5,
-        ):
+    ):
         """ Gets sampled performance data of requested Vm """
 
         LOG.info(_('Received the message for VM Utilization for uuid : %s'
-                 ) % uuid)
+                   ) % uuid)
         resource_utilization = \
             self.driver.get_resource_utilization(context, uuid,
-                Constants.Vm, windowMinutes)
+                                                 Constants.Vm, windowMinutes)
         LOG.info(_('VM Resource Utilization : %s')
                  % resource_utilization.__dict__)
         return dict(ResourceUtilization=resource_utilization.__dict__)
@@ -157,6 +159,7 @@ class HealthnMonManager(manager.Manager):
         helper.profile_memory(method, decorator, status, setref)
 
     def setLogLevel(self, context, level, module):
-        LOG.info(_('Received the message for setting log level for %s '), module)
+        LOG.info(
+            _('Received the message for setting log level for %s '), module)
 
         helper.setLogLevel(level, module)

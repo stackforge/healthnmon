@@ -52,79 +52,82 @@ class BaseControllerTest(unittest.TestCase):
 
     def test__index_json(self):
         request = webob.Request.blank('/v2.0/accounts.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller._index(request,
-                                    [FakeModel(str(x)) for x in range(1, 5)],
-                                    [{'rel': 'next', 'href': 'http://marker'},
-                                     {'rel': 'previous',
-                                      'href': 'http://marker'},
-                                     ])
+                                      [FakeModel(str(x)) for x in range(1, 5)],
+                                      [{'rel': 'next', 'href': 'http://marker'},
+                                       {'rel': 'previous',
+                                       'href': 'http://marker'},
+                                       ])
         self.assertEquals(expected_index_json, resp.body)
 
     def test__index_fields_json(self):
         request = webob.Request.blank('/v2.0/accounts.json?fields=id',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller._index(request,
-                                    [FakeModel(str(x)) for x in range(1, 5)],
-                                    [{'rel': 'next', 'href': 'http://marker'},
-                                     {'rel': 'previous',
-                                      'href': 'http://marker'},
-                                     ])
+                                      [FakeModel(str(x)) for x in range(1, 5)],
+                                      [{'rel': 'next', 'href': 'http://marker'},
+                                       {'rel': 'previous',
+                                       'href': 'http://marker'},
+                                       ])
         self.assertEquals(expected_index_fields_json, resp.body)
 
     def test__index_xml(self):
         request = webob.Request.blank('/v2.0/accounts.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller._index(request,
-                                    [FakeModel(str(x)) for x in range(1, 5)],
-                                    [{'rel': 'next', 'href': 'http://marker'},
-                                     {'rel': 'previous',
-                                      'href': 'http://marker'},
-                                     ])
+                                      [FakeModel(str(x)) for x in range(1, 5)],
+                                      [{'rel': 'next', 'href': 'http://marker'},
+                                       {'rel': 'previous',
+                                       'href': 'http://marker'},
+                                       ])
         self.assertEquals(expected_index_xml, resp.body)
 
     def test__index_fields_xml(self):
         request = webob.Request.blank('/v2.0/accounts.xml?fields=id',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller._index(request,
-                                    [FakeModel(str(x)) for x in range(1, 5)],
-                                    [{'rel': 'next', 'href': 'http://marker'},
-                                     {'rel': 'previous',
-                                      'href': 'http://marker'},
-                                     ])
+                                      [FakeModel(str(x)) for x in range(1, 5)],
+                                      [{'rel': 'next', 'href': 'http://marker'},
+                                       {'rel': 'previous',
+                                       'href': 'http://marker'},
+                                       ])
         self.assertEquals(expected_index_fields_xml, resp.body)
 
     def test__detail_json(self):
         request = webob.Request.blank('/v2.0/accounts/detail',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller._detail(request,
-                                    [FakeModel(str(x)) for x in range(1, 5)],
-                                    [{'rel': 'next', 'href': 'http://marker'},
-                                     {'rel': 'previous',
-                                      'href': 'http://marker'},
-                                     ])
+                                       [FakeModel(
+                                           str(x)) for x in range(1, 5)],
+                                       [{'rel': 'next', 'href': 'http://marker'},
+                                        {'rel': 'previous',
+                                         'href': 'http://marker'},
+                                        ])
         self.assertEqual(resp.body, expected_detail_json)
 
     def test__detail_xml(self):
         request = webob.Request.blank('/v2.0/accounts/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller._detail(request,
-                                    [FakeModel(str(x)) for x in range(1, 5)],
-                                    [{'rel': 'next', 'href': 'http://marker'},
-                                     {'rel': 'previous',
-                                      'href': 'http://marker'},
-                                     ])
+                                       [FakeModel(
+                                           str(x)) for x in range(1, 5)],
+                                       [{'rel': 'next', 'href': 'http://marker'},
+                                        {'rel': 'previous',
+                                         'href': 'http://marker'},
+                                        ])
         self.assertEqual(resp.body, expected_detail_xml)
 
     def test_search_options_changes_since(self):
-        request = webob.Request.blank('/v2.0/accounts/detail?changes-since=2012-05-10T00:00:00&deleted=false',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/accounts/detail?changes-since=2012-05-10T00:00:00&deleted=false',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller.get_search_options(request, VmHost)
         self.assertNotEqual(resp, None)
@@ -137,40 +140,43 @@ class BaseControllerTest(unittest.TestCase):
         self.assert_(sort_dir == DbConstants.ORDER_DESC)
 
     def test_search_options_composite(self):
-        request = webob.Request.blank('/v2.0/accounts/detail?name=SRS&name=SRS111&os=windows&virtualizationType=QEMU',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/accounts/detail?name=SRS&name=SRS111&os=windows&virtualizationType=QEMU',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller.get_search_options(request, VmHost)
         self.assertNotEqual(resp, None)
 
     def test_search_options_non_epoc(self):
         request = webob.Request.blank('/v2.0/accounts/detail',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller.get_search_options(request, IpProfile)
         self.assertNotEqual(resp, None)
         self.assertEqual(str(resp), expected_search_json)
 
     def test_search_options_exception(self):
-        request = webob.Request.blank('/v2.0/accounts/detail?changes-since=ABCD',
-                base_url='http://localhost:8774/v2.0/')
+        request = webob.Request.blank(
+            '/v2.0/accounts/detail?changes-since=ABCD',
+            base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         self.assertRaises(webob.exc.HTTPBadRequest,
                           self.controller.get_search_options, request, VmHost)
 
     def test_limited_by_marker(self):
         request = webob.Request.blank('/v2.0/accounts?marker=2&limit=1',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        item_list, collection_links = self.controller.limited_by_marker(\
-                                        [FakeModel(str(x)) for x in range(1, 5)],
-                                        request)
+        item_list, collection_links = self.controller.limited_by_marker(
+            [FakeModel(
+             str(x)) for x in range(1, 5)],
+            request)
         self.assertEqual(item_list[0].get_id(), '3')
         self.assertEqual(str(collection_links), expected_links)
 
     def test_limited_by_marker_exception(self):
         request = webob.Request.blank('/v2.0/accounts?marker=19',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         self.assertRaises(webob.exc.HTTPBadRequest,
                           self.controller.limited_by_marker,
@@ -181,7 +187,7 @@ class BaseControllerTest(unittest.TestCase):
         def test_func(ctx, filters, sort_key, sort_dir):
             raise sql_exc.DataError('a', 'b', 'c')
         request = webob.Request.blank('/v2.0/accounts?marker=19',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         self.assertRaises(Invalid,
                           Controller('vmhosts',
@@ -195,16 +201,16 @@ class BaseControllerTest(unittest.TestCase):
 
     def test_zero_limit_value(self):
         request = webob.Request.blank('/v2.0/accounts?limit=0',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         self.assertEquals(self.controller.limited_by_marker([FakeModel('1')],
-                                          request,
-                                          20),
+                                                            request,
+                                                            20),
                           ([], []))
 
     def test_negative_limit_value(self):
         request = webob.Request.blank('/v2.0/accounts?limit=-1',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         self.assertRaises(webob.exc.HTTPBadRequest,
                           self.controller.limited_by_marker,
@@ -216,7 +222,7 @@ class BaseControllerTest(unittest.TestCase):
 
     def test_base_identifier_json(self):
         request = webob.Request.blank('/v2.0/accounts?fields=name',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         item_list = [FakeModel(str(x)) for x in range(1, 5)]
         self.assertEquals(self.controller._show(request, item_list[0]).body,
@@ -226,7 +232,7 @@ class BaseControllerTest(unittest.TestCase):
 
     def test_base_identifier_xml(self):
         request = webob.Request.blank('/v2.0/accounts/detail.xml?fields=name',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         item_list = [FakeModel(str(x)) for x in range(1, 5)]
         self.assertEquals(self.controller._show(request, item_list[0]).body,

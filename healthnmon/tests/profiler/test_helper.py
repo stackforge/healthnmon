@@ -31,7 +31,7 @@ class CPUProfileMonkeyPatchingTestCase(test.TestCase):
 
     def test_enable_profile_cputime_by_decorator(self):
         helper.profile_cputime(self.example_package + 'example_a',
-            self.example_package + 'example_cpu_profile_decorator', True)
+                               self.example_package + 'example_cpu_profile_decorator', True)
 
         healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION = []
 
@@ -43,17 +43,17 @@ class CPUProfileMonkeyPatchingTestCase(test.TestCase):
 
         package_a = self.example_package + 'example_a.'
         self.assertTrue(package_a + 'example_function_a'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
 
         self.assertTrue(package_a + 'ExampleClassA.example_method'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
         self.assertTrue(package_a + 'ExampleClassA.example_method_add'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
         self.assertEqual(len(profile_cpu.modules), 1)
 
     def test_disable_profile_cputime_by_decorator(self):
         helper.profile_cputime(self.example_package + 'example_a',
-            self.example_package + 'example_cpu_profile_decorator', False)
+                               self.example_package + 'example_cpu_profile_decorator', False)
 
         healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION = []
 
@@ -65,38 +65,40 @@ class CPUProfileMonkeyPatchingTestCase(test.TestCase):
 
         package_a = self.example_package + 'example_a.'
         self.assertTrue(package_a + 'example_function_a'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
 
         self.assertTrue(package_a + 'ExampleClassA.example_method'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
         self.assertTrue(package_a + 'ExampleClassA.example_method_add'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
         self.assertEqual(len(profile_cpu.modules), 0)
 
     def test_profile_cputime_twice_by_samedecorator(self):
         helper.profile_cputime(self.example_package + 'example_a',
-            self.example_package + 'example_cpu_profile_decorator', True)
+                               self.example_package + 'example_cpu_profile_decorator', True)
         self.assertEqual(len(profile_cpu.modules), 1)
 
         helper.profile_cputime(self.example_package + 'example_a',
-            self.example_package + 'example_cpu_profile_decorator', False)
+                               self.example_package + 'example_cpu_profile_decorator', False)
         self.assertEqual(len(profile_cpu.modules), 0)
 
     def test_profile_cputime_throw_excsption(self):
-        helper.profile_cputime(self.example_package + 'example_a_not_available',
+        helper.profile_cputime(
+            self.example_package + 'example_a_not_available',
             self.example_package + 'example_cpu_profile_decorator', True)
         healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION = []
 
         package_a = self.example_package + 'example_a.'
         self.assertFalse(package_a + 'example_function_a'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
         self.assertFalse(package_a + 'ExampleClassA.example_method'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
         self.assertFalse(package_a + 'ExampleClassA.example_method_add'
-            in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.CPU_PROFILE_CALLED_FUNCTION)
 
     def tearDown(self):
         profile_cpu.modules = []
+        super(CPUProfileMonkeyPatchingTestCase, self).tearDown()
 
 
 class MemoryProfileMonkeyPatchingTestCase(test.TestCase):
@@ -110,7 +112,8 @@ class MemoryProfileMonkeyPatchingTestCase(test.TestCase):
 
     def test_enable_profile_memory_by_decorator(self):
 
-        helper.profile_memory(self.example_package + 'example_a.example_function_a',
+        helper.profile_memory(
+            self.example_package + 'example_a.example_function_a',
             self.example_package + 'example_memory_profile_decorator', True, True)
 
         healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION = []
@@ -123,19 +126,21 @@ class MemoryProfileMonkeyPatchingTestCase(test.TestCase):
 
         package_a = self.example_package + 'example_a.'
         self.assertTrue(package_a + 'example_function_a'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
 
         self.assertFalse(package_a + 'ExampleClassA.example_method'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
         self.assertFalse(package_a + 'ExampleClassA.example_method_add'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
 
     def test_profile_memory_twice_by_samedecorator(self):
 
-        helper.profile_memory(self.example_package + 'example_a.example_function_a',
+        helper.profile_memory(
+            self.example_package + 'example_a.example_function_a',
             self.example_package + 'example_memory_profile_decorator', True, True)
 
-        helper.profile_memory(self.example_package + 'example_a.example_function_a',
+        helper.profile_memory(
+            self.example_package + 'example_a.example_function_a',
             self.example_package + 'example_memory_profile_decorator', False, True)
 
         healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION = []
@@ -148,32 +153,33 @@ class MemoryProfileMonkeyPatchingTestCase(test.TestCase):
 
         package_a = self.example_package + 'example_a.'
         self.assertTrue(package_a + 'example_function_a'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                        in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
 
         self.assertFalse(package_a + 'ExampleClassA.example_method'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
         self.assertFalse(package_a + 'ExampleClassA.example_method_add'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
 
     def test_profile_memory_throw_exception(self):
-        helper.profile_memory(self.example_package + 'example_a.example_a_not_available',
+        helper.profile_memory(
+            self.example_package + 'example_a.example_a_not_available',
             self.example_package + 'example_memory_profile_decorator', True, True)
         healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION = []
 
         package_a = self.example_package + 'example_a.'
         self.assertFalse(package_a + 'example_function_a'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
 
         self.assertFalse(package_a + 'ExampleClassA.example_method'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
         self.assertFalse(package_a + 'ExampleClassA.example_method_add'
-            in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
+                         in healthnmon.tests.profiler.MEMORY_PROFILE_CALLED_FUNCTION)
 
 
 class HelperTestCase(test.TestCase):
     current_dir = os.path.join(os.path.dirname(__file__))
     log_config_file_path = os.path.join(current_dir,
-                '../healthnmon_testlog.conf')
+                                        '../healthnmon_testlog.conf')
 
     def setUp(self):
         super(HelperTestCase, self).setUp()
@@ -201,7 +207,8 @@ class HelperTestCase(test.TestCase):
         self.assertEqual(logging.INFO, self.log.logger.getEffectiveLevel())
 
         helper.setLogLevel('AUDIT', 'healthnmon.example')
-        self.assertEqual(log.logging.AUDIT, self.log.logger.getEffectiveLevel())
+        self.assertEqual(
+            log.logging.AUDIT, self.log.logger.getEffectiveLevel())
 
     def test_set_log_level_ERROR(self):
         self.log = log.getLogger('healthnmon.example')
@@ -216,7 +223,8 @@ class HelperTestCase(test.TestCase):
 
         helper.setLogLevel('DEBUG', 'healthnmon')
         self.assertEqual(logging.DEBUG, self.log.logger.getEffectiveLevel())
-        self.assertEqual(logging.DEBUG, logging.getLogger().getEffectiveLevel())
+        self.assertEqual(
+            logging.DEBUG, logging.getLogger().getEffectiveLevel())
 
     def test_set_log_level_healthnmon_debug(self):
         self.log = log.getLogger('healthnmon.example')
@@ -224,7 +232,8 @@ class HelperTestCase(test.TestCase):
 
         helper.setLogLevel('debug', 'healthnmon')
         self.assertEqual(logging.DEBUG, self.log.logger.getEffectiveLevel())
-        self.assertEqual(logging.DEBUG, logging.getLogger().getEffectiveLevel())
+        self.assertEqual(
+            logging.DEBUG, logging.getLogger().getEffectiveLevel())
 
     def test_set_log_level_healthnmon_invalid_loglevel(self):
         self.log = log.getLogger('healthnmon.example')
@@ -232,4 +241,5 @@ class HelperTestCase(test.TestCase):
 
         helper.setLogLevel('test', 'healthnmon')
         self.assertNotEqual(logging.DEBUG, self.log.logger.getEffectiveLevel())
-        self.assertNotEqual(logging.DEBUG, logging.getLogger().getEffectiveLevel())
+        self.assertNotEqual(
+            logging.DEBUG, logging.getLogger().getEffectiveLevel())

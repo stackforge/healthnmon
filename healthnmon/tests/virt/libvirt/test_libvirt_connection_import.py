@@ -35,8 +35,9 @@ class Test_virt_connection_cover(test.TestCase):
         self.libvirt_connection_cls = connection.LibvirtConnection
         super(Test_virt_connection_cover, self).setUp()
         self.flags(
-         healthnmon_notification_drivers=['healthnmon.notifier.log_notifier']
-                   )
+            healthnmon_notification_drivers=[
+                'healthnmon.notifier.log_notifier']
+        )
 
     def test_broken_connection_cover(self):
         global libvirt
@@ -55,14 +56,14 @@ class Test_virt_connection_cover(test.TestCase):
         self.mox.StubOutWithMock(libvirt.libvirtError,
                                  'get_error_domain')
 
-        conn._wrapped_conn.getCapabilities().AndRaise(\
-                        FakeLibvirt.libvirtError('fake failure'
-                ))
+        conn._wrapped_conn.getCapabilities().AndRaise(
+            FakeLibvirt.libvirtError('fake failure'
+                                     ))
 
         libvirt.libvirtError.get_error_code().MultipleTimes(). \
-              AndReturn(error)
+            AndReturn(error)
         libvirt.libvirtError.get_error_domain().MultipleTimes(). \
-              AndReturn(domain)
+            AndReturn(domain)
 
         self.mox.ReplayAll()
         try:
@@ -71,16 +72,7 @@ class Test_virt_connection_cover(test.TestCase):
             print 'error'
 
     def tearDown(self):
-
-#        list_notifier._reset_drivers()
-        # super(Test_virt_connection, self).tearDown()
-
-        self.mox.UnsetStubs()
-        self.stubs.UnsetAll()
-        self.stubs.SmartUnsetAll()
-
-
-            # self.mox.UnsetStubs()
+        super(Test_virt_connection_cover, self).tearDown()
 
 if __name__ == '__main__':
 

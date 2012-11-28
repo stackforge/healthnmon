@@ -55,7 +55,8 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         return subnet
 
     def test_virtual_switch_save_none(self):
-        self.assertTrue(api.virtual_switch_save(self.admin_context, None) == None, 'No Virtual Switch should be saved')
+        self.assertTrue(api.virtual_switch_save(self.admin_context,
+                        None) is None, 'No Virtual Switch should be saved')
 
     def test_virtual_switch_save(self):
         virtualswitch = VirtualSwitch()
@@ -64,11 +65,13 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         api.virtual_switch_save(self.admin_context, virtualswitch)
         virtualswitches = \
             api.virtual_switch_get_by_ids(self.admin_context,
-                [virtualswitch.id])
-        self.assertFalse(virtualswitches == None,
+                                          [virtualswitch.id])
+        self.assertFalse(virtualswitches is None,
                          'VirtualSwitch  all returned a list')
-        self.assertTrue(virtualswitches[0].id == 'VS1', 'Virtual Switch id mismatch')
-        self.assertTrue(virtualswitches[0].switchType == 'switch', 'Virtual Switch type mismatch')
+        self.assertTrue(
+            virtualswitches[0].id == 'VS1', 'Virtual Switch id mismatch')
+        self.assertTrue(virtualswitches[0].switchType == 'switch',
+                        'Virtual Switch type mismatch')
 
     def test_virtual_switch_save_update(self):
         virtualswitch = VirtualSwitch()
@@ -79,16 +82,18 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         api.virtual_switch_save(self.admin_context, virtualswitch)
         virtualswitches = \
             api.virtual_switch_get_by_ids(self.admin_context,
-                [virtualswitch.id])
-        self.assertFalse(virtualswitches == None,
+                                          [virtualswitch.id])
+        self.assertFalse(virtualswitches is None,
                          'VirtualSwitch  all returned a list')
-        self.assertTrue(virtualswitches[0].id == 'VS1', 'Virtual Switch id mismatch')
-        self.assertTrue(virtualswitches[0].switchType == 'switchUpdated', 'Virtual Switch type mismatch')
+        self.assertTrue(
+            virtualswitches[0].id == 'VS1', 'Virtual Switch id mismatch')
+        self.assertTrue(virtualswitches[0].switchType == 'switchUpdated',
+                        'Virtual Switch type mismatch')
 
     def test_virtual_switch_get_by_ids_none(self):
         virtualswitches = \
             api.virtual_switch_get_by_ids(self.admin_context, None)
-        self.assertTrue(virtualswitches == None,
+        self.assertTrue(virtualswitches is None,
                         'VirtualSwitch  all returned a none list')
 
     def test_virtual_switch_get_by_ids(self):
@@ -98,11 +103,13 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         api.virtual_switch_save(self.admin_context, virtualswitch)
         virtualswitches = \
             api.virtual_switch_get_by_ids(self.admin_context,
-                [virtualswitch.id])
-        self.assertFalse(virtualswitches == None,
+                                          [virtualswitch.id])
+        self.assertFalse(virtualswitches is None,
                          'VirtualSwitch  all returned a list')
-        self.assertTrue(virtualswitches[0].id == 'VS1', 'Virtual Switch Id mismatch')
-        self.assertTrue(virtualswitches[0].switchType == 'switch', 'Virtual Switch Type mismatch')
+        self.assertTrue(
+            virtualswitches[0].id == 'VS1', 'Virtual Switch Id mismatch')
+        self.assertTrue(virtualswitches[0].switchType == 'switch',
+                        'Virtual Switch Type mismatch')
 
     def test_virtual_switch_get_all(self):
         virtualswitch = VirtualSwitch()
@@ -110,12 +117,14 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         virtualswitch.switchType = 'switch'
         api.virtual_switch_save(self.admin_context, virtualswitch)
         virtualswitches = api.virtual_switch_get_all(self.admin_context)
-        self.assertFalse(virtualswitches == None,
+        self.assertFalse(virtualswitches is None,
                          'virtual_switch all returned a none list')
         self.assertTrue(len(virtualswitches) == 1,
                         'virtual_switch all returned invalid number of list')
-        self.assertTrue(virtualswitches[0].id == 'VS1', 'Virtual Switch Id mismatch')
-        self.assertTrue(virtualswitches[0].switchType == 'switch', 'Virtual Switch Type mismatch')
+        self.assertTrue(
+            virtualswitches[0].id == 'VS1', 'Virtual Switch Id mismatch')
+        self.assertTrue(virtualswitches[0].switchType == 'switch',
+                        'Virtual Switch Type mismatch')
 
     def test_virtual_switch_save_with_subnet(self):
         # Save virtual switch with a port group
@@ -138,7 +147,7 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         api.virtual_switch_save(self.admin_context, vSwitch)
         # Update after adding a port group and subnet
         vSwitch = api.virtual_switch_get_by_ids(self.admin_context,
-                [vSwitch.id])[0]
+                                                [vSwitch.id])[0]
         portGroup2 = PortGroup()
         portGroup2.set_id('pg-02')
         portGroup2.set_name('pg-02')
@@ -155,32 +164,52 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         api.virtual_switch_save(self.admin_context, vSwitch)
         virtualswitches = \
             api.virtual_switch_get_by_ids(self.admin_context,
-                [vSwitch.id])
+                                          [vSwitch.id])
         # Assert the values
-        self.assertTrue(len(virtualswitches) == 1, 'Unexpected number of Virtual Switch returned')
-        self.assertTrue(virtualswitches[0].get_id() == 'vSwitch-11', 'Virtual Switch id mismatch')
-        self.assertTrue(virtualswitches[0].get_name() == 'vSwitch-11', 'Virtual Switch name mismatch')
-        self.assertTrue(virtualswitches[0].get_resourceManagerId() == 'rmId', 'Virtual Switch Resource Manager id mismatch')
-        self.assertTrue(virtualswitches[0].get_switchType() == 'vSwitch', 'Virtual Switch type mismatch')
+        self.assertTrue(len(virtualswitches) == 1,
+                        'Unexpected number of Virtual Switch returned')
+        self.assertTrue(virtualswitches[0].get_id(
+        ) == 'vSwitch-11', 'Virtual Switch id mismatch')
+        self.assertTrue(virtualswitches[0].get_name(
+        ) == 'vSwitch-11', 'Virtual Switch name mismatch')
+        self.assertTrue(virtualswitches[0].get_resourceManagerId(
+        ) == 'rmId', 'Virtual Switch Resource Manager id mismatch')
+        self.assertTrue(virtualswitches[0].get_switchType(
+        ) == 'vSwitch', 'Virtual Switch type mismatch')
         cost1 = virtualswitches[0].get_cost()
-        self.assertTrue(cost1.get_value() == 100, 'VSwitch Cost Value mismatch')
-        self.assertTrue(cost1.get_units() == 'USD', 'VSwitch Cost units mismatch')
+        self.assertTrue(
+            cost1.get_value() == 100, 'VSwitch Cost Value mismatch')
+        self.assertTrue(
+            cost1.get_units() == 'USD', 'VSwitch Cost units mismatch')
         portGroups = virtualswitches[0].get_portGroups()
-        self.assertTrue(len(portGroups) == 2, 'All the portgroups have not been saved')
-        self.assertTrue(portGroups[0].get_id() == 'pg-01', 'VSwitch Port Group id mismatch')
-        self.assertTrue(portGroups[0].get_name() == 'pg-01', 'VSwitch Port Group Name mismatch')
-        self.assertTrue(portGroups[0].get_resourceManagerId() == 'rmId', 'VSwitch portgroup Resource Manager id mismatch')
-        self.assertTrue(portGroups[0].get_type() == 'portgroup_type', 'VSwitch port group type mismatched')
+        self.assertTrue(
+            len(portGroups) == 2, 'All the portgroups have not been saved')
+        self.assertTrue(portGroups[0].get_id(
+        ) == 'pg-01', 'VSwitch Port Group id mismatch')
+        self.assertTrue(portGroups[0].get_name(
+        ) == 'pg-01', 'VSwitch Port Group Name mismatch')
+        self.assertTrue(portGroups[0].get_resourceManagerId(
+        ) == 'rmId', 'VSwitch portgroup Resource Manager id mismatch')
+        self.assertTrue(portGroups[0].get_type(
+        ) == 'portgroup_type', 'VSwitch port group type mismatched')
         cost2 = portGroups[0].get_cost()
-        self.assertTrue(cost2.get_value() == 100, 'PortGroup Cost Value mismatch')
-        self.assertTrue(cost2.get_units() == 'USD', 'PortGroup Cost units mismatch')
-        self.assertTrue(portGroups[1].get_id() == 'pg-02', 'VSwitch Port Group id mismatch')
-        self.assertTrue(portGroups[1].get_name() == 'pg-02', 'VSwitch Port Group Name mismatch')
-        self.assertTrue(portGroups[1].get_resourceManagerId() == 'rmId', 'VSwitch portgroup Resource Manager id mismatch')
-        self.assertTrue(portGroups[1].get_type() == 'portgroup_type', 'VSwitch port group type mismatched')
+        self.assertTrue(
+            cost2.get_value() == 100, 'PortGroup Cost Value mismatch')
+        self.assertTrue(
+            cost2.get_units() == 'USD', 'PortGroup Cost units mismatch')
+        self.assertTrue(portGroups[1].get_id(
+        ) == 'pg-02', 'VSwitch Port Group id mismatch')
+        self.assertTrue(portGroups[1].get_name(
+        ) == 'pg-02', 'VSwitch Port Group Name mismatch')
+        self.assertTrue(portGroups[1].get_resourceManagerId(
+        ) == 'rmId', 'VSwitch portgroup Resource Manager id mismatch')
+        self.assertTrue(portGroups[1].get_type(
+        ) == 'portgroup_type', 'VSwitch port group type mismatched')
         subnetId = virtualswitches[0].get_subnetIds()
-        self.assertTrue(subnetId[0] == 'subnet-02', 'Virtual Switch subnet id mismatch')
-        self.assertTrue(virtualswitches[0].get_networkInterfaces()[0] == '1', 'Virtual Switch network INterfaces mismatch')
+        self.assertTrue(
+            subnetId[0] == 'subnet-02', 'Virtual Switch subnet id mismatch')
+        self.assertTrue(virtualswitches[0].get_networkInterfaces(
+        )[0] == '1', 'Virtual Switch network INterfaces mismatch')
 
     def test_virtual_switch_delete(self):
         virtualswitch = VirtualSwitch()
@@ -198,15 +227,16 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         #virtualswitchs = api.virtual_switch_get_by_ids([virtualswitch.id])
 
         api.virtual_switch_delete_by_ids(self.admin_context,
-                [virtualswitch.id])
+                                         [virtualswitch.id])
         virtualswitchs = \
             api.virtual_switch_get_by_ids(self.admin_context,
-                [virtualswitch.id])
-        self.assertTrue(virtualswitchs == None or len(virtualswitchs)
+                                          [virtualswitch.id])
+        self.assertTrue(virtualswitchs is None or len(virtualswitchs)
                         == 0, 'switch not deleted')
 
     def test_virtual_switch_delete_none(self):
-        self.assertTrue(api.virtual_switch_delete_by_ids(self.admin_context, None) == None, 'No virtual switch should be deleted')
+        self.assertTrue(api.virtual_switch_delete_by_ids(self.admin_context,
+                        None) is None, 'No virtual switch should be deleted')
 
     def test_virtual_switch_save_throw_exception(self):
         self.assertRaises(Exception, api.virtual_switch_save,
@@ -246,12 +276,13 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2')
         switch_names = ('name1', 'name2')
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i])
         # Query with filter
         filters = {'name': switch_names[1]}
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 1)
         self.assert_(switches[0] is not None)
@@ -262,14 +293,15 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2')
         switch_names = ('name1', 'name2')
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i])
         # Delete one switch
         api.virtual_switch_delete_by_ids(self.admin_context, [switch_ids[0]])
         # Query with filter
         filters = {'deleted': 'true'}
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 1)
         self.assert_(switches[0] is not None)
@@ -280,14 +312,15 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2')
         switch_names = ('name1', 'name2')
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i])
         # Delete one switch
         api.virtual_switch_delete_by_ids(self.admin_context, [switch_ids[0]])
         # Query with filter
         filters = {'deleted': False}
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 1)
         self.assert_(switches[0] is not None)
@@ -298,12 +331,13 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2', 'SW3')
         switch_names = ('name1', 'name2', 'name3')
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i])
         created_time = long(time.time() * 1000L)
         # Wait for 1 sec and update second switch and delete third switch
         time.sleep(1)
         second_switch = api.virtual_switch_get_by_ids(
-                                self.admin_context, [switch_ids[1]])[0]
+            self.admin_context, [switch_ids[1]])[0]
         second_switch.name = 'New name'
         api.virtual_switch_save(self.admin_context, second_switch)
         api.virtual_switch_delete_by_ids(self.admin_context, [switch_ids[2]])
@@ -311,8 +345,8 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         expected_updated_ids = [switch_ids[1], switch_ids[2]]
         filters = {'changes-since': created_time}
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, filters,
-                                None, None)
+            self.admin_context, filters,
+            None, None)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 2)
         for switch in switches:
@@ -324,11 +358,12 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2')
         switch_names = ('name1', 'name2')
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i])
         # Query with sort
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, None,
-                                'name', DbConstants.ORDER_ASC)
+            self.admin_context, None,
+            'name', DbConstants.ORDER_ASC)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 2)
         self.assert_(switches[0] is not None)
@@ -341,11 +376,12 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2')
         switch_names = ('name1', 'name2')
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i])
         # Query with sort
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, {'name': switch_names},
-                                'name', DbConstants.ORDER_DESC)
+            self.admin_context, {'name': switch_names},
+            'name', DbConstants.ORDER_DESC)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 2)
         self.assert_(switches[0] is not None)
@@ -358,14 +394,16 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         switch_ids = ('SW1', 'SW2', 'SW3')
         switch_names = ('name1', 'name2', 'name3')
         switch_net_intfs = (['vnet1'], ['vnet1', 'vnet3'],
-                              ['vnet3'])
+                            ['vnet3'])
         for i in range(len(switch_ids)):
-            self.__create_virtual_switch(id=switch_ids[i], name=switch_names[i],
-                                         networkInterfaces=switch_net_intfs[i])
+            self.__create_virtual_switch(
+                id=switch_ids[i], name=switch_names[i],
+                networkInterfaces=switch_net_intfs[i])
         # Query with sort
         switches = api.virtual_switch_get_all_by_filters(
-                                self.admin_context, {'networkInterfaces': 'vnet1'},
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, {
+                'networkInterfaces': 'vnet1'},
+            'id', DbConstants.ORDER_ASC)
         self.assert_(switches is not None)
         self.assert_(len(switches) == 2)
         self.assert_(switches[0] is not None)
@@ -389,14 +427,21 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         'Add second subnet'
         self.__create_subnet(id=subnet_id_lst[1], name=subnet_id_lst[1])
         api.virtual_switch_save(self.admin_context, virtualswitch)
-        virtualswitches = api.virtual_switch_get_by_ids(self.admin_context, [virtualswitch.id])
+        virtualswitches = api.virtual_switch_get_by_ids(
+            self.admin_context, [virtualswitch.id])
 
-        self.assertFalse(virtualswitches == None, 'VirtualSwitch  all returned a list')
-        self.assertTrue(virtualswitches[0].id == 'VS1', 'Virtual Switch id mismatch')
-        self.assertTrue(virtualswitches[0].switchType == 'switchUpdated', 'Virtual Switch type mismatch')
-        self.assertTrue(len(virtualswitches[0].subnetIds) >= 0, 'Virtual Switch - subnetIds does not exist')
-        self.assertTrue(virtualswitches[0].subnetIds[0] in subnet_id_lst, 'Virtual Switch - subnetIds is not api output')
-        self.assertTrue(virtualswitches[0].subnetIds[1] in subnet_id_lst, 'Virtual Switch - subnetIds is not api output')
+        self.assertFalse(
+            virtualswitches is None, 'VirtualSwitch  all returned a list')
+        self.assertTrue(
+            virtualswitches[0].id == 'VS1', 'Virtual Switch id mismatch')
+        self.assertTrue(virtualswitches[0].switchType == 'switchUpdated',
+                        'Virtual Switch type mismatch')
+        self.assertTrue(len(virtualswitches[0].subnetIds) >= 0,
+                        'Virtual Switch - subnetIds does not exist')
+        self.assertTrue(virtualswitches[0].subnetIds[0] in subnet_id_lst,
+                        'Virtual Switch - subnetIds is not api output')
+        self.assertTrue(virtualswitches[0].subnetIds[1] in subnet_id_lst,
+                        'Virtual Switch - subnetIds is not api output')
 
     def test_timestamp_columns(self):
         """
@@ -411,9 +456,10 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         api.virtual_switch_save(self.admin_context, virSw1)
         epoch_after = utils.get_current_epoch_ms()
-        virsw_queried = api.virtual_switch_get_by_ids(self.admin_context, [virSw1.get_id()])[0]
+        virsw_queried = api.virtual_switch_get_by_ids(
+            self.admin_context, [virSw1.get_id()])[0]
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, virsw_queried.get_createEpoch()))
+            epoch_before, epoch_after, virsw_queried.get_createEpoch()))
         for pg in virsw_queried.get_portGroups():
             self.assert_(test_utils.is_timestamp_between(
                 epoch_before, epoch_after, pg.get_createEpoch()))
@@ -424,10 +470,12 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         api.virtual_switch_save(self.admin_context, virsw_modified)
         epoch_after = utils.get_current_epoch_ms()
-        virsw_queried = api.virtual_switch_get_by_ids(self.admin_context, [virSw1.get_id()])[0]
-        self.assert_(virsw_modified.get_createEpoch() == virsw_queried.get_createEpoch())
+        virsw_queried = api.virtual_switch_get_by_ids(
+            self.admin_context, [virSw1.get_id()])[0]
+        self.assert_(virsw_modified.get_createEpoch(
+        ) == virsw_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, virsw_queried.get_lastModifiedEpoch()))
+            epoch_before, epoch_after, virsw_queried.get_lastModifiedEpoch()))
         for pg in virsw_queried.get_portGroups():
             self.assert_(virsw_modified.get_portGroups()[0].get_createEpoch()
                          == pg.get_createEpoch())
@@ -442,10 +490,12 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         api.virtual_switch_save(self.admin_context, virsw_modified)
         epoch_after = utils.get_current_epoch_ms()
-        virsw_queried = api.virtual_switch_get_by_ids(self.admin_context, [virSw1.get_id()])[0]
-        self.assert_(virsw_modified.get_createEpoch() == virsw_queried.get_createEpoch())
+        virsw_queried = api.virtual_switch_get_by_ids(
+            self.admin_context, [virSw1.get_id()])[0]
+        self.assert_(virsw_modified.get_createEpoch(
+        ) == virsw_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, virsw_queried.get_lastModifiedEpoch()))
+            epoch_before, epoch_after, virsw_queried.get_lastModifiedEpoch()))
         for pg in virsw_queried.get_portGroups():
             if pg.get_id() == portGrp2.get_id():
                 self.assert_(test_utils.is_timestamp_between(

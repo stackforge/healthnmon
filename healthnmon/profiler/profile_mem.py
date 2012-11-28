@@ -20,13 +20,13 @@ Uses heapy- for memory profiling
 """
 
 from healthnmon import log as logging
-from nova import flags
+from nova.openstack.common import cfg
 import traceback
 import functools
 import os
 
 LOG = logging.getLogger('healthnmon.profiler')
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 h = None
 mem_profile_path = None
@@ -63,7 +63,7 @@ def import_guupy():
     global hpy
     if hpy is None:
         guppy = __import__('guppy', globals(), locals(),
-                       ['hpy'], -1)
+                           ['hpy'], -1)
         hpy = guppy.hpy
 
 
@@ -80,7 +80,7 @@ def _init_mem_profile_path():
     mem_profile_path = _get_memprofile_dumpfile('healthnmon')
     if mem_profile_path:
         open(mem_profile_path, 'a')
-        mode = int(FLAGS.logfile_mode, 8)
+        mode = int(CONF.logfile_mode, 8)
         os.chmod(mem_profile_path, mode)
 
 
@@ -95,13 +95,14 @@ def mem_profile():
         h.heap().dump(mem_profile_path)
         LOG.debug(_("Dumped the memory profiling data "))
         if setref:
-            LOG.debug(_("Setting the reference for next memory profiling data "))
+            LOG.debug(_("Setting the reference for next \
+                memory profiling data "))
             h.setref()
     except:
         LOG.debug(_('Exception occurred %s ') % traceback.format_exc())
 
 
 def _get_memprofile_dumpfile(binary=None):
-    logdir = FLAGS.healthnmon_log_dir
+    logdir = CONF.healthnmon_log_dir
     if logdir:
         return '%s_memprofile.hpy' % (os.path.join(logdir, binary),)

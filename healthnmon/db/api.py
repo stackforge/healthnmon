@@ -19,7 +19,7 @@ Defines interface for healthnmon DB access.
 Uses underlying SQL alchemy layer which is dynamically loaded.
 """
 
-from nova import flags
+from nova.openstack.common import cfg
 from nova import utils
 from nova.openstack.common import cfg
 
@@ -27,10 +27,10 @@ db_opts = [
     cfg.StrOpt('healthnmon_db_backend',
                default='sqlalchemy',
                help='The backend to use for db'),
-    ]
+]
 
-FLAGS = flags.FLAGS
-FLAGS.register_opts(db_opts)
+CONF = cfg.CONF
+CONF.register_opts(db_opts)
 
 IMPL = utils.LazyPluggable('healthnmon_db_backend',
                            sqlalchemy='healthnmon.db.sqlalchemy.api')

@@ -15,16 +15,17 @@
 #    under the License.
 
 
-from nova import flags
+from nova.openstack.common import cfg
 import unittest
 import os
 import logging
 import shutil
 import healthnmon
 
-healthnmon_path = os.path.abspath(os.path.join(healthnmon.get_healthnmon_location(), '../'))
+healthnmon_path = os.path.abspath(
+    os.path.join(healthnmon.get_healthnmon_location(), '../'))
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 class TestCase(unittest.TestCase):
@@ -35,5 +36,5 @@ class TestCase(unittest.TestCase):
         """Run before each test method to initialize DB"""
         logging.basicConfig()
         super(TestCase, self).setUp()
-        shutil.copyfile(os.path.join(healthnmon_path, FLAGS.sqlite_clean_db),
-                        os.path.join(healthnmon_path, FLAGS.sqlite_db))
+        shutil.copyfile(os.path.join(healthnmon_path, CONF.sqlite_clean_db),
+                        os.path.join(healthnmon_path, CONF.sqlite_db))

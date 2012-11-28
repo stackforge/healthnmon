@@ -51,8 +51,8 @@ class MigrationTestCase(test.TestCase):
         self.mox.StubOutWithMock(versioning_api, 'db_version')
 
         versioning_api.db_version(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes(). \
-                AndRaise(\
+                                  mox.IgnoreArg()).MultipleTimes(). \
+            AndRaise(
                 versioning_exceptions.DatabaseNotControlledError)
         self.mox.ReplayAll()
         self.assertRaises(Exception, migration.db_sync, '0')

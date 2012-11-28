@@ -57,4 +57,4 @@ PERFORMANCE_DATA_ATTRIBUTES = (
     'maximumSystemMemory',
     'memoryRelativeWeight',
     'uuid',
-    )
+)

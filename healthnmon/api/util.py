@@ -23,13 +23,13 @@ from lxml import etree
 from lxml.etree import Element
 from lxml.etree import SubElement
 from webob import Response
-from nova import flags
+from nova.openstack.common import cfg
 from .. import log as logging
 from nova.api.openstack import common
 from ..api import constants
 
 LOG = logging.getLogger(__name__)
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 
 def get_path_elements(path_str):
@@ -220,33 +220,35 @@ def replace_with_links(xml_str, tag_dict_list, replace_dict_out):
                     if not tag_replacement:
                         tag_replacement = tag
                     replace_element = Element(ROOTNS + tag_replacement,
-                            nsmap=nsmap)
-                    if tag_attrib_list != None:
+                                              nsmap=nsmap)
+                    if tag_attrib_list is not None:
                         for tag in tag_attrib_list:
-                            if element.find(tag) != None:
+                            if element.find(tag) is not None:
                                 replace_element.attrib[ROOTNS + tag] = \
                                     element.find(tag).text
                                 out_dict[tag] = element.find(tag).text
                     resource_key = None
                     if not tag_key or len(element) == 0:
                         resource_key = element.text
-                    elif tag_key != None and element.find(ROOTNS
-                            + tag_key) != None and element.find(ROOTNS
-                            + tag_key).text != None:
+                    elif tag_key is not None and element.find(ROOTNS
+                                                              + tag_key) is not None and element.find(ROOTNS
+                                                                                                      + tag_key).text is not None:
 
                         resource_key = element.find(ROOTNS
-                                + tag_key).text
+                                                    + tag_key).text
                     if not resource_key:
                         raise TagDictionaryError('No resource key found from tag dictionary:', tag_dict)
-                    if tag_key != None:
+                    if tag_key is not None:
                         replace_element.attrib[ROOTNS + tag_key] = \
                             resource_key
                         out_dict[tag_key] = resource_key
 
                     href = os.path.join(tag_collection_url,
-                            str(resource_key))
+                                        str(resource_key))
                     bookmark = \
-                        os.path.join(common.remove_version_from_href(tag_collection_url),
+                        os.path.join(
+                            common.remove_version_from_href(
+                                tag_collection_url),
                             str(resource_key))
                     links = [{'rel': 'self', 'href': href},
                              {'rel': 'bookmark', 'href': bookmark}]
@@ -256,24 +258,25 @@ def replace_with_links(xml_str, tag_dict_list, replace_dict_out):
                                    + 'link', attrib=link_dict)
                     out_dict['links'] = links
                     elements_to_be_replaced.append((element,
-                            replace_element, out_dict))
+                                                    replace_element, out_dict))
 
                 for (element, replace_element, out_dict) in \
-                    elements_to_be_replaced:
-                    if element.getparent() == None:
+                        elements_to_be_replaced:
+                    if element.getparent() is None:
                         tree._setroot(replace_element)
                     else:
                         element.getparent().replace(element,
-                                replace_element)
+                                                    replace_element)
 
                 for (element, replace_element, out_dict) in \
-                    elements_to_be_replaced:
+                        elements_to_be_replaced:
                     LOG.debug(_('Replaced element path: %s'
                               % replace_element.getroottree().getpath(replace_element)))
-                    replace_dict_out.update({tree.getpath(replace_element): out_dict})
+                    replace_dict_out.update(
+                        {tree.getpath(replace_element): out_dict})
             except (KeyError, IndexError, ValueError), err:
                 LOG.error(_('Lookup Error while finding tag healthnmon api... %s '
-                           % str(err)), exc_info=1)
+                            % str(err)), exc_info=1)
     return etree.tostringlist(tree.getroot())[0]
 
 
@@ -298,7 +301,7 @@ def get_project_context(req):
         project_id = context.project_id
     except KeyError, err:
         LOG.error(_('Exception while fetching nova context from request... %s '
-                   % str(err)), exc_info=1)
+                    % str(err)), exc_info=1)
     return (context, project_id)
 
 
@@ -387,7 +390,7 @@ def update_dict_using_xpath(input_dict, xpath_dict):
             loc[path_elements[-1]] = d
         except (LookupError, ValueError), err:
             LOG.debug(_('XPath traversion error in input dictionary current key:%s '
-                       % str(err)))
+                        % str(err)))
     return input_dict
 
 
@@ -397,7 +400,7 @@ def get_entity_list_xml(
     root_element_tag,
     sub_element_tag,
     root_prefix='None',
-    ):
+):
     """ Get entity list in xml format
         :params: entity_dict with root key as entity name. The value is
         an array of entity dictionaries which each containing entity attributes
@@ -456,7 +459,7 @@ def get_entity_list_xml(
     else:
         root_key = entity_dict.keys()[0]
     root_namespace = ''
-    if nsmap != None and root_prefix in nsmap:
+    if nsmap is not None and root_prefix in nsmap:
         root_namespace = '{%s}' % nsmap[root_prefix]
     root = Element(root_namespace + root_element_tag, nsmap=nsmap)
     dict_list = entity_dict[root_key]
@@ -469,8 +472,8 @@ def get_entity_list_xml(
             del ent['links']
         attrib = {}
         for (key, val) in ent.items():
-            if key != None:
-                if val != None:
+            if key is not None:
+                if val is not None:
                     attrib[key] = val
                 else:
                     attrib[key] = ''
@@ -587,7 +590,7 @@ def get_select_elements_xml(input_xml, field_list, default_field=None):
             # Ignore if the field name is invalid.
             pass
     if len(display_root) > 0 and default_field and  \
-        default_field not in field_list:
+            default_field not in field_list:
         try:
             for i, ele in enumerate(root.findall(root_ns + default_field)):
                 display_root.insert(i, ele)

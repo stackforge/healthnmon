@@ -74,8 +74,10 @@ class LibvirtEvents(object):
         @param compute_id: An integer representing the compute id of the host'''
         try:
             self.call_back_ids['domain_events'][:] = []
-            conn_driver = InventoryCacheManager.get_compute_inventory(self.compute_id).get_compute_conn_driver()
-            self.libvirt_con = conn_driver.get_new_connection(conn_driver.uri, True)
+            conn_driver = InventoryCacheManager.get_compute_inventory(
+                self.compute_id).get_compute_conn_driver()
+            self.libvirt_con = conn_driver.get_new_connection(
+                conn_driver.uri, True)
             if self.libvirt_con is None:
                 self.first_poll = True
                 return
@@ -91,7 +93,8 @@ class LibvirtEvents(object):
         '''Register the hosts for domain events
         Stores the callback ids for the each event for hosts in the list
         The call back ids are mainly used for deregistering the hosts for the events'''
-        LOG.debug(_('Registering host with compute id %s for events' % str(self.compute_id)))
+        LOG.debug(_('Registering host with compute id %s for events' %
+                  str(self.compute_id)))
         self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self._domain_event_callback, None))
         self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_REBOOT, self._domain_event_callback, None))
 
@@ -113,7 +116,8 @@ class LibvirtEvents(object):
     def _deregister_libvirt_domain_events(self):
         '''Deregisters the hosts for domain events by calling the domainEventDeregisterAny method
         of the libvirt. It uses the domain events' callback ids for the deregistration of the hosts'''
-        LOG.debug(_('Deregistering the host with compute id %s for events' % str(self.compute_id)))
+        LOG.debug(_('Deregistering the host with compute id %s for events' %
+                  str(self.compute_id)))
         for callBackId in self.call_back_ids['domain_events']:
             self.libvirt_con.domainEventDeregisterAny(callBackId)
 
@@ -123,7 +127,8 @@ class LibvirtEvents(object):
         libvirt domain event.
         @param domainobj: An object of the class virDomain of libvirt
         This object holds the VM parameters needs to processed'''
-        libvirtVmobj = healthnmon.libvirt_inventorymonitor.LibvirtVM(self.libvirt_con, self.compute_id)
+        libvirtVmobj = healthnmon.libvirt_inventorymonitor.LibvirtVM(
+            self.libvirt_con, self.compute_id)
         libvirtVmobj.process_updates_for_updated_VM(domainObj)
 
     def _domain_event_callback(self, *args):
@@ -132,7 +137,8 @@ class LibvirtEvents(object):
         The length and the content varies depending upon the event calling this callback
         The first two values are the libvirt connection and the virDomain's domainobj necessarily.'''
         try:
-            pool_for_processing_updated_vm.spawn_n(self._process_updates_for_updated_domain, args[1])
+            pool_for_processing_updated_vm.spawn_n(
+                self._process_updates_for_updated_domain, args[1])
             pool_for_processing_updated_vm.waitall()
         except Exception:
             LOG.error(_('An exception occurred in the domain event callback'))

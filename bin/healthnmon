@@ -27,7 +27,8 @@ from healthnmon.service_healthnmon import HealthnmonService
 
 """Starter script for healthnmon module."""
 
-eventlet.monkey_patch(all=False, os=True, select=True, socket=True, thread=False, time=True)
+eventlet.monkey_patch(
+    all=False, os=True, select=True, socket=True, thread=False, time=True)
 
 
 # If ../healthnmon/__init__.py exists, add ../ to Python search path, so that
@@ -42,9 +43,9 @@ gettext.install('healthnmon', unicode=1)
 
 
 healthnmon_opts = [
-cfg.StrOpt('healthnmon_manager',
-            default='healthnmon.manager.HealthnMonManager',
-            help='The healthnmon manager class to use'), ]
+    cfg.StrOpt('healthnmon_manager',
+               default='healthnmon.manager.HealthnMonManager',
+               help='The healthnmon manager class to use'), ]
 
 FLAGS = flags.FLAGS
 FLAGS.register_opts(healthnmon_opts)

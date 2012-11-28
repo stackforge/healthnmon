@@ -48,10 +48,10 @@ from healthnmon.common import ssh_configuration
 from nova.openstack.common import cfg, rpc
 
 api_opts = [
-cfg.StrOpt('healthnmon_topic',
-            default='healthnmon',
-            help='the topic healthnmon service listen on')
-    ]
+    cfg.StrOpt('healthnmon_topic',
+               default='healthnmon',
+               help='the topic healthnmon service listen on')
+]
 
 FLAGS = flags.FLAGS
 FLAGS.register_opts(api_opts)
@@ -72,7 +72,7 @@ class DbCommands(object):
         pass
 
     @args('--version', dest='version', metavar='<version>',
-            help='Database version')
+          help='Database version')
     def sync(self, version=None):
         """Sync the database up to the most recent version."""
         return migration.db_sync(version)
@@ -87,7 +87,8 @@ class SSHCommands(object):
 
     def configure(self, hostname, user):
         """Set up SSH key pair between the appliance and host"""
-        service_records = db_api.service_get_all_by_host(context.get_admin_context(), hostname)
+        service_records = db_api.service_get_all_by_host(
+            context.get_admin_context(), hostname)
         if len(service_records) == 0:
             print _("Unable to find the host '%s' in the list of compute nodes. For a list of known compute nodes try 'nova-manage service list'" % (hostname))
             return
@@ -104,11 +105,11 @@ class ProfileCommands(object):
         pass
 
     @args('--state', dest='state', metavar='<state>',
-            help='Whether to enable/disable CPU profile')
+          help='Whether to enable/disable CPU profile')
     @args('--module', dest='module', metavar='<module>',
-            help='module name for which CPU profiler decorator is applied')
+          help='module name for which CPU profiler decorator is applied')
     @args('--decorator', dest='decorator', metavar='<decorator>',
-            help='CPU profiler decorator name')
+          help='CPU profiler decorator name')
     def cputime(self, state, module, decorator='healthnmon.profiler.profile_cpu.profile_cputime_decorator'):
         """enables/disables decorator to profile CPU in healthnmon """
         if module is None:
@@ -124,20 +125,20 @@ class ProfileCommands(object):
             return
 
         result = rpc.call(context.get_admin_context(),
-                     FLAGS.healthnmon_topic,
-                     {"method": "profile_cputime",
-                      "args": {"module": module,
-                               "decorator": decorator,
-                               "status": status}})
+                          FLAGS.healthnmon_topic,
+                          {"method": "profile_cputime",
+                           "args": {"module": module,
+                                    "decorator": decorator,
+                                    "status": status}})
 
     @args('--state', dest='state', metavar='<state>',
-            help='Whether to enable/disable memory profile')
+          help='Whether to enable/disable memory profile')
     @args('--method', dest='method', metavar='<method>',
-            help='method name for which memory profiler decorator need to be applied')
+          help='method name for which memory profiler decorator need to be applied')
     @args('--setref', dest='setref', action="store_true", default=False,
-            help='Whether to Set reference for enabling relative memory profling')
+          help='Whether to Set reference for enabling relative memory profling')
     @args('--decorator', dest='decorator', metavar='<decorator>',
-            help='memory profiler decorator name')
+          help='memory profiler decorator name')
     def memory(self, state, method, decorator='healthnmon.profiler.profile_mem.profile_memory_decorator', setref=False):
         """enables/disables decorator to profile memory in healthnmon """
         if method is None:
@@ -153,12 +154,12 @@ class ProfileCommands(object):
             return
 
         result = rpc.call(context.get_admin_context(),
-                     FLAGS.healthnmon_topic,
-                     {"method": "profile_memory",
-                      "args": {"method": method,
-                               "decorator": decorator,
-                               "status": status,
-                               "setref": setref}})
+                          FLAGS.healthnmon_topic,
+                          {"method": "profile_memory",
+                           "args": {"method": method,
+                                    "decorator": decorator,
+                                    "status": status,
+                                    "setref": setref}})
 
 
 class LogCommands(object):
@@ -168,17 +169,17 @@ class LogCommands(object):
         pass
 
     @args('--level', dest='level', metavar='<level>',
-            help='log level')
+          help='log level')
     @args('--module', dest='module', metavar='<module>',
-            help='module')
+          help='module')
     def setlevel(self, level='INFO', module='healthnmon'):
         """enables in setting the required log level to healthnmon logger."""
 
         result = rpc.call(context.get_admin_context(),
-                     FLAGS.healthnmon_topic,
-                     {"method": "setLogLevel",
-                      "args": {"level": level,
-                               "module": module}})
+                          FLAGS.healthnmon_topic,
+                          {"method": "setLogLevel",
+                           "args": {"level": level,
+                                    "module": module}})
 
 CATEGORIES = [('db', DbCommands),
               ('ssh', SSHCommands),
@@ -232,7 +233,7 @@ def main():
     script_name = argv.pop(0)
     if len(argv) < 1:
         print _("\healthnmon version: %s (%s)\n") % \
-                (version.version_string(), version.version_string_with_vcs())
+            (version.version_string(), version.version_string_with_vcs())
         print script_name + " category action [<args>]"
         print _("Available categories:")
         for k, _v in CATEGORIES:

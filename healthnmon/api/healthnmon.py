@@ -48,22 +48,24 @@ class Healthnmon(extensions.ExtensionDescriptor):
         resources = []
         vmhosts_resource = \
             extensions.ResourceExtension(constants.VMHOSTS_COLLECTION_NAME,
-                vmhosts.VmHostsController(),
-                collection_actions={'detail': 'GET'})
+                                         vmhosts.VmHostsController(),
+                                         collection_actions={'detail': 'GET'})
         vm_resource = \
             extensions.ResourceExtension(constants.VM_COLLECTION_NAME,
-                vm.VMController(),
-                collection_actions={'detail': 'GET'})
+                                         vm.VMController(),
+                                         collection_actions={'detail': 'GET'})
         storage_resource = \
-            extensions.ResourceExtension(constants.STORAGEVOLUME_COLLECTION_NAME,
+            extensions.ResourceExtension(
+                constants.STORAGEVOLUME_COLLECTION_NAME,
                 storagevolume.StorageVolumeController(),
                 collection_actions={'detail': 'GET'})
         subnet_resource = \
             extensions.ResourceExtension(constants.SUBNET_COLLECTION_NAME,
-                subnet.SubnetController(),
-                collection_actions={'detail': 'GET'})
+                                         subnet.SubnetController(),
+                                         collection_actions={'detail': 'GET'})
         virtual_switch_resource = \
-            extensions.ResourceExtension(constants.VIRTUAL_SWITCH_COLLECTION_NAME,
+            extensions.ResourceExtension(
+                constants.VIRTUAL_SWITCH_COLLECTION_NAME,
                 virtualswitch.VirtualSwitchController(),
                 collection_actions={'detail': 'GET'})
         resources.append(vmhosts_resource)

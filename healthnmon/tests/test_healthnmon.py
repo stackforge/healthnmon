@@ -27,7 +27,7 @@ class HealthnMonTestCase(test.TestCase):
         healthnmon_package_loc = healthnmon.get_healthnmon_location()
         self.assertNotEqual(healthnmon_package_loc, None)
         init_file_path = os.path.join(healthnmon_package_loc,
-                '__init__.py')
+                                      '__init__.py')
         init_exists = os.path.exists(init_file_path)
         self.assertTrue(init_exists,
                         _('__init__.py file not existing in %s'

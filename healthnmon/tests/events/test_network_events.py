@@ -17,7 +17,7 @@
 from nova import test
 from healthnmon.virt.libvirt.connection import LibvirtConnection
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
-            VirtualSwitch, PortGroup
+    VirtualSwitch, PortGroup
 from healthnmon.libvirt_inventorymonitor import LibvirtNetwork
 from healthnmon.tests import FakeLibvirt as libvirt
 from healthnmon.constants import Constants
@@ -36,13 +36,15 @@ class NetworkEventsTest(test.TestCase):
         super(NetworkEventsTest, self).setUp()
         self.connection = LibvirtConnection(False)
         self.connection._wrapped_conn = libvirt.open("qemu:///system")
-        rm_context = ComputeRMContext(rmType='QEMU', rmIpAddress='10.10.155.165',
-                        rmUserName='openstack',
-                        rmPassword='password')
+        rm_context = ComputeRMContext(
+            rmType='QEMU', rmIpAddress='10.10.155.165',
+            rmUserName='openstack',
+            rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['1'] = \
             ComputeInventory(rm_context)
-        self.libvirtNetwork = LibvirtNetwork(self.connection._wrapped_conn, '1')
-        self.flags(\
+        self.libvirtNetwork = LibvirtNetwork(
+            self.connection._wrapped_conn, '1')
+        self.flags(
             healthnmon_notification_drivers=['nova.notifier.test_notifier'])
         test_notifier.NOTIFICATIONS = []
 
@@ -65,10 +67,10 @@ class NetworkEventsTest(test.TestCase):
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = event_metadata.get_EventMetaData(\
-                                    event_metadata.EVENT_TYPE_NETWORK_ADDED)
-        self.assertEquals(msg['event_type'], \
-                        event_type.get_event_fully_qal_name())
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_NETWORK_ADDED)
+        self.assertEquals(msg['event_type'],
+                          event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'VirtualSwitch')
         self.assertEquals(payload['entity_id'], vswitch.get_id())
@@ -87,9 +89,9 @@ class NetworkEventsTest(test.TestCase):
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_NETWORK_DELETED)
-        self.assertEquals(msg['event_type'], \
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_NETWORK_DELETED)
+        self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'VirtualSwitch')
@@ -106,15 +108,15 @@ class NetworkEventsTest(test.TestCase):
         vmhost = copy.deepcopy(cachedHost)
         vmhost.get_virtualSwitches()[0].set_connectionState("Active")
         self.libvirtNetwork._processNetworkEvents(cachedHost, vmhost)
-        self.assertEquals(vmhost.get_virtualSwitches()[0]. \
-                          get_connectionState(), \
+        self.assertEquals(vmhost.get_virtualSwitches()[0].
+                          get_connectionState(),
                           Constants.VIRSWITCH_STATE_ACTIVE)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = event_metadata.get_EventMetaData(\
-                                    event_metadata.EVENT_TYPE_NETWORK_ENABLED)
-        self.assertEquals(msg['event_type'], \
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_NETWORK_ENABLED)
+        self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'VirtualSwitch')
@@ -132,16 +134,16 @@ class NetworkEventsTest(test.TestCase):
         vmhost = copy.deepcopy(cachedHost)
         vmhost.get_virtualSwitches()[0].set_connectionState("Inactive")
         self.libvirtNetwork._processNetworkEvents(cachedHost, vmhost)
-        self.assertEquals(vmhost.get_virtualSwitches()[0]. \
-                          get_connectionState(), \
+        self.assertEquals(vmhost.get_virtualSwitches()[0].
+                          get_connectionState(),
                           Constants.VIRSWITCH_STATE_INACTIVE)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.WARN)
-        event_type = event_metadata.get_EventMetaData(\
-                        event_metadata.EVENT_TYPE_NETWORK_DISABLED)
-        self.assertEquals(msg['event_type'], \
-                        event_type.get_event_fully_qal_name())
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_NETWORK_DISABLED)
+        self.assertEquals(msg['event_type'],
+                          event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'VirtualSwitch')
         self.assertEquals(payload['entity_id'], vswitch.get_id())
@@ -166,9 +168,9 @@ class NetworkEventsTest(test.TestCase):
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 2)
         msg = test_notifier.NOTIFICATIONS[1]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = event_metadata.get_EventMetaData(\
-                            event_metadata.EVENT_TYPE_PORTGROUP_ADDED)
-        self.assertEquals(msg['event_type'], \
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_PORTGROUP_ADDED)
+        self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'PortGroup')
@@ -195,9 +197,9 @@ class NetworkEventsTest(test.TestCase):
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 2)
         msg = test_notifier.NOTIFICATIONS[1]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = event_metadata.get_EventMetaData(\
-                            event_metadata.EVENT_TYPE_PORTGROUP_DELETED)
-        self.assertEquals(msg['event_type'], \
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_PORTGROUP_DELETED)
+        self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'PortGroup')
@@ -224,9 +226,9 @@ class NetworkEventsTest(test.TestCase):
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
         msg = test_notifier.NOTIFICATIONS[0]
         self.assertEquals(msg['priority'], notifier_api.INFO)
-        event_type = event_metadata.get_EventMetaData(\
-                            event_metadata.EVENT_TYPE_PORTGROUP_RECONFIGURED)
-        self.assertEquals(msg['event_type'], \
+        event_type = event_metadata.get_EventMetaData(
+            event_metadata.EVENT_TYPE_PORTGROUP_RECONFIGURED)
+        self.assertEquals(msg['event_type'],
                           event_type.get_event_fully_qal_name())
         payload = msg['payload']
         self.assertEquals(payload['entity_type'], 'PortGroup')

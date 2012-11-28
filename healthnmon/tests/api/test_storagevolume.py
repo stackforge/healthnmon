@@ -72,7 +72,7 @@ rel="bookmark"/>\
         self.config_drive = None
         self.mock = mox.Mox()
         self.admin_context = context.RequestContext('admin', '',
-                is_admin=True)
+                                                    is_admin=True)
 
     def tearDown(self):
         self.mock.stubs.UnsetAll()
@@ -81,12 +81,12 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().index(request)
         self.assertNotEqual(resp, None, 'Return json string')
@@ -96,12 +96,12 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().index(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -111,13 +111,13 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes/detail.xml?'
-        'limit=1&marker=datastore-111',
-                base_url='http://localhost:8774/v2.0/')
+                                      'limit=1&marker=datastore-111',
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().detail(request)
         self.assertEqual(resp.body, self.expected_limited_detail_xml)
@@ -126,12 +126,12 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().detail(request)
         self.assertEqual(resp.body, self.expected_detail_xml)
@@ -140,12 +140,12 @@ rel="bookmark"/>\
         storagevolumes = None
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -154,12 +154,12 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         request.headers['Accept'] = 'application/xml'
         resp = StorageVolumeController().index(request)
@@ -170,12 +170,12 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.headers['Accept'] = 'application/json'
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().index(request)
@@ -187,10 +187,10 @@ rel="bookmark"/>\
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
         api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                      mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank('/v2.0/storagevolumes/datastore-111.json', \
+            webob.Request.blank('/v2.0/storagevolumes/datastore-111.json',
                                 base_url='http://localhost:8774/v2.0/'
                                 )
         request.environ['nova.context'] = self.admin_context
@@ -204,10 +204,10 @@ rel="bookmark"/>\
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
         api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                      mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank('/v2.0/storagevolumes/datastore-111.xml', \
+            webob.Request.blank('/v2.0/storagevolumes/datastore-111.xml',
                                 base_url='http://localhost:8774/v2.0/'
                                 )
         request.environ['nova.context'] = self.admin_context
@@ -221,10 +221,10 @@ rel="bookmark"/>\
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
         api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                      mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank('/v2.0/storagevolumes/datastore-111.xml', \
+            webob.Request.blank('/v2.0/storagevolumes/datastore-111.xml',
                                 base_url='http://localhost:8774/v2.0/'
                                 )
         request.environ['nova.context'] = self.admin_context
@@ -236,15 +236,15 @@ rel="bookmark"/>\
         storagevolumes = self.get_storagevolume_list()
         xml_utils = util
         self.mock.StubOutWithMock(xml_utils, 'xml_to_dict')
-        xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(Exception(\
-                                        'Test Exception'))
+        xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(Exception(
+            'Test Exception'))
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
         api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                      mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank('/v2.0/storagevolumes/datastore-111.json', \
+            webob.Request.blank('/v2.0/storagevolumes/datastore-111.json',
                                 base_url='http://localhost:8774/v2.0/'
                                 )
         request.environ['nova.context'] = self.admin_context
@@ -254,12 +254,12 @@ rel="bookmark"/>\
     def test_list_storagevolumes_none_check(self):
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
         api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(None)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().index(request)
         self.assertEqual(resp.body, '{"storagevolumes": []}',
@@ -270,13 +270,13 @@ rel="bookmark"/>\
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
         api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(storagevolumes)
+                                      mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(
-            '/v2.0/storagevolumes/datastore-111.json?fields=id,name', \
-             base_url='http://localhost:8774/v2.0/'
-                                )
+                '/v2.0/storagevolumes/datastore-111.json?fields=id,name',
+                base_url='http://localhost:8774/v2.0/'
+            )
         request.environ['nova.context'] = self.admin_context
         resp = StorageVolumeController().show(request, 'datastore-111')
         self.assertNotEqual(resp, None,
@@ -287,7 +287,7 @@ rel="bookmark"/>\
 
         # storagevolume_list = []
 
-        if storageId != None:
+        if storageId is not None:
             self.get_storagevolume_list(storageId)
         return self.get_storagevolume_list()
 
@@ -297,19 +297,19 @@ rel="bookmark"/>\
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-111')
         storagevolume.set_name('datastore-111')
-        storagevolume.set_resourceManagerId(\
-         '13274325-BFD6-464F-A9D1-61332573B5E2')
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2')
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(True)
         storagevolume.set_shared(True)
         storagevolume.set_assignedServerCount(2)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-         '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da')
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da')
         hostMountPoint = \
-            HostMountPoint(\
-            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da', 'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da', 'host-9')
         storagevolume.add_mountPoints(hostMountPoint)
         storagevolume_list.append(storagevolume)
         storagevolume_dict[storagevolume.get_id()] = storagevolume
@@ -317,23 +317,23 @@ rel="bookmark"/>\
         storagevolume = StorageVolume()
         storagevolume.set_id('datastore-112')
         storagevolume.set_name('datastore-112')
-        storagevolume.set_resourceManagerId(\
-         '13274325-BFD6-464F-A9D1-61332573B5E2')
+        storagevolume.set_resourceManagerId(
+            '13274325-BFD6-464F-A9D1-61332573B5E2')
         storagevolume.set_size(107105746944)
         storagevolume.set_free(32256294912)
         storagevolume.set_vmfsVolume(False)
         storagevolume.set_shared(False)
         storagevolume.set_assignedServerCount(1)
         storagevolume.set_volumeType('VMFS')
-        storagevolume.set_volumeId(\
-         '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
+        storagevolume.set_volumeId(
+            '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db')
         hostMountPoint = \
-            HostMountPoint(\
-             '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', 'host-9')
+            HostMountPoint(
+                '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db', 'host-9')
         storagevolume.add_mountPoints(hostMountPoint)
         storagevolume_list.append(storagevolume)
         storagevolume_dict[storagevolume.get_id()] = storagevolume
-        if storageId != None:
+        if storageId is not None:
             return [storagevolume_dict[storageId]]
         return storagevolume_list
 

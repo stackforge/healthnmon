@@ -44,14 +44,14 @@ class VirtualSwitchTest(unittest.TestCase):
         self.config_drive = None
         self.mock = mox.Mox()
         self.admin_context = context.RequestContext('admin', '',
-                is_admin=True)
+                                                    is_admin=True)
 
     def tearDown(self):
         self.mock.stubs.UnsetAll()
 
     def test_list_virtual_switch_json(self):
         expected_out_json = \
-        '{"virtualswitches": [{"id": "virtual-switch-01", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", "rel": "self"}, \
+            '{"virtualswitches": [{"id": "virtual-switch-01", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualswitches/virtual-switch-01", "rel": "bookmark"}], "name": "virtual-switch-01"}, \
         {"id": "virtual-switch-02", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-02", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualswitches/virtual-switch-02", "rel": "bookmark"}], "name": "virtual-switch-02"}]}'
@@ -59,12 +59,12 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switch_list = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches.json',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().index(request)
         self.assertNotEqual(resp, None, 'Return json string')
@@ -76,7 +76,7 @@ class VirtualSwitchTest(unittest.TestCase):
 
     def test_list_virtual_switch_xml(self):
         expected_out_xml = \
-        '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+            '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
         <virtualswitch id="virtual-switch-01" name="virtual-switch-01">\
         <atom:link href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-01" rel="self"/>\
         <atom:link href="http://localhost:8774/virtualswitches/virtual-switch-01" rel="bookmark"/>\
@@ -88,12 +88,12 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switch_list = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().index(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -105,7 +105,7 @@ class VirtualSwitchTest(unittest.TestCase):
 
     def test_list_virtual_switch_xml_header(self):
         expected_out_xml = \
-        '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+            '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
         <virtualswitch id="virtual-switch-01" name="virtual-switch-01">\
         <atom:link href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-01" rel="self"/>\
         <atom:link href="http://localhost:8774/virtualswitches/virtual-switch-01" rel="bookmark"/>\
@@ -117,12 +117,12 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switches)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virutalswitches',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         request.headers['Accept'] = 'application/xml'
         resp = VirtualSwitchController().index(request)
@@ -135,7 +135,7 @@ class VirtualSwitchTest(unittest.TestCase):
 
     def test_list_virtual_switch_json_header(self):
         expected_out_json = \
-        '{"virtualswitches": [{"id": "virtual-switch-01", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", "rel": "self"}, \
+            '{"virtualswitches": [{"id": "virtual-switch-01", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", "rel": "self"}, \
         {"href": "http://localhost:8774/virtualswitches/virtual-switch-01", "rel": "bookmark"}], "name": "virtual-switch-01"}, \
         {"id": "virtual-switch-02", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-02", "rel": "self"},\
          {"href": "http://localhost:8774/virtualswitches/virtual-switch-02", "rel": "bookmark"}], "name": "virtual-switch-02"}]}'
@@ -143,12 +143,12 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switches)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         request.headers['Accept'] = 'application/json'
         resp = VirtualSwitchController().index(request)
@@ -163,13 +163,13 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switches)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches/detail.xml?'
-        'limit=1&marker=virtual-switch-01',
-                base_url='http://localhost:8774/v2.0/')
+                                      'limit=1&marker=virtual-switch-01',
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().detail(request)
         self.assertEqual(resp.body, self.expected_limited_detail_xml)
@@ -178,12 +178,12 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switches)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().detail(request)
         self.assertEqual(resp.body, self.expected_detail_xml)
@@ -192,12 +192,12 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switches = None
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(virtual_switches)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches/detail.xml',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().detail(request)
         self.assertNotEqual(resp, None, 'Return xml string')
@@ -205,12 +205,12 @@ class VirtualSwitchTest(unittest.TestCase):
     def test_list_virtual_switch_none_check(self):
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
         api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg(),
-                                mox.IgnoreArg()).AndReturn(None)
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg(),
+                                              mox.IgnoreArg()).AndReturn(None)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches',
-                base_url='http://localhost:8774/v2.0/')
+                                      base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().index(request)
         self.assertEqual(resp.body, '{"virtualswitches": []}',
@@ -218,7 +218,7 @@ class VirtualSwitchTest(unittest.TestCase):
 
     def test_virtual_switch_details_json(self):
         expected_out_json = \
-        '{"VirtualSwitch": {"subnets": [{"id": "subnet-3883", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-3883", "rel": "self"}, \
+            '{"VirtualSwitch": {"subnets": [{"id": "subnet-3883", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-3883", "rel": "self"}, \
         {"href": "http://localhost:8774/subnets/subnet-3883", "rel": "bookmark"}]}, \
         {"id": "subnet-323", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-323", "rel": "self"}, \
         {"href": "http://localhost:8774/subnets/subnet-323", "rel": "bookmark"}]}], "id": "virtual-switch-01", "switchType": "dvSwitch", "name": "virtual-switch-01"}}'
@@ -227,16 +227,16 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
         api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank(\
-            '/v2.0/virtualswitches/virtual-switch-01.json', \
-            base_url='http://localhost:8774/v2.0/'
-                                )
+            webob.Request.blank(
+                '/v2.0/virtualswitches/virtual-switch-01.json',
+                base_url='http://localhost:8774/v2.0/'
+            )
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().show(request,
-                'virtual-switch-01')
+                                              'virtual-switch-01')
         self.assertNotEqual(resp, None,
                             'Return json response for virtual-switch-01'
                             )
@@ -245,7 +245,7 @@ class VirtualSwitchTest(unittest.TestCase):
 
     def test_virtual_switch_details_xml(self):
         expected_out_xml = \
-        '<VirtualSwitch><id>virtual-switch-01</id><name>virtual-switch-01</name><switchType>dvSwitch</switchType>\
+            '<VirtualSwitch><id>virtual-switch-01</id><name>virtual-switch-01</name><switchType>dvSwitch</switchType>\
         <subnet xmlns:atom="http://www.w3.org/2005/Atom" id="subnet-3883">\
         <atom:link href="http://localhost:8774/v2.0/subnets/subnet-3883" rel="self"/>\
         <atom:link href="http://localhost:8774/subnets/subnet-3883" rel="bookmark"/></subnet>\
@@ -257,16 +257,16 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
         api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank(\
-            '/v2.0/virtualswitches/virtual-switch-01.xml', \
-            base_url='http://localhost:8774/v2.0/'
-                                )
+            webob.Request.blank(
+                '/v2.0/virtualswitches/virtual-switch-01.xml',
+                base_url='http://localhost:8774/v2.0/'
+            )
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().show(request,
-                'virtual-switch-01')
+                                              'virtual-switch-01')
         self.assertNotEqual(resp, None,
                             'Return xml response for virtual-switch-01')
         self.compare_xml(expected_out_xml, resp.body)
@@ -277,16 +277,16 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
         api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank(\
-            '/v2.0/virtualswitches/virtual-switch-01.xml', \
-            base_url='http://localhost:8774/v2.0/'
-                                )
+            webob.Request.blank(
+                '/v2.0/virtualswitches/virtual-switch-01.xml',
+                base_url='http://localhost:8774/v2.0/'
+            )
         request.environ['nova.context'] = self.admin_context
         resp = VirtualSwitchController().show(request,
-                'virtual-switch-01')
+                                              'virtual-switch-01')
         self.assertNotEqual(resp, None,
                             'Return xml response for virtual-switch-01')
         self.mock.stubs.UnsetAll()
@@ -296,38 +296,34 @@ class VirtualSwitchTest(unittest.TestCase):
         xml_utils = util
         self.mock.StubOutWithMock(xml_utils, 'xml_to_dict')
         xml_utils.xml_to_dict(mox.IgnoreArg()).AndRaise(IndexError('Test index'
-                ))
+                                                                   ))
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
         api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
-            webob.Request.blank(\
-                '/v2.0/virtualswitches/virtual-switch-01.json', \
-                base_url='http://localhost:8774/v2.0/'
-                                )
+            webob.Request.blank(
+                '/v2.0/virtualswitches/virtual-switch-01.json',
+                base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = VirtualSwitchController().show(request,
-                'virtual-switch-01')
+        resp = VirtualSwitchController().show(request, 'virtual-switch-01')
         self.assertTrue(isinstance(resp, HTTPNotFound))
 
     def test_query_field_key(self):
-        expected_out_json = \
-        '{"VirtualSwitch": {"id": "virtual-switch-01", "name": "virtual-switch-01"}}'
+        expected_out_json = '{"VirtualSwitch": {"id": "virtual-switch-01", "name": "virtual-switch-01"}}'
 
         virtual_switch_list = self.get_single_virtual_switch()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
-        api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_by_ids(
+            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank('/v2.0/vm/vm-01.json?fields=id,name',
                                 base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = VirtualSwitchController().show(request,
-                'virtual-switch-01')
+        resp = VirtualSwitchController().show(request, 'virtual-switch-01')
         self.assertNotEqual(resp, None,
                             'Return xml response for virtual-switch-01')
         self.compare_json(expected_out_json, resp.body)

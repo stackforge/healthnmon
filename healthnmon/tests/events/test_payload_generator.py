@@ -34,8 +34,8 @@ class EventMetadataTest(test.TestCase):
 
     def testPayloadGenerator(self):
         metadata = event_metadata.EventMetaData('TestEvent',
-                'TestCategory', 'Short Description %(name)s',
-                'Long Description %(name)s', notifier.api.INFO)
+                                                'TestCategory', 'Short Description %(name)s',
+                                                'Long Description %(name)s', notifier.api.INFO)
         obj = Entity()
         obj.name = 'TestName'
         payload = payload_generator.generate_payload(metadata, obj)
@@ -45,8 +45,8 @@ class EventMetadataTest(test.TestCase):
 
     def testVmPayloadGenerator(self):
         metadata = \
-            event_metadata.get_EventMetaData(\
-                    event_metadata.EVENT_TYPE_VM_CREATED)
+            event_metadata.get_EventMetaData(
+                event_metadata.EVENT_TYPE_VM_CREATED)
         obj = Vm()
         obj.name = 'TestVm'
         ipProfile = IpProfile()
@@ -61,7 +61,7 @@ class EventMetadataTest(test.TestCase):
 
     def testVmHostPayloadGenerator(self):
         metadata = \
-            event_metadata.get_EventMetaData(\
+            event_metadata.get_EventMetaData(
                 event_metadata.EVENT_TYPE_HOST_ADDED)
         obj = VmHost()
         obj.name = 'TestVmHost'
@@ -78,7 +78,7 @@ class EventMetadataTest(test.TestCase):
     def testVmHostPayload_with_storage_size(self):
         self.flags(instances_path="/var/lib/nova/instances")
         metadata = \
-            event_metadata.get_EventMetaData(\
+            event_metadata.get_EventMetaData(
                 event_metadata.EVENT_TYPE_HOST_ADDED)
         obj = VmHost()
         obj.name = 'TestVmHost'
@@ -100,9 +100,10 @@ class EventMetadataTest(test.TestCase):
         mount_point.set_vmHostId('TestVmHost')
         storage_obj.add_mountPoints(mount_point)
         obj.add_storageVolumeIds("storage_id")
-        self.mox.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache')
+        self.mox.StubOutWithMock(
+            InventoryCacheManager, 'get_object_from_cache')
         InventoryCacheManager.get_object_from_cache(storage_obj.id,
-                Constants.StorageVolume).AndReturn(storage_obj)
+                                                    Constants.StorageVolume).AndReturn(storage_obj)
         self.mox.ReplayAll()
         payload = payload_generator.generate_payload(metadata, obj)
         self.assertEquals(payload['entity_type'],
@@ -117,7 +118,7 @@ class EventMetadataTest(test.TestCase):
 
     def testStorageVolumePayloadGenerator(self):
         metadata = \
-            event_metadata.get_EventMetaData(\
+            event_metadata.get_EventMetaData(
                 event_metadata.EVENT_TYPE_STORAGE_ADDED)
         obj = StorageVolume()
         obj.name = 'TestStorageVolume'

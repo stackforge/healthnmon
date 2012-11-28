@@ -37,7 +37,7 @@ class InventoryCacheManager(object):
         Constants.Vm: {},
         Constants.StorageVolume: {},
         Constants.Network: {},
-        }
+    }
     _compute_inventory = {}  # {<compute_Id> : ComputeInventory }
 
     @staticmethod
@@ -63,7 +63,8 @@ class InventoryCacheManager(object):
             InventoryCacheManager.get_inventory_cache()[Constants.VmHost][uuid] = \
                 obj
         elif isinstance(obj, Vm):
-            InventoryCacheManager.get_inventory_cache()[Constants.Vm][uuid] = obj
+            InventoryCacheManager.get_inventory_cache(
+            )[Constants.Vm][uuid] = obj
         elif isinstance(obj, StorageVolume):
             InventoryCacheManager.get_inventory_cache()[Constants.StorageVolume][uuid] = \
                 obj
@@ -97,7 +98,7 @@ class InventoryCacheManager(object):
         elif obj_type == Constants.Vm:
             host_id = inv_obj.get_vmHostId()
             compute_id = InventoryCacheManager.get_object_from_cache(host_id,
-                    Constants.VmHost).get_id()
+                                                                     Constants.VmHost).get_id()
 
         compute_inv = InventoryCacheManager.get_compute_inventory(compute_id)
         if compute_inv is not None:

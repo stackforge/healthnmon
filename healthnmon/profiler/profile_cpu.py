@@ -15,16 +15,17 @@
 #    under the License.
 
 """
-Defines decorator that provides details on time spent in each function in specified
-modules which is used from utils.monkey_patch()
+Defines decorator that provides details on time spent
+in each function in specified modules which is used
+from utils.monkey_patch()
 """
 
 from healthnmon import log as logging
-from nova import flags
+from nova.openstack.common import cfg
 import functools
 import time
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 modules = []
@@ -48,8 +49,8 @@ def profile_cputime_decorator(name, fn):
             rt = fn(*args, **kwarg)
             logger = logging.getLogger(module)
             logger.debug(_(' %(fn_name)s | %(time)f | ms'),
-                {'fn_name': name,
-                 'time': (time.time() - st) * 1000})
+                         {'fn_name': name,
+                         'time': (time.time() - st) * 1000})
             return rt
         else:
             return fn(*args, **kwarg)
@@ -58,8 +59,8 @@ def profile_cputime_decorator(name, fn):
 
 
 def getmodules():
-    if FLAGS.monkey_patch is True:
-        for module_and_decorator in FLAGS.monkey_patch_modules:
+    if CONF.monkey_patch is True:
+        for module_and_decorator in CONF.monkey_patch_modules:
             module = module_and_decorator.split(':')[0]
             modules.append(module)
 

@@ -20,7 +20,7 @@ Implements the healthnmon notifier API
 
 import uuid
 
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import timeutils, jsonutils, importutils
 from healthnmon import log as logging
 from nova.openstack.common import cfg
@@ -30,7 +30,7 @@ from healthnmon.constants import Constants
 
 LOG = logging.getLogger('healthnmon.notifier.api')
 
-FLAGS = flags.FLAGS
+CONF = cfg.CONF
 
 WARN = 'WARN'
 INFO = 'INFO'
@@ -49,11 +49,11 @@ class BadPriorityException(Exception):
 
 
 def notify(context,
-    publisher_id,
-    event_type,
-    priority,
-    payload,
-    ):
+           publisher_id,
+           event_type,
+           priority,
+           payload,
+           ):
     """
     Sends a notification using the specified driver
 
@@ -100,14 +100,15 @@ def notify(context,
         event_type=event_type,
         priority=priority,
         payload=payload,
-        timestamp=time.strftime(Constants.DATE_TIME_FORMAT, timeutils.utcnow().timetuple()),
-        )
+        timestamp=time.strftime(
+            Constants.DATE_TIME_FORMAT, timeutils.utcnow().timetuple()),
+    )
     for driver in _get_drivers():
         try:
             driver.notify(context, msg)
         except Exception, e:
             LOG.exception(_("Problem '%(e)s' attempting to send to healthnmon notification driver %(driver)s."
-                       % locals()))
+                            % locals()))
 
 
 def _get_drivers():
@@ -115,7 +116,7 @@ def _get_drivers():
     global drivers
     if not drivers:
         drivers = []
-        for notification_driver in FLAGS.healthnmon_notification_drivers:
+        for notification_driver in CONF.healthnmon_notification_drivers:
             drivers.append(importutils.import_module(notification_driver))
 #            try:
 #                drivers.append(importutils.import_module(notification_driver))

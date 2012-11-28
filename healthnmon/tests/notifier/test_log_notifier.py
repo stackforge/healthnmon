@@ -35,9 +35,10 @@ class LogNotifierTest(test.TestCase):
             'event_type': 'LifeCycle.Vm.Reconfigured',
             'payload': {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'},
             'message_id': '409e109d-41c0-4b75-9019-04aa3329c67b',
-            }
-        self.assertEquals(healthnmon.notifier.log_notifier.notify(self.context, message),
-                          None)
+        }
+        self.assertEquals(
+            healthnmon.notifier.log_notifier.notify(self.context, message),
+            None)
 
     def tearDown(self):
 

@@ -88,17 +88,17 @@ class VmHostDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_host_save(get_admin_context(), vmhost)
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
-        self.assertFalse(vmhosts == None,
+                                                 [host_id])
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
                         )
         self.assertTrue(len(vmhosts[0].get_virtualSwitches()) > 0,
-            'Host get by virtual switch returned invalid number of list'
+                        'Host get by virtual switch returned invalid number of list'
                         )
         self.assertTrue(len(vmhosts[0].get_portGroups()) > 0,
-            'Host get by port group returned invalid number of list'
+                        'Host get by port group returned invalid number of list'
                         )
         self.assertTrue(vmhosts[0].id == host_id)
 
@@ -130,17 +130,17 @@ class VmHostDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_host_save(get_admin_context(), vmhost)
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
-        self.assertFalse(vmhosts == None,
+                                                 [host_id])
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
                         )
         self.assertTrue(len(vmhosts[0].get_virtualSwitches()) > 0,
-            'Host get by virtual switch returned invalid number of list'
+                        'Host get by virtual switch returned invalid number of list'
                         )
         self.assertTrue(len(vmhosts[0].get_portGroups()) > 0,
-            'Host get by port group returned invalid number of list'
+                        'Host get by port group returned invalid number of list'
                         )
         self.assertTrue(vmhosts[0].id == host_id)
 
@@ -189,17 +189,17 @@ class VmHostDbApiTestCase(test.TestCase):
 
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
-        self.assertFalse(vmhosts == None,
+                                                 [host_id])
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
                         )
         self.assertTrue(len(vmhosts[0].get_virtualSwitches()) > 0,
-            'Host get by virtual switch returned invalid number of list'
+                        'Host get by virtual switch returned invalid number of list'
                         )
         self.assertTrue(len(vmhosts[0].get_portGroups()) > 0,
-            'Host get by port group returned invalid number of list'
+                        'Host get by port group returned invalid number of list'
                         )
         self.assertTrue(vmhosts[0].id == host_id)
 
@@ -233,57 +233,57 @@ class VmHostDbApiTestCase(test.TestCase):
         healthnmon_db_api.storage_volume_save(get_admin_context(), volume)
 
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None,
-                'vm_host_get_all returned a None')
+        self.assertFalse(vmhosts is None,
+                         'vm_host_get_all returned a None')
         self.assertTrue(len(vmhosts) == 2,
-                'vm_host_get_all does not returned expected number of hosts')
+                        'vm_host_get_all does not returned expected number of hosts')
         self.assertEqual(vmhosts[0].get_id(),
-                'VH1-id', "VMHost id is not same")
+                         'VH1-id', "VMHost id is not same")
         self.assertEqual(vmhosts[1].get_id(),
-                'VH2-id', "VMHost id is not same")
+                         'VH2-id', "VMHost id is not same")
         vmlist = vmhosts[0].get_virtualMachineIds()
-        self.assertFalse(vmlist == None,
-                "virtual machines from the host returned None")
+        self.assertFalse(vmlist is None,
+                         "virtual machines from the host returned None")
         self.assertTrue(len(vmlist) == 1,
-                "length of virtual machines list is not returned as expected")
+                        "length of virtual machines list is not returned as expected")
         self.assertTrue(vm.id in vmlist,
-                "VmId is not in host")
+                        "VmId is not in host")
 
         vms = healthnmon_db_api.vm_get_by_ids(get_admin_context(), ['VM1-id'])
-        self.assertTrue(vms != None)
+        self.assertTrue(vms is not None)
         self.assertTrue(len(vms) == 1)
         vm = vms[0]
         self.assertEqual(vm.get_id(), 'VM1-id', "VM id is not same")
         vmGlobalSets = vm.get_vmGlobalSettings()
-        self.assertTrue(vmGlobalSets != None)
+        self.assertTrue(vmGlobalSets is not None)
         self.assertEqual(vmGlobalSets.get_id(), 'VM1-id', "VM id is not same")
         self.assertEqual(vmGlobalSets.get_autoStartAction(),
-                'autoStartAction', "autoStartAction is not same")
+                         'autoStartAction', "autoStartAction is not same")
         self.assertEqual(vmGlobalSets.get_autoStopAction(),
-                'autoStopAction', "autoStopAction is not same")
+                         'autoStopAction', "autoStopAction is not same")
 
         svlist = vmhosts[0].get_storageVolumeIds()
-        self.assertFalse(svlist == None,
-                "Storage Volumes from the host returned None")
+        self.assertFalse(svlist is None,
+                         "Storage Volumes from the host returned None")
         self.assertTrue(len(svlist) >= 1,
-                "length of storage volumes list is not returned as expected")
+                        "length of storage volumes list is not returned as expected")
         self.assertTrue(sv_id in svlist,
-                "Storage Volume Id is not host")
+                        "Storage Volume Id is not host")
 
         storagevolumes = \
             healthnmon_db_api.storage_volume_get_by_ids(get_admin_context(),
                                                         ['SV1-id'])
-        self.assertFalse(storagevolumes == None,
-                'Storage volume get by id returned a none list')
+        self.assertFalse(storagevolumes is None,
+                         'Storage volume get by id returned a none list')
         self.assertTrue(len(storagevolumes) > 0,
-                'Storage volume get by id returned invalid number of list')
+                        'Storage volume get by id returned invalid number of list')
         self.assertEquals(storagevolumes[0].id,
-                'SV1-id', "Storage volume id is not same")
+                          'SV1-id', "Storage volume id is not same")
         hostMountPoints = storagevolumes[0].get_mountPoints()
         self.assertEquals(hostMountPoints[0].get_path(),
-                '/path', "Host mount point path is not same")
+                          '/path', "Host mount point path is not same")
         self.assertEquals(hostMountPoints[0].get_vmHostId(),
-                'VH1-id', "VmHost id is not same for storage volumes")
+                          'VH1-id', "VmHost id is not same for storage volumes")
 
     def test_vm_host_get_by_id(self):
         host_id = 'VH1'
@@ -301,12 +301,12 @@ class VmHostDbApiTestCase(test.TestCase):
         volume.set_id('SV11')
         volume.add_mountPoints(mntPnt)
         healthnmon_db_api.storage_volume_save(get_admin_context(),
-                volume)
+                                              volume)
 
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
-        self.assertFalse(vmhosts == None,
+                                                 [host_id])
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
@@ -324,8 +324,8 @@ class VmHostDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_save(get_admin_context(), vm)
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
-        self.assertFalse(vmhosts == None,
+                                                 [host_id])
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
@@ -338,7 +338,7 @@ class VmHostDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_delete_by_ids(get_admin_context(), [vm.id])
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
+                                                 [host_id])
         self.assertTrue(vmhosts[0].id == host_id)
         vmids = vmhosts[0].get_virtualMachineIds()
         self.assert_((vmids is None) or (len(vmids) == 0))
@@ -354,7 +354,7 @@ class VmHostDbApiTestCase(test.TestCase):
         healthnmon_db_api.vm_save(get_admin_context(), vm)
         vmhosts = \
             healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None,
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
@@ -383,12 +383,12 @@ class VmHostDbApiTestCase(test.TestCase):
         volume.set_id('SV11')
         volume.add_mountPoints(mntPnt)
         healthnmon_db_api.storage_volume_save(get_admin_context(),
-                volume)
+                                              volume)
 
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
-        self.assertFalse(vmhosts == None,
+                                                 [host_id])
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
@@ -399,10 +399,11 @@ class VmHostDbApiTestCase(test.TestCase):
         self.assert_(len(svlist) == 1)
         self.assert_(volume.get_id() in svlist)
 
-        healthnmon_db_api.storage_volume_delete_by_ids(get_admin_context(), [volume.get_id()])
+        healthnmon_db_api.storage_volume_delete_by_ids(
+            get_admin_context(), [volume.get_id()])
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [host_id])
+                                                 [host_id])
         self.assertTrue(vmhosts[0].id == host_id)
         svids = vmhosts[0].get_storageVolumeIds()
         self.assert_((svids is None) or (len(svids) == 0))
@@ -419,11 +420,11 @@ class VmHostDbApiTestCase(test.TestCase):
         volume.set_id('SV11')
         volume.add_mountPoints(mntPnt)
         healthnmon_db_api.storage_volume_save(get_admin_context(),
-                volume)
+                                              volume)
 
         vmhosts = \
             healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None,
+        self.assertFalse(vmhosts is None,
                          'Host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'Host get by id returned invalid number of list'
@@ -434,7 +435,8 @@ class VmHostDbApiTestCase(test.TestCase):
         self.assert_(len(svlist) == 1)
         self.assert_(volume.get_id() in svlist)
 
-        healthnmon_db_api.storage_volume_delete_by_ids(get_admin_context(), [volume.get_id()])
+        healthnmon_db_api.storage_volume_delete_by_ids(
+            get_admin_context(), [volume.get_id()])
         vmhosts = \
             healthnmon_db_api.vm_host_get_all(get_admin_context())
         self.assertTrue(vmhosts[0].id == host_id)
@@ -492,7 +494,7 @@ class VmHostDbApiTestCase(test.TestCase):
         hostMount2.set_vmHostId('VH2')
         storage.add_mountPoints(hostMount2)
         healthnmon_db_api.storage_volume_save(get_admin_context(),
-                storage)
+                                              storage)
 
         vm = Vm()
         vm.set_id('vm-01')
@@ -502,8 +504,8 @@ class VmHostDbApiTestCase(test.TestCase):
 
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [vmhost_id])
-        self.assertFalse(vmhosts == None,
+                                                 [vmhost_id])
+        self.assertFalse(vmhosts is None,
                          'host get by id returned a none list')
         self.assertTrue(len(vmhosts) > 0,
                         'host get by id returned invalid number of list'
@@ -512,12 +514,12 @@ class VmHostDbApiTestCase(test.TestCase):
 #        self.assertRaises(Exception, healthnmon_db_api.vm_host_delete_by_ids,([vmhost_id]))
 
         healthnmon_db_api.vm_host_delete_by_ids(get_admin_context(),
-                [vmhost_id])
+                                                [vmhost_id])
 
         vmhosts = \
             healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
-                [vmhost_id])
-        self.assertTrue(vmhosts == None or len(vmhosts) == 0,
+                                                 [vmhost_id])
+        self.assertTrue(vmhosts is None or len(vmhosts) == 0,
                         'host not deleted')
 
     def test_vm_host_save_none(self):
@@ -528,17 +530,17 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost.id = 'VH1-id'
         healthnmon_db_api.vm_host_save(get_admin_context(), vmhost)
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None, 'vm_host_get_all returned a None')
+        self.assertFalse(vmhosts is None, 'vm_host_get_all returned a None')
         self.assertTrue(len(vmhosts) == 1,
-                'vm_host_get_all does not returned expected number of hosts')
+                        'vm_host_get_all does not returned expected number of hosts')
         #Now tries to put None object in the db
         healthnmon_db_api.vm_host_save(get_admin_context(), None)
         #Again tries to retrieve the vmhost from db and
         #check it is same as before
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None, 'vm_host_get_all returned a None')
+        self.assertFalse(vmhosts is None, 'vm_host_get_all returned a None')
         self.assertTrue(len(vmhosts) == 1,
-                'vm_host_get_all does not returned expected number of hosts')
+                        'vm_host_get_all does not returned expected number of hosts')
 
     def test_vm_host_get_by_id_none(self):
         '''
@@ -546,8 +548,8 @@ class VmHostDbApiTestCase(test.TestCase):
         '''
         vmHost = healthnmon_db_api.vm_host_get_by_ids(get_admin_context(),
                                                       None)
-        self.assertTrue(vmHost == None,
-                         "Vmhost retrived from the none object is not none")
+        self.assertTrue(vmHost is None,
+                        "Vmhost retrived from the none object is not none")
 
     def test_vm_host_delete_none(self):
         '''
@@ -557,17 +559,17 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost.id = 'VH1-id'
         healthnmon_db_api.vm_host_save(get_admin_context(), vmhost)
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None, 'vm_host_get_all returned a None')
+        self.assertFalse(vmhosts is None, 'vm_host_get_all returned a None')
         self.assertTrue(len(vmhosts) == 1,
-                'vm_host_get_all does not returned expected number of hosts')
+                        'vm_host_get_all does not returned expected number of hosts')
         #Now call the delete api by passing the id as None
         healthnmon_db_api.vm_host_delete_by_ids(get_admin_context(), None)
         #Again try to retrieve the vmhost and check whether its intact
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
-        self.assertFalse(vmhosts == None,
-                'vm_host_get_all returned a None')
+        self.assertFalse(vmhosts is None,
+                         'vm_host_get_all returned a None')
         self.assertTrue(len(vmhosts) == 1,
-                'vm_host_get_all does not returned expected number of hosts')
+                        'vm_host_get_all does not returned expected number of hosts')
 
     def test_vm_host_save_throw_exception(self):
         self.assertRaises(Exception, healthnmon_db_api.vm_host_save,
@@ -613,8 +615,8 @@ class VmHostDbApiTestCase(test.TestCase):
         # Query with filter
         filters = {'name': host_names[1]}
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 1)
         self.assert_(vmhosts[0] is not None)
@@ -627,12 +629,13 @@ class VmHostDbApiTestCase(test.TestCase):
         for i in range(len(host_ids)):
             self.__create_vm_host(id=host_ids[i], name=host_names[i])
         # Delete one host
-        healthnmon_db_api.vm_host_delete_by_ids(self.admin_context, [host_ids[0]])
+        healthnmon_db_api.vm_host_delete_by_ids(
+            self.admin_context, [host_ids[0]])
         # Query with filter
         filters = {'deleted': 'true'}
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 1)
         self.assert_(vmhosts[0] is not None)
@@ -645,12 +648,13 @@ class VmHostDbApiTestCase(test.TestCase):
         for i in range(len(host_ids)):
             self.__create_vm_host(id=host_ids[i], name=host_names[i])
         # Delete one host
-        healthnmon_db_api.vm_host_delete_by_ids(self.admin_context, [host_ids[0]])
+        healthnmon_db_api.vm_host_delete_by_ids(
+            self.admin_context, [host_ids[0]])
         # Query with filter
         filters = {'deleted': False}
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, filters,
-                                'id', DbConstants.ORDER_ASC)
+            self.admin_context, filters,
+            'id', DbConstants.ORDER_ASC)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 1)
         self.assert_(vmhosts[0] is not None)
@@ -666,16 +670,17 @@ class VmHostDbApiTestCase(test.TestCase):
         # Wait for 1 sec and update second host and delete third host
         time.sleep(1)
         second_host = healthnmon_db_api.vm_host_get_by_ids(
-                                self.admin_context, [host_ids[1]])[0]
+            self.admin_context, [host_ids[1]])[0]
         second_host.name = 'New name'
         healthnmon_db_api.vm_host_save(self.admin_context, second_host)
-        healthnmon_db_api.vm_host_delete_by_ids(self.admin_context, [host_ids[2]])
+        healthnmon_db_api.vm_host_delete_by_ids(
+            self.admin_context, [host_ids[2]])
         # Query with filter
         expected_updated_ids = [host_ids[1], host_ids[2]]
         filters = {'changes-since': created_time}
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, filters,
-                                None, None)
+            self.admin_context, filters,
+            None, None)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 2)
         for host in vmhosts:
@@ -690,8 +695,8 @@ class VmHostDbApiTestCase(test.TestCase):
             self.__create_vm_host(id=host_ids[i], name=host_names[i])
         # Query with sort
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, None,
-                                'name', DbConstants.ORDER_ASC)
+            self.admin_context, None,
+            'name', DbConstants.ORDER_ASC)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 2)
         self.assert_(vmhosts[0] is not None)
@@ -707,8 +712,8 @@ class VmHostDbApiTestCase(test.TestCase):
             self.__create_vm_host(id=host_ids[i], name=host_names[i])
         # Query with sort
         vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
-                                self.admin_context, {'name': host_names},
-                                'name', DbConstants.ORDER_DESC)
+            self.admin_context, {'name': host_names},
+            'name', DbConstants.ORDER_DESC)
         self.assert_(vmhosts is not None)
         self.assert_(len(vmhosts) == 2)
         self.assert_(vmhosts[0] is not None)
@@ -723,11 +728,11 @@ class VmHostDbApiTestCase(test.TestCase):
     def _setup_host(self):
         vmhost = self.__create_vm_host(id='1', name='host-1')
         vm_01 = self.__create_vm(id='u23lksd-32342-324l-23423',
-                         name='instance001',
-                         vmHostId='1')
+                                 name='instance001',
+                                 vmHostId='1')
         vm_02 = self.__create_vm(id='u23lksd-32342-324l-demo',
-                 name='instance002',
-                 vmHostId='1')
+                                 name='instance002',
+                                 vmHostId='1')
         return (vmhost, vm_01, vm_02)
 
     def test_deleted_vm(self):
@@ -736,19 +741,21 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost, vm_01, vm_02 = self._setup_host()
         vm_01.deleted = True
         self.__save(vmhost, vm_01, vm_02)
-        hosts = healthnmon_db_api.vm_host_get_all_by_filters(self.admin_context,
-                                                     None,
-                                                     None,
-                                                     None)
+        hosts = healthnmon_db_api.vm_host_get_all_by_filters(
+            self.admin_context,
+            None,
+            None,
+            None)
         self.assertEquals(hosts[0].get_virtualMachineIds(),
                           ['u23lksd-32342-324l-demo'])
         # Delete second VM
         vm_02.deleted = True
         self.__save(vmhost, vm_01, vm_02)
-        hosts = healthnmon_db_api.vm_host_get_all_by_filters(self.admin_context,
-                                                     None,
-                                                     None,
-                                                     None)
+        hosts = healthnmon_db_api.vm_host_get_all_by_filters(
+            self.admin_context,
+            None,
+            None,
+            None)
         self.assertEquals(hosts[0].get_virtualMachineIds(), [])
 
     def test_vm_not_deleted(self):
@@ -759,12 +766,13 @@ class VmHostDbApiTestCase(test.TestCase):
         vm_01.deleted = False
         vm_02.deleted = None
         self.__save(vmhost, vm_01, vm_02)
-        hosts = healthnmon_db_api.vm_host_get_all_by_filters(self.admin_context,
-                                                     None,
-                                                     None,
-                                                     None)
+        hosts = healthnmon_db_api.vm_host_get_all_by_filters(
+            self.admin_context,
+            None,
+            None,
+            None)
         self.assertEquals(hosts[0].get_virtualMachineIds(),
-                    ['u23lksd-32342-324l-23423', 'u23lksd-32342-324l-demo'])
+                          ['u23lksd-32342-324l-23423', 'u23lksd-32342-324l-demo'])
 
     def test_deleted_vm_host(self):
         """ Test if vmhost get all by filters lists deleted virtual machines
@@ -773,11 +781,12 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost, vm_01, vm_02 = self._setup_host()
         self.__save(vmhost, vm_01, vm_02)
         healthnmon_db_api.vm_host_delete_by_ids(self.admin_context, vmhost.id)
-        self.assertEqual(healthnmon_db_api.vm_get_all_by_filters(self.admin_context,
-                                            {'id': vm_01.id},
-                                            None,
-                                            None)[0].deleted,
-                         True, 'Delete vm host and assert if VM is deleted')
+        self.assertEqual(
+            healthnmon_db_api.vm_get_all_by_filters(self.admin_context,
+                                                    {'id': vm_01.id},
+                                                    None,
+                                                    None)[0].deleted,
+            True, 'Delete vm host and assert if VM is deleted')
 
     def test_inconsistent_vmhost(self):
         """ Test if vmhost get all by filters lists deleted virtual machines
@@ -787,11 +796,12 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost.virtualMachineIds = ['a', 'b']
         self.__save(vmhost, vm_01, vm_02)
         healthnmon_db_api.vm_host_delete_by_ids(self.admin_context, vmhost.id)
-        self.assertEqual(healthnmon_db_api.vm_get_all_by_filters(self.admin_context,
-                                            {'deleted': 'true'},
-                                            None,
-                                            None)[0].deleted,
-                         True, 'Delete inconsistent vm host and assert if VM is deleted')
+        self.assertEqual(
+            healthnmon_db_api.vm_get_all_by_filters(self.admin_context,
+                                                    {'deleted': 'true'},
+                                                    None,
+                                                    None)[0].deleted,
+            True, 'Delete inconsistent vm host and assert if VM is deleted')
 
     def test_timestamp_columns(self):
         """
@@ -810,9 +820,10 @@ class VmHostDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.vm_host_save(self.admin_context, vmhost)
         epoch_after = utils.get_current_epoch_ms()
-        vmhost_queried = healthnmon_db_api.vm_host_get_by_ids(self.admin_context, [vmhost.get_id()])[0]
+        vmhost_queried = healthnmon_db_api.vm_host_get_by_ids(
+            self.admin_context, [vmhost.get_id()])[0]
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, vmhost_queried.get_createEpoch()))
+            epoch_before, epoch_after, vmhost_queried.get_createEpoch()))
         for virSw in vmhost_queried.get_virtualSwitches():
             self.assert_(test_utils.is_timestamp_between(
                 epoch_before, epoch_after, virSw.get_createEpoch()))
@@ -826,10 +837,12 @@ class VmHostDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.vm_host_save(self.admin_context, vmhost_modified)
         epoch_after = utils.get_current_epoch_ms()
-        vmhost_queried = healthnmon_db_api.vm_host_get_by_ids(self.admin_context, [vmhost.get_id()])[0]
-        self.assert_(vmhost_modified.get_createEpoch() == vmhost_queried.get_createEpoch())
+        vmhost_queried = healthnmon_db_api.vm_host_get_by_ids(
+            self.admin_context, [vmhost.get_id()])[0]
+        self.assert_(vmhost_modified.get_createEpoch(
+        ) == vmhost_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, vmhost_queried.get_lastModifiedEpoch()))
+            epoch_before, epoch_after, vmhost_queried.get_lastModifiedEpoch()))
         for virSw in vmhost_queried.get_virtualSwitches():
             self.assert_(test_utils.is_timestamp_between(
                 epoch_before, epoch_after, virSw.get_lastModifiedEpoch()))
@@ -849,10 +862,12 @@ class VmHostDbApiTestCase(test.TestCase):
         epoch_before = utils.get_current_epoch_ms()
         healthnmon_db_api.vm_host_save(self.admin_context, vmhost_modified)
         epoch_after = utils.get_current_epoch_ms()
-        vmhost_queried = healthnmon_db_api.vm_host_get_by_ids(self.admin_context, [vmhost.get_id()])[0]
-        self.assert_(vmhost_modified.get_createEpoch() == vmhost_queried.get_createEpoch())
+        vmhost_queried = healthnmon_db_api.vm_host_get_by_ids(
+            self.admin_context, [vmhost.get_id()])[0]
+        self.assert_(vmhost_modified.get_createEpoch(
+        ) == vmhost_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, vmhost_queried.get_lastModifiedEpoch()))
+            epoch_before, epoch_after, vmhost_queried.get_lastModifiedEpoch()))
         for virSw in vmhost_queried.get_virtualSwitches():
             if virSw.get_id() == virSw2.get_id():
                 self.assert_(test_utils.is_timestamp_between(
@@ -869,23 +884,25 @@ class VmHostDbApiTestCase(test.TestCase):
                         epoch_before, epoch_after, pg.get_lastModifiedEpoch()))
         # Check for deletedEpoch
         epoch_before = utils.get_current_epoch_ms()
-        healthnmon_db_api.vm_host_delete_by_ids(self.admin_context, [vmhost_queried.get_id()])
+        healthnmon_db_api.vm_host_delete_by_ids(
+            self.admin_context, [vmhost_queried.get_id()])
         epoch_after = utils.get_current_epoch_ms()
-        deleted_host = healthnmon_db_api.vm_host_get_all_by_filters(self.admin_context,
-                                {"id": vmhost_queried.get_id()}, None, None)[0]
-        self.assert_(deleted_host.get_deleted() == True)
+        deleted_host = healthnmon_db_api.vm_host_get_all_by_filters(
+            self.admin_context,
+            {"id": vmhost_queried.get_id()}, None, None)[0]
+        self.assertTrue(deleted_host.get_deleted())
         self.assert_(test_utils.is_timestamp_between(
-                epoch_before, epoch_after, deleted_host.get_deletedEpoch()))
+            epoch_before, epoch_after, deleted_host.get_deletedEpoch()))
         deleted_switches = healthnmon_db_api.virtual_switch_get_all_by_filters(self.admin_context,
-                                {"id": (virSw1.get_id(), virSw2.get_id())}, None, None)
+                                                                               {"id": (virSw1.get_id(), virSw2.get_id())}, None, None)
         for deleted_switch in deleted_switches:
-            self.assert_(deleted_switch.get_deleted() == True)
+            self.assertTrue(deleted_switch.get_deleted())
             self.assert_(test_utils.is_timestamp_between(
-                    epoch_before, epoch_after, deleted_switch.get_deletedEpoch()))
+                epoch_before, epoch_after, deleted_switch.get_deletedEpoch()))
             for deleted_portgrp in deleted_switch.get_portGroups():
-                self.assert_(deleted_portgrp.get_deleted() == True)
+                self.assertTrue(deleted_portgrp.get_deleted())
                 self.assert_(test_utils.is_timestamp_between(
-                        epoch_before, epoch_after, deleted_portgrp.get_deletedEpoch()))
+                    epoch_before, epoch_after, deleted_portgrp.get_deletedEpoch()))
 
     def _create_cost(self):
         cost1 = Cost()
@@ -941,8 +958,10 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost.add_portGroups(portGroup2)
 
         healthnmon_db_api.vm_host_save(get_admin_context(), vmhost)
-        vmhosts = healthnmon_db_api.vm_host_get_by_ids(get_admin_context(), [host_id])
-        self.assertFalse(vmhosts == None, 'Host get by id returned a none list')
+        vmhosts = healthnmon_db_api.vm_host_get_by_ids(
+            get_admin_context(), [host_id])
+        self.assertFalse(
+            vmhosts is None, 'Host get by id returned a none list')
         self.assertTrue(len(vmhosts[0].get_virtualSwitches()) > 0, 'Host get by virtual switch returned invalid number of list')
         vss = vmhosts[0].get_virtualSwitches()
         vs_ids = []
@@ -954,8 +973,10 @@ class VmHostDbApiTestCase(test.TestCase):
         pg_ids = []
         for pg in pgs:
             pg_ids.append(pg.get_id())
-        self.assertTrue(portGroup1.get_id() in pg_ids, "Added port group1 does not appears in the host api")
-        self.assertTrue(portGroup2.get_id() in pg_ids, "Added port group2 does not appears in the host api")
+        self.assertTrue(portGroup1.get_id(
+        ) in pg_ids, "Added port group1 does not appears in the host api")
+        self.assertTrue(portGroup2.get_id(
+        ) in pg_ids, "Added port group2 does not appears in the host api")
 
         "Points 3 and 4 - Remove the second vswitch and portgroup from the vmhost and the save the vmhost"
         vmhost = VmHost()
@@ -970,26 +991,33 @@ class VmHostDbApiTestCase(test.TestCase):
         vmhost.add_portGroups(portGroup)
         healthnmon_db_api.vm_host_save(get_admin_context(), vmhost)
 
-        vmhosts = healthnmon_db_api.vm_host_get_by_ids(get_admin_context(), [host_id])
-        self.assertFalse(vmhosts == None, 'Host get by id returned a none list')
+        vmhosts = healthnmon_db_api.vm_host_get_by_ids(
+            get_admin_context(), [host_id])
+        self.assertFalse(
+            vmhosts is None, 'Host get by id returned a none list')
         vss = vmhosts[0].get_virtualSwitches()
         vs_ids = []
         for vs in vss:
             vs_ids.append(vs.get_id())
         self.assertTrue(vSwitch.get_id() in vs_ids, "Modified virtual switch1 not appearing in the host api")
-        self.assertTrue(vSwitch2.get_id() not in vs_ids, "Deleted virtual switch2 appears in the host api")
+        self.assertTrue(vSwitch2.get_id() not in vs_ids,
+                        "Deleted virtual switch2 appears in the host api")
         pgs = vmhosts[0].get_portGroups()
         pg_ids = []
         for pg in pgs:
             pg_ids.append(pg.get_id())
-        self.assertTrue(portGroup.get_id() in pg_ids, "Modified port group1 not appearing in the host api")
-        self.assertTrue(portGroup2.get_id() not in pg_ids, "Deleted port group2 appears in the host api")
+        self.assertTrue(portGroup.get_id(
+        ) in pg_ids, "Modified port group1 not appearing in the host api")
+        self.assertTrue(portGroup2.get_id(
+        ) not in pg_ids, "Deleted port group2 appears in the host api")
 
         "Points 5 and 6 - Delete the host and assert for deletion using filter-by api"
         filters = {'id': host_id, 'deleted': 'true'}
         healthnmon_db_api.vm_host_delete_by_ids(get_admin_context(), [host_id])
-        del_vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(get_admin_context(), filters, 'id', 'asc')
-        self.assertFalse(del_vmhosts == None, 'Host get by filters returned a none list')
+        del_vmhosts = healthnmon_db_api.vm_host_get_all_by_filters(
+            get_admin_context(), filters, 'id', 'asc')
+        self.assertFalse(
+            del_vmhosts is None, 'Host get by filters returned a none list')
         vss = del_vmhosts[0].get_virtualSwitches()
         vs_ids = []
         for vs in vss:

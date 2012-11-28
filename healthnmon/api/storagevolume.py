@@ -46,7 +46,7 @@ class StorageVolumeController(base.Controller):
             resource links.
         """
         storagevolumes = self.get_all_by_filters(req,
-                                        api.storage_volume_get_all_by_filters)
+                                                 api.storage_volume_get_all_by_filters)
         if not storagevolumes:
             storagevolumes = []
         limited_list, collection_links = self.limited_by_marker(storagevolumes,
@@ -61,12 +61,12 @@ class StorageVolumeController(base.Controller):
             :returns: webob response for detail list operation.
         """
         storagevolumes = self.get_all_by_filters(req,
-                                        api.storage_volume_get_all_by_filters)
+                                                 api.storage_volume_get_all_by_filters)
         if not storagevolumes:
             storagevolumes = []
-        limited_list, collection_links = self.limited_by_marker(\
-                                                        storagevolumes,
-                                                        req)
+        limited_list, collection_links = self.limited_by_marker(
+            storagevolumes,
+            req)
         return self._detail(req, limited_list, collection_links)
 
     def _get_resource_tag_dict_list(self, application_url, proj_id):
@@ -80,7 +80,7 @@ class StorageVolumeController(base.Controller):
                 'tag_replacement': 'vmhost',
                 'tag_key': 'id',
                 'tag_collection_url': os.path.join(application_url,
-                        proj_id, constants.VMHOSTS_COLLECTION_NAME),
+                                                   proj_id, constants.VMHOSTS_COLLECTION_NAME),
                 'tag_attrib': None,
                 }]
 
@@ -98,10 +98,10 @@ class StorageVolumeController(base.Controller):
             (ctx, proj_id) = util.get_project_context(req)
             storagevolume_list = api.storage_volume_get_by_ids(ctx, [id])
             LOG.debug(_('Project id: %s Received storagevolumes from database'
-                       % proj_id))
+                        % proj_id))
             if storagevolume_list:
                 return self._show(req, storagevolume_list[0])
         except Exception, err:
             LOG.error(_('Exception while fetching data from healthnmon api %s'
-                       % str(err)), exc_info=1)
+                        % str(err)), exc_info=1)
         return HTTPNotFound()

@@ -42,51 +42,41 @@ class Test_virt_connection(test.TestCase):
         self.fakeConn = libvirt.open('qemu:///system')
         self.libvirt_connection_cls = connection.LibvirtConnection
         super(Test_virt_connection, self).setUp()
-        self.flags(\
-         healthnmon_notification_drivers=['healthnmon.notifier.log_notifier']
-                   )
+        self.flags(
+            healthnmon_notification_drivers=['healthnmon.notifier.log_notifier']
+        )
 
     def test_init_rmcontext(self):
         compute_rmcontext = rmcontext.ComputeRMContext(rmType='QEMU',
-                rmIpAddress='10.10.155.165', rmUserName='openstack',
-                rmPassword='password')
+                                                       rmIpAddress='10.10.155.165', rmUserName='openstack',
+                                                       rmPassword='password')
         conn = connection.get_connection(True)
         conn.init_rmcontext(compute_rmcontext)
-        self.assertTrue(conn.compute_rmcontext != None)
+        self.assertTrue(conn.compute_rmcontext is not None)
         self.assertEquals(conn.compute_rmcontext.rmIpAddress, "10.10.155.165")
         self.assertEquals(conn.compute_rmcontext.rmUserName, "openstack")
         self.assertEquals(conn.compute_rmcontext.rmPassword, "password")
 
     def test__get_connection_with_conn(self):
 
-        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
-        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
-        self.mox.ReplayAll()
         conn = connection.get_connection(True)
         compute_rmcontext = ComputeRMContext(rmType='QEMU',
-                rmIpAddress='10.10.155.165', rmUserName='openstack',
-                rmPassword='password')
+                                             rmIpAddress='10.10.155.165', rmUserName='openstack',
+                                             rmPassword='password')
         conn.init_rmcontext(compute_rmcontext)
         conn._wrapped_conn = self.fakeConn
         result = conn._get_connection()
         assert result
 
-        # self.mox.UnsetStubs()
-
     def test__get_connection_with_invalid_conn(self):
 
-        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
-        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
-        self.mox.ReplayAll()
         conn = connection.get_connection(True)
         compute_rmcontext = ComputeRMContext(rmType='QEMU',
-                rmIpAddress='10.10.155.165', rmUserName='openstack',
-                rmPassword='password')
+                                             rmIpAddress='10.10.155.165', rmUserName='openstack',
+                                             rmPassword='password')
         conn.init_rmcontext(compute_rmcontext)
         conn._wrapped_conn = 'Invalid'
         self.assertRaises(Exception, conn._get_connection)
-
-        # self.mox.UnsetStubs()
 
     def test_update_inventory(self):
         self.mox.StubOutWithMock(libvirt, 'openReadOnly')
@@ -96,18 +86,18 @@ class Test_virt_connection(test.TestCase):
         self.mox.StubOutWithMock(api, 'storage_volume_save')
 
         api.storage_volume_save(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.vm_host_save(mox.IgnoreArg(),
-                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.vm_save(mox.IgnoreArg(),
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mox.ReplayAll()
         conn = connection.get_connection(True)
         compute_rmcontext = ComputeRMContext(rmType='QEMU',
-                rmIpAddress='10.10.155.165', rmUserName='openstack',
-                rmPassword='password')
+                                             rmIpAddress='10.10.155.165', rmUserName='openstack',
+                                             rmPassword='password')
 
         InventoryCacheManager.get_all_compute_inventory()['1'] = \
             ComputeInventory(compute_rmcontext)
@@ -122,15 +112,13 @@ class Test_virt_connection(test.TestCase):
         libvirt_inv = conn1.get_inventory_monitor()
         assert libvirt_inv
 
-        # self.mox.UnsetStubs()
-
     def test_get_inventory_monitor_None(self):
         conn1 = connection.get_connection(True)
-        self.assertTrue(conn1.get_inventory_monitor() != None)
-        self.assertTrue(conn1.get_perf_monitor() != None)
+        self.assertTrue(conn1.get_inventory_monitor() is not None)
+        self.assertTrue(conn1.get_perf_monitor() is not None)
         conn1.libvirt_invmonitor = None
         conn1.get_inventory_monitor()
-        self.assertTrue(conn1.get_inventory_monitor() == None)
+        self.assertTrue(conn1.get_inventory_monitor() is None)
 
     def test_test_connection(self):
         conn1 = connection.get_connection(True)
@@ -141,7 +129,6 @@ class Test_virt_connection(test.TestCase):
     def test_get_new_connection(self):
         libvirtcon = connection.get_connection(True)
         libvirtcon.get_new_connection("wrong:///uri", True)
-        self.mox.UnsetStubs()
 
     def test_uri_uml(self):
         self.flags(libvirt_type='uml')
@@ -159,41 +146,40 @@ class Test_virt_connection(test.TestCase):
         self.assertEquals(conn1.uri, "lxc:///")
 
     def test_update_perfdata(self):
-        conn = connection.get_connection(True)
 
-        self.mox.StubOutWithMock(connection.LibvirtConnection, 'uri')
-        conn.uri().AndReturn(None)
-
-        self.mox.StubOutWithMock(connection.LibvirtConnection, '_connect')
-        conn._connect(mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(self.fakeConn)
-
+        self.mox.StubOutWithMock(libvirt_perfdata.LibvirtPerfMonitor, 'refresh_perfdata')
+        libvirt_perfdata.LibvirtPerfMonitor.refresh_perfdata(mox.IgnoreArg(),
+                                                             mox.IgnoreArg(), mox.IgnoreArg()).AndReturn('')
         self.mox.ReplayAll()
-        conn.update_perfdata('uuid', 'perfmon_type')
-        self.assertTrue(conn.libvirt_perfmon.perfDataCache != None)
 
-        conn.update_perfdata('uuid', 'perfmon_type1')
-        self.assertTrue(conn.libvirt_perfmon.perfDataCache != None)
+        conn = connection.get_connection(True)
+        compute_rmcontext = ComputeRMContext(rmType='QEMU',
+                                             rmIpAddress='10.10.155.165', rmUserName='openstack',
+                                             rmPassword='password')
+        conn.init_rmcontext(compute_rmcontext)
+        conn._wrapped_conn = self.fakeConn
+        conn.update_perfdata('uuid', 'perfmon_type')
+        self.assertTrue(conn.libvirt_perfmon.perfDataCache is not None)
 
     def test_get_resource_utilization(self):
-        mock_libvirt_perfmon = \
-            self.mox.CreateMock(libvirt_perfdata.LibvirtPerfMonitor)
 
-        mock_libvirt_perfmon.get_resource_utilization(mox.IgnoreArg(),
-                mox.IgnoreArg(), mox.IgnoreArg()).AndReturn('')
+        self.mox.StubOutWithMock(libvirt_perfdata.LibvirtPerfMonitor, 'get_resource_utilization')
+        libvirt_perfdata.LibvirtPerfMonitor.get_resource_utilization(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn('')
         self.mox.ReplayAll()
         conn1 = connection.get_connection(True)
         self.assertTrue(conn1.get_resource_utilization('uuid', 'perfmon_type',
-                'window_minutes') is None)
-        self.assertTrue(conn1.libvirt_perfmon.perfDataCache != None)
-
-        # self.mox.UnsetStubs()
+                                                       'window_minutes') is '')
+        self.assertTrue(conn1.libvirt_perfmon.perfDataCache is not None)
 
     def test_get_resource_utilization_None(self):
         libvirt_conn = connection.LibvirtConnection(True)
         libvirt_conn.libvirt_perfmon = None
         conn1 = connection.get_connection(True)
-        self.assertTrue(libvirt_conn.get_resource_utilization('uuid', 'perfmon_type',
-                'window_minutes') is None)
+        self.assertTrue(
+            libvirt_conn.get_resource_utilization('uuid', 'perfmon_type',
+                                                  'window_minutes') is None)
         self.assertTrue(conn1.libvirt_perfmon.perfDataCache.get('old_stats') is None)
         self.assertTrue(conn1.libvirt_perfmon.perfDataCache.get('new_stats') is None)
 
@@ -201,8 +187,6 @@ class Test_virt_connection(test.TestCase):
         conn1 = connection.get_connection(True)
         libvirt_perform = conn1.get_perf_monitor()
         assert libvirt_perform
-
-        # self.mox.UnsetStubs()
 
     def test_get_perf_monitor_None(self):
         conn1 = connection.get_connection(True)
@@ -213,9 +197,9 @@ class Test_virt_connection(test.TestCase):
 
         libvirtError = libvirt.libvirtError('fake failure')
 
-        libError = self.mox.CreateMockAnything()
-        self.stubs.Set(libvirt.libvirtError, '__init__', libError)
-        libError('fake failure').AndReturn(libvirtError)
+#        libError = self.mox.CreateMockAnything()
+#        self.stubs.Set(libvirt.libvirtError, '__init__', libError)
+#        libError('fake failure').AndReturn(libvirtError)
 
         capability = self.mox.CreateMockAnything()
         self.stubs.Set(libvirt.virConnect, 'getCapabilities',
@@ -272,25 +256,13 @@ class Test_virt_connection(test.TestCase):
 
         try:
             compute_rmcontext = ComputeRMContext(rmType='QEMU',
-                    rmIpAddress='10.10.155.165', rmUserName='openstack', \
-                    rmPassword='password')
+                                                 rmIpAddress='10.10.155.165', rmUserName='openstack',
+                                                 rmPassword='password')
 
             compute_rmcontext.__getattribute__('test'
-                    ).AndRaise(AttributeError)
+                                               ).AndRaise(AttributeError)
         except Exception, e:
             self.assertEquals(type(e), AttributeError)
-
-    def tearDown(self):
-
-#        list_notifier._reset_drivers()
-        # super(Test_virt_connection, self).tearDown()
-
-        self.mox.UnsetStubs()
-        self.stubs.UnsetAll()
-        self.stubs.SmartUnsetAll()
-
-
-            # self.mox.UnsetStubs()
 
 if __name__ == '__main__':
 

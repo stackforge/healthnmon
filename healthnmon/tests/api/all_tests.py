@@ -45,7 +45,7 @@ def run_tests():
         vmhosts_suite,
         virtual_switch_suite,
         base_suite
-        ]
+    ]
     result = unittest.TestResult()
     for test in alltests:
         test.run(result)

@@ -31,7 +31,8 @@ class test_InventoryDriver(unittest.TestCase):
         self.assertRaises(NotImplementedError, self.ID.get_host_ip_addr)
 
     def test_update_inventory(self):
-        self.assertRaises(NotImplementedError, self.ID.update_inventory, 'compute_id')
+        self.assertRaises(
+            NotImplementedError, self.ID.update_inventory, 'compute_id')
 
     def test_update_perfdata(self):
         self.assertRaises(NotImplementedError, self.ID.update_perfdata,

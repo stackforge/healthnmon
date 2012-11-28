@@ -32,10 +32,12 @@ from eventlet import greenthread
 class HealthnmonLoggerTestCase(test.TestCase):
     """Test cases for Healthnmon log adapter"""
 
-    log_config_file_path = os.path.join(os.path.join(os.path.dirname(__file__)),
-                'healthnmon_testlog.conf')
-    manage_log_config_file_path = os.path.join(os.path.join(os.path.dirname(__file__)),
-                'healthnmon-manage_testlog.conf')
+    log_config_file_path = os.path.join(
+        os.path.join(os.path.dirname(__file__)),
+        'healthnmon_testlog.conf')
+    manage_log_config_file_path = os.path.join(
+        os.path.join(os.path.dirname(__file__)),
+        'healthnmon-manage_testlog.conf')
 
     def setUp(self):
         super(HealthnmonLoggerTestCase, self).setUp()
@@ -61,26 +63,31 @@ class HealthnmonLoggerTestCase(test.TestCase):
         self.log.logger.setLevel(logging.DEBUG)
         self.log.debug(_("baz"))
         self.assert_(True)  # didn't raise exception
-        self.assertEqual(self.log.logger.level, self.log.logger.getEffectiveLevel())
+        self.assertEqual(
+            self.log.logger.level, self.log.logger.getEffectiveLevel())
 
     def test_loglevel_INFO_from_logConf(self):
         self.log.info("baz")
         self.assert_(True)  # didn't raise exception
-        self.assertEqual(self.log.logger.level, self.log.logger.getEffectiveLevel())
+        self.assertEqual(
+            self.log.logger.level, self.log.logger.getEffectiveLevel())
 
     def test_loglevel_audit_from_logConf(self):
         self.log.logger.setLevel(logging.AUDIT)
         self.log.audit("baz")
         self.assert_(True)  # didn't raise exception
-        self.assertEqual(self.log.logger.level, self.log.logger.getEffectiveLevel())
+        self.assertEqual(
+            self.log.logger.level, self.log.logger.getEffectiveLevel())
 
     def test_log_handlers(self):
         self.log.info("baz")
         self.assert_(True)  # didn't raise exception
         self.handlers = self.log.logger.handlers
         self.assertEqual(self.handlers[0].__class__.__name__, 'StreamHandler')
-        self.assertEqual(self.handlers[1].__class__.__name__, 'WatchedFileHandler')
-        self.assertEqual(self.handlers[2].__class__.__name__, 'HealthnmonAuditHandler')
+        self.assertEqual(
+            self.handlers[1].__class__.__name__, 'WatchedFileHandler')
+        self.assertEqual(
+            self.handlers[2].__class__.__name__, 'HealthnmonAuditHandler')
 
     def test_loglevel_no_logConf(self):
         self.flags(healthnmon_log_config="dummyfile")
@@ -113,13 +120,15 @@ class HealthnmonLoggerTestCase(test.TestCase):
     def test_log_with_kwarsg(self):
         self.log.info("baz", extra={})
         self.assert_(True)  # didn't raise exception
-        self.assertEqual(self.log.logger.level, self.log.logger.getEffectiveLevel())
+        self.assertEqual(
+            self.log.logger.level, self.log.logger.getEffectiveLevel())
 
     def test_loglevel_INFO_from_manage_logConf(self):
         log.healthnmon_manage_setup()
         self.log.info("baz")
         self.assert_(True)  # didn't raise exception
-        self.assertEqual(self.log.logger.level, self.log.logger.getEffectiveLevel())
+        self.assertEqual(
+            self.log.logger.level, self.log.logger.getEffectiveLevel())
 
     def test_loglevel_no_manage_logConf(self):
         self.flags(healthnmon_manage_log_config="dummyfile")
@@ -209,7 +218,8 @@ class HealthnmonFormatterTestCase(test.TestCase):
 
     def test_log_threadId(self):
         self.mox.StubOutWithMock(self.log.logger, 'makeRecord')
-        logrecord = logging.LogRecord('healthnmon', 10, None, 117, 'foo', None, None, None)
+        logrecord = logging.LogRecord(
+            'healthnmon', 10, None, 117, 'foo', None, None, None)
         self.log.logger.makeRecord(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(logrecord)
         self.mox.ReplayAll()
 
@@ -287,7 +297,8 @@ class HealthnmonAuditHandlerTestCase(test.TestCase):
 
     def test_log_healthnmon_audit_handler(self):
         handler = HealthnmonAuditHandler("Test.log")
-        self.assertEqual(handler.filters[0].__class__.__name__, 'HealthnmonAuditFilter')
+        self.assertEqual(
+            handler.filters[0].__class__.__name__, 'HealthnmonAuditFilter')
 
     def tearDown(self):
         super(HealthnmonAuditHandlerTestCase, self).tearDown()

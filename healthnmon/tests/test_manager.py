@@ -25,7 +25,7 @@ from healthnmon.constants import Constants
 from nova.openstack.common import context
 from nova import test
 import mox
-from nova import flags
+from nova.openstack.common import cfg
 from nova.openstack.common import cfg
 
 
@@ -41,7 +41,7 @@ class HealthnMonManagerTestCase(test.TestCase):
         super(HealthnMonManagerTestCase, self).setUp()
         self.flags(healthnmon_driver=self.driver_cls_name)
         self.context = context.RequestContext('fake_user',
-                'fake_project')
+                                              'fake_project')
 
     def _createInvCache(self):
         self._createCache()
@@ -107,8 +107,9 @@ class HealthnMonManagerTestCase(test.TestCase):
 
         self.mox.ReplayAll()
         self.manager._poll_compute_nodes(self.context)
-        self.assertTrue(self.manager.driver.inventory_manager != None)
-        self.assertTrue(InventoryCacheManager.get_all_compute_inventory() != None)
+        self.assertTrue(self.manager.driver.inventory_manager is not None)
+        self.assertTrue(
+            InventoryCacheManager.get_all_compute_inventory() is not None)
         self.mox.VerifyAll()
         self.mox.UnsetStubs()
 
@@ -120,8 +121,10 @@ class HealthnMonManagerTestCase(test.TestCase):
 
         self.mox.ReplayAll()
         self.manager._poll_compute_perfmon(self.context)
-        self.assertTrue(self.manager.driver.inventory_manager.perf_green_pool != None)
-        self.assertTrue(InventoryCacheManager.get_all_compute_inventory() != None)
+        self.assertTrue(
+            self.manager.driver.inventory_manager.perf_green_pool is not None)
+        self.assertTrue(
+            InventoryCacheManager.get_all_compute_inventory() is not None)
         self.mox.VerifyAll()
         self.mox.UnsetStubs()
 
@@ -133,12 +136,13 @@ class HealthnMonManagerTestCase(test.TestCase):
                                  'get_resource_utilization')
 
         self.manager.driver.get_resource_utilization(mox.IgnoreArg(),
-                mox.IgnoreArg(), Constants.VmHost,
-                mox.IgnoreArg()).AndReturn(expected)
+                                                     mox.IgnoreArg(
+                                                     ), Constants.VmHost,
+                                                     mox.IgnoreArg()).AndReturn(expected)
 
         self.mox.ReplayAll()
         result = self.manager.get_vmhost_utilization(self.context,
-                'uuid')
+                                                     'uuid')
         self.assertEqual(result,
                          dict(ResourceUtilization=expected.__dict__))
         self.mox.UnsetStubs()
@@ -151,8 +155,9 @@ class HealthnMonManagerTestCase(test.TestCase):
                                  'get_resource_utilization')
 
         self.manager.driver.get_resource_utilization(mox.IgnoreArg(),
-                mox.IgnoreArg(), Constants.Vm,
-                mox.IgnoreArg()).AndReturn(expected)
+                                                     mox.IgnoreArg(
+                                                     ), Constants.Vm,
+                                                     mox.IgnoreArg()).AndReturn(expected)
 
         self.mox.ReplayAll()
         result = self.manager.get_vm_utilization(self.context, 'uuid')
@@ -164,10 +169,12 @@ class HealthnMonManagerTestCase(test.TestCase):
         self._createInvCache()
         self.mox.StubOutWithMock(helper,
                                  'profile_cputime')
-        helper.profile_cputime(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
+        helper.profile_cputime(
+            mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
 
         self.mox.ReplayAll()
-        self.manager.profile_cputime(self.context, 'test_name', 'test_decorator', True)
+        self.manager.profile_cputime(
+            self.context, 'test_name', 'test_decorator', True)
         self.mox.VerifyAll()
         self.mox.UnsetStubs()
 
@@ -175,10 +182,12 @@ class HealthnMonManagerTestCase(test.TestCase):
         self._createInvCache()
         self.mox.StubOutWithMock(helper,
                                  'profile_memory')
-        helper.profile_memory(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
+        helper.profile_memory(mox.IgnoreArg(
+        ), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
 
         self.mox.ReplayAll()
-        self.manager.profile_memory(self.context, 'test_name', 'test_decorator', True, True)
+        self.manager.profile_memory(
+            self.context, 'test_name', 'test_decorator', True, True)
         self.mox.VerifyAll()
         self.mox.UnsetStubs()
 
@@ -194,15 +203,15 @@ class HealthnMonManagerTestCase(test.TestCase):
         self.mox.UnsetStubs()
 
     def test_register_flag(self):
-        self.mox.StubOutWithMock(flags.cfg.CommonConfigOpts, '__getattr__')
-        flags.cfg.CommonConfigOpts.__getattr__('healthnmon_driver').\
+        self.mox.StubOutWithMock(cfg.CommonConfigOpts, '__getattr__')
+        cfg.CommonConfigOpts.__getattr__('healthnmon_driver').\
             AndRaise(cfg.NoSuchOptError('healthnmon_driver'))
-        flags.cfg.CommonConfigOpts.__getattr__('perfmon_refresh_interval').\
+        cfg.CommonConfigOpts.__getattr__('perfmon_refresh_interval').\
             AndRaise(cfg.NoSuchOptError('perfmon_refresh_interval'))
-        flags.cfg.CommonConfigOpts.__getattr__('healthnmon_topic').\
+        cfg.CommonConfigOpts.__getattr__('healthnmon_topic').\
             AndRaise(cfg.NoSuchOptError('healthnmon_topic'))
-        self.mox.StubOutWithMock(flags.cfg.CommonConfigOpts, 'register_opts')
-        flags.cfg.CommonConfigOpts.register_opts(mox.IgnoreArg()). \
+        self.mox.StubOutWithMock(cfg.CommonConfigOpts, 'register_opts')
+        cfg.CommonConfigOpts.register_opts(mox.IgnoreArg()). \
             MultipleTimes().AndReturn(None)
         self.mox.ReplayAll()
         manager.register_flags()

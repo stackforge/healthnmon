@@ -83,20 +83,20 @@ class VMController(base.Controller):
         vm_xml = util.dump_resource_xml(vm, self._model_name)
         out_dict = {}
         vm_xml_update = util.replace_with_links(vm_xml,
-                self._get_resource_tag_dict_list(req.application_url,
-                                               proj_id),
-                out_dict)
+                                                self._get_resource_tag_dict_list(req.application_url,
+                                                                                 proj_id),
+                                                out_dict)
         field_list = util.get_query_fields(req)
-        if field_list != None:
+        if field_list is not None:
             if 'utilization' in field_list:
                 vm_xml_update = self._add_perf_data(vm.get_id(),
-                        vm_xml_update, ctx)
+                                                    vm_xml_update, ctx)
             vm_xml_update = \
                 util.get_select_elements_xml(vm_xml_update,
-                    field_list, 'id')
+                                             field_list, 'id')
         elif len(req.GET.getall('utilization')) > 0:
             vm_xml_update = self._add_perf_data(vm.get_id(),
-                    vm_xml_update, ctx)
+                                                vm_xml_update, ctx)
         return (vm_xml_update, out_dict)
 
     def _get_resource_tag_dict_list(self, application_url, proj_id):
@@ -110,16 +110,16 @@ class VMController(base.Controller):
             'tag_replacement': 'storagevolume',
             'tag_key': 'id',
             'tag_collection_url': os.path.join(application_url,
-                    proj_id, constants.STORAGEVOLUME_COLLECTION_NAME),
+                                               proj_id, constants.STORAGEVOLUME_COLLECTION_NAME),
             'tag_attrib': None,
-            }, {
+        }, {
             'tag': 'vmHostId',
             'tag_replacement': 'vmhost',
             'tag_key': 'id',
             'tag_collection_url': os.path.join(application_url,
-                    proj_id, constants.VMHOSTS_COLLECTION_NAME),
+                                               proj_id, constants.VMHOSTS_COLLECTION_NAME),
             'tag_attrib': None,
-            }]
+        }]
 
     def show(self, req, id):
         """ Display details for particular virtual machine
@@ -135,12 +135,12 @@ class VMController(base.Controller):
             (ctx, proj_id) = util.get_project_context(req)
             vm_list = api.vm_get_by_ids(ctx, [id])
             LOG.debug(_('Project id: %s Received vmhosts from the database'
-                       % proj_id))
+                        % proj_id))
             if vm_list:
                 return self._show(req, vm_list[0])
         except Exception, err:
             LOG.error(_('Exception while fetching data from healthnmon api %s'
-                       % str(err)), exc_info=1)
+                        % str(err)), exc_info=1)
         return HTTPNotFound()
 
     def _add_perf_data(
@@ -148,7 +148,7 @@ class VMController(base.Controller):
         vm_id,
         input_xml,
         ctx,
-        ):
+    ):
         ''' Append virtual machine resource utilization data
             :param vm_id: virtual machine id
             :param input_xml: virtual machine detail xml
@@ -161,6 +161,6 @@ class VMController(base.Controller):
         resource_obj = healthnmonResourceModel.ResourceUtilization()
         util.set_select_attributes(resource_obj, attr_dict)
         utilization_xml = util.dump_resource_xml(resource_obj,
-                'utilization')
+                                                 'utilization')
         LOG.debug(_('Utilization xml: %s' % utilization_xml))
         return util.append_xml_as_child(input_xml, utilization_xml)

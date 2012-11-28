@@ -45,12 +45,12 @@ class VirtualSwitchController(base.Controller):
             each virtual switch.
         """
         virtualswitch_list = self.get_all_by_filters(req,
-                                        api.virtual_switch_get_all_by_filters)
+                                                     api.virtual_switch_get_all_by_filters)
         if not virtualswitch_list:
             virtualswitch_list = []
-        limited_list, collection_links = self.limited_by_marker(\
-                                                    virtualswitch_list,
-                                                    req)
+        limited_list, collection_links = self.limited_by_marker(
+            virtualswitch_list,
+            req)
         return self._index(req, limited_list, collection_links)
 
     def detail(self, req):
@@ -62,12 +62,12 @@ class VirtualSwitchController(base.Controller):
         """
 
         virtualswitch_list = self.get_all_by_filters(req,
-                                        api.virtual_switch_get_all_by_filters)
+                                                     api.virtual_switch_get_all_by_filters)
         if not virtualswitch_list:
             virtualswitch_list = []
-        limited_list, collection_links = self.limited_by_marker(\
-                                                            virtualswitch_list,
-                                                            req)
+        limited_list, collection_links = self.limited_by_marker(
+            virtualswitch_list,
+            req)
         return self._detail(req, limited_list, collection_links)
 
     def _get_resource_tag_dict_list(self, application_url, proj_id):
@@ -81,9 +81,9 @@ class VirtualSwitchController(base.Controller):
             'tag_replacement': 'subnet',
             'tag_key': 'id',
             'tag_collection_url': os.path.join(application_url,
-                    proj_id, constants.SUBNET_COLLECTION_NAME),
+                                               proj_id, constants.SUBNET_COLLECTION_NAME),
             'tag_attrib': None,
-            }]
+        }]
 
     def show(self, req, id):
         """ Display details for particular virtual_switch
@@ -98,13 +98,13 @@ class VirtualSwitchController(base.Controller):
             LOG.debug(_('Show virtual_switch id : %s' % str(id)))
             (ctx, proj_id) = util.get_project_context(req)
             virtual_switch_list = api.virtual_switch_get_by_ids(ctx,
-                    [id])
+                                                                [id])
             LOG.debug(_('Project id: %s Received virtual switches from database'
-                       % proj_id))
+                        % proj_id))
             if virtual_switch_list:
                 return self._show(req, virtual_switch_list[0])
         except Exception, err:
             LOG.error(_('Exception while fetching data from healthnmon api %s'
-                       % str(err)), exc_info=1)
+                        % str(err)), exc_info=1)
 
         return HTTPNotFound()

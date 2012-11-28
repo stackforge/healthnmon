@@ -48,7 +48,7 @@ def generate_payload(event_metadata, obj, **kwargs):
 
     payloadGenerator = __factory(obj)
     return payloadGenerator.generate_payload(event_metadata, obj,
-            **kwargs)
+                                             **kwargs)
 
 
 def __factory(obj):
@@ -101,7 +101,7 @@ class PayloadGenerator(object):
         event_metadata,
         obj,
         **kwargs
-        ):
+    ):
         """Generate the generic payload
 
             Parameters:
@@ -127,20 +127,20 @@ class PayloadGenerator(object):
         payload['short_description'] = \
             event_metadata.get_short_desc(obj, **kwargs)
         payload['long_description'] = event_metadata.get_long_desc(obj,
-                **kwargs)
+                                                                   **kwargs)
         createEpoch = _getattr_no_none(obj, 'createEpoch')
         if createEpoch == '':
             payload['creation_time'] = ''
         else:
-            payload['creation_time'] = time.strftime(\
-             Constants.DATE_TIME_FORMAT, time.gmtime(long(createEpoch) / 1000))
+            payload['creation_time'] = time.strftime(
+                Constants.DATE_TIME_FORMAT, time.gmtime(long(createEpoch) / 1000))
         lastModifiedEpoch = _getattr_no_none(obj,
-                'lastModifiedEpoch')
+                                             'lastModifiedEpoch')
         if lastModifiedEpoch == '':
             payload['modified_time'] = ''
         else:
-            payload['modified_time'] = time.strftime(\
-             Constants.DATE_TIME_FORMAT, time.gmtime(long(lastModifiedEpoch) / 1000))
+            payload['modified_time'] = time.strftime(
+                Constants.DATE_TIME_FORMAT, time.gmtime(long(lastModifiedEpoch) / 1000))
         return payload
 
 
@@ -149,9 +149,9 @@ class VmHostPayloadGenerator(PayloadGenerator):
     def _get_VmHost_state_desc(self, state):
         state_descs = \
             {Constants.VMHOST_CONNECTED: _('VmHost is in Connected state'
-             ),
+                                           ),
              Constants.VMHOST_DISCONNECTED: _('VmHost is in Disconnected state'
-             )}
+                                              )}
         if state in state_descs:
             return state_descs[state]
         else:
@@ -162,7 +162,7 @@ class VmHostPayloadGenerator(PayloadGenerator):
         event_metadata,
         obj,
         **kwargs
-        ):
+    ):
         """Generate the vmhost specific payload
 
             Parameters:
@@ -178,7 +178,7 @@ class VmHostPayloadGenerator(PayloadGenerator):
 
         payload = super(VmHostPayloadGenerator,
                         self).generate_payload(event_metadata, obj,
-                **kwargs)
+                                               **kwargs)
 
         # Add ipAddresses
 
@@ -205,12 +205,13 @@ class VmHostPayloadGenerator(PayloadGenerator):
         utilization_sample = {}
         utilization_data = _getattr_no_none(obj, 'utilization', None)
         if utilization_data is not None:
-            memoryConsumed = utilization_data.get_totalMemory() - utilization_data.get_freeMemory()
+            memoryConsumed = utilization_data.get_totalMemory(
+            ) - utilization_data.get_freeMemory()
             utilization_sample = {'cpuUserLoad': utilization_data.get_cpuUserLoad(),
                                   'processorCoresCount': utilization_data.get_ncpus(),
                                   'totalMemory': utilization_data.get_totalMemory(),
                                   'memoryConsumed': memoryConsumed,
-                                 }
+                                  }
             payload['utilizationSampleStatus'] = utilization_data.get_status()
             payload['utilizationSample'] = utilization_sample
 
@@ -218,8 +219,9 @@ class VmHostPayloadGenerator(PayloadGenerator):
         storage_free = 0
         storageVolumeIds = _getattr_no_none(obj, 'storageVolumeIds', [])
         for storageVolumeId in storageVolumeIds:
-            storageVolume = InventoryCacheManager.get_object_from_cache(storageVolumeId,
-                    Constants.StorageVolume)
+            storageVolume = InventoryCacheManager.get_object_from_cache(
+                storageVolumeId,
+                Constants.StorageVolume)
             storage_pool_path = storageVolume.get_mountPoints()[0].get_path()
             if storage_pool_path == getFlagByKey('instances_path'):
                 total_storage_size = long(storageVolume.get_size())
@@ -236,32 +238,32 @@ class VmPayloadGenerator(PayloadGenerator):
     def __get_vm_state_desc(self, state):
         state_descs = {
             Constants.VM_POWER_STATE_ACTIVE: _('VM is in running state'
-                    ),
+                                               ),
             Constants.VM_POWER_STATE_BUILDING: _('VM is in building state'
-                    ),
+                                                 ),
             Constants.VM_POWER_STATE_REBUILDING: _('VM is in rebuilding state'
-                    ),
+                                                   ),
             Constants.VM_POWER_STATE_PAUSED: _('VM is in paused state'
-                    ),
+                                               ),
             Constants.VM_POWER_STATE_SUSPENDED: _('VM is in suspended state'
-                    ),
+                                                  ),
             Constants.VM_POWER_STATE_SHUTDOWN: _('VM is shutdown'),
             Constants.VM_POWER_STATE_RESCUED: _('VM is in rescued state'
-                    ),
+                                                ),
             Constants.VM_POWER_STATE_DELETED: _('VM is in deleted state'
-                    ),
+                                                ),
             Constants.VM_POWER_STATE_STOPPED: _('VM is in stopped state'
-                    ),
+                                                ),
             Constants.VM_POWER_STATE_SOFT_DELETE: _('VM underwent a soft delete'
-                    ),
+                                                    ),
             Constants.VM_POWER_STATE_MIGRATING: _('VM is being migrated'
-                    ),
+                                                  ),
             Constants.VM_POWER_STATE_RESIZING: _('VM is being resized'
-                    ),
+                                                 ),
             Constants.VM_POWER_STATE_ERROR: _('VM is in error state'),
             Constants.VM_POWER_STATE_UNKNOWN: _('VM is in unknown state'
-                    ),
-            }
+                                                ),
+        }
         #if state_descs.has_key(upper(state)):
         if upper(state) in state_descs:
             return state_descs[upper(state)]
@@ -273,7 +275,7 @@ class VmPayloadGenerator(PayloadGenerator):
         event_metadata,
         obj,
         **kwargs
-        ):
+    ):
         """Generate the vm specific payload
 
             Parameters:
@@ -289,7 +291,7 @@ class VmPayloadGenerator(PayloadGenerator):
 
         payload = super(VmPayloadGenerator,
                         self).generate_payload(event_metadata, obj,
-                **kwargs)
+                                               **kwargs)
 
         # Add ipAddresses
 
@@ -314,9 +316,9 @@ class StorageVolumePayloadGenerator(PayloadGenerator):
     def __get_storage_state_desc(self, state):
         state_descs = \
             {Constants.STORAGE_STATE_ACTIVE: _('Storage pool is active'
-             ),
+                                               ),
              Constants.STORAGE_STATE_INACTIVE: _('Storage pool is inactive'
-             )}
+                                                 )}
         if state in state_descs:
             return state_descs[state]
         else:
@@ -327,7 +329,7 @@ class StorageVolumePayloadGenerator(PayloadGenerator):
         event_metadata,
         obj,
         **kwargs
-        ):
+    ):
         """Generate the storage specific payload
 
             Parameters:
@@ -343,7 +345,7 @@ class StorageVolumePayloadGenerator(PayloadGenerator):
 
         payload = super(StorageVolumePayloadGenerator,
                         self).generate_payload(event_metadata, obj,
-                **kwargs)
+                                               **kwargs)
 
         payload['size'] = _getattr_no_none(obj, 'size')
         payload['volumeType'] = _getattr_no_none(obj, 'volumeType')
@@ -372,9 +374,9 @@ class VirtualSwitchPayloadGenerator(PayloadGenerator):
     def __get_virswitch_state_desc(self, state):
         state_descs = \
             {Constants.VIRSWITCH_STATE_ACTIVE: _('Virtual switch is active'
-             ),
+                                                 ),
              Constants.VIRSWITCH_STATE_INACTIVE: _('Virtual switch is inactive'
-             )}
+                                                   )}
         if state in state_descs:
             return state_descs[state]
         else:
@@ -385,7 +387,7 @@ class VirtualSwitchPayloadGenerator(PayloadGenerator):
         event_metadata,
         obj,
         **kwargs
-        ):
+    ):
         """Generate the virtual switch specific payload
 
             Parameters:
@@ -401,14 +403,14 @@ class VirtualSwitchPayloadGenerator(PayloadGenerator):
 
         payload = super(VirtualSwitchPayloadGenerator,
                         self).generate_payload(event_metadata, obj,
-                **kwargs)
+                                               **kwargs)
 
         payload['switchType'] = _getattr_no_none(obj, 'switchType')
 
         # Add networkInterfaces
 
         networkInterfaces = _getattr_no_none(obj, 'networkInterfaces',
-                [])
+                                             [])
         payload['networkInterfaces'] = ','.join(networkInterfaces)
 
         # Add state and state_description
@@ -428,7 +430,7 @@ class PortGroupPayloadGenerator(PayloadGenerator):
         event_metadata,
         obj,
         **kwargs
-        ):
+    ):
         """Generate the virtual switch specific payload
 
             Parameters:
@@ -444,9 +446,9 @@ class PortGroupPayloadGenerator(PayloadGenerator):
 
         payload = super(PortGroupPayloadGenerator,
                         self).generate_payload(event_metadata, obj,
-                **kwargs)
+                                               **kwargs)
 
         payload['type'] = _getattr_no_none(obj, 'type')
         payload['virtualSwitchId'] = _getattr_no_none(obj,
-                'virtualSwitchId')
+                                                      'virtualSwitchId')
         return payload

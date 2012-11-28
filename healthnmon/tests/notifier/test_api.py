@@ -26,9 +26,9 @@ class APiTest(test.TestCase):
     def setUp(self):
         super(APiTest, self).setUp()
         self.flags(healthnmon_default_notification_level='INFO',
-        healthnmon_notification_drivers=[
-                 'healthnmon.notifier.rabbit_notifier'
-                  ])
+                   healthnmon_notification_drivers=[
+                   'healthnmon.notifier.rabbit_notifier'
+                   ])
         self.context = context.get_admin_context()
 
     def testNotify(self):
@@ -37,8 +37,9 @@ class APiTest(test.TestCase):
         publisher_id = 'healthnmon.unittest'
         priority = 'INFO'
         payload = {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'}
-        self.assertEquals(notifier_api.notify(self.context, publisher_id, event_type,
-                          priority, payload), None)
+        self.assertEquals(
+            notifier_api.notify(self.context, publisher_id, event_type,
+                                priority, payload), None)
 
     def testNotifyForPriorityException(self):
         event_type = 'LifeCycle.Vm.Reconfigured'
@@ -53,7 +54,7 @@ class APiTest(test.TestCase):
             event_type,
             priority,
             payload,
-            )
+        )
 
     def testNotifierException(self):
         self.flags(healthnmon_notification_drivers=['healthnmon.tests.\
@@ -63,7 +64,8 @@ notifier.ExceptionNotifier']
         publisher_id = 'healthnmon.unittest'
         priority = 'INFO'
         payload = {'entity_id': '024c1520-f836-47f7-3c91-df627096f8ab'}
-        notifier_api.notify(self.context, publisher_id, event_type, priority, payload)
+        notifier_api.notify(
+            self.context, publisher_id, event_type, priority, payload)
 
     def tearDown(self):
         super(APiTest, self).tearDown()

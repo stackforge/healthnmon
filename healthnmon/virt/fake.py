@@ -56,7 +56,7 @@ class FakeConnection(driver.ComputeInventoryDriver):
             'disk_used': 100000000000,
             'host_uuid': 'cedb9b39-9388-41df-8891-c5c9a0c0fe5f',
             'host_name_label': 'fake-mini',
-            }
+        }
         self._mounts = {}
 
     @classmethod
@@ -94,5 +94,5 @@ class FakeConnection(driver.ComputeInventoryDriver):
         uuid,
         perfmon_type,
         window_minutes,
-        ):
+    ):
         pass
