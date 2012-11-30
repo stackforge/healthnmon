@@ -150,7 +150,11 @@ class InventoryManager(object):
         for compute in computes:
             compute_id = str(compute['id'])
             service = compute['service']
-            if service is not None:
+            compute_hypervisor_type = compute['hypervisor_type']
+            LOG.debug(_(' Compute-id -> %s: Hypervisor Type -> %s') %
+                      (compute_id, compute_hypervisor_type))
+
+            if service is not None and compute_hypervisor_type == 'QEMU':
                 compute_alive = hnm_utils.is_service_alive(
                     service['updated_at'], service['created_at'])
                 db_keys.append(compute_id)
