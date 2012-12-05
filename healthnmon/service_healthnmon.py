@@ -13,7 +13,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
+import random
 from nova.service import Service
 from nova import version
 from nova import utils
@@ -43,27 +43,43 @@ class HealthnmonService(Service):
         except exception.NotFound:
             self._create_service_ref(ctxt)
 
+        if self.backdoor_port is not None:
+            self.manager.backdoor_port = self.backdoor_port
+
         self.conn = rpc.create_connection(new=True)
         LOG.debug(_("Creating Consumer connection for Service %s") %
                   self.topic)
 
+        self.manager.pre_start_hook(rpc_connection=self.conn)
+
+        rpc_dispatcher = self.manager.create_rpc_dispatcher()
+
         # Share this same connection for these Consumers
-        self.conn.create_consumer(self.topic, self, fanout=False)
+        self.conn.create_consumer(self.topic, rpc_dispatcher, fanout=False)
 
         node_topic = '%s.%s' % (self.topic, self.host)
-        self.conn.create_consumer(node_topic, self, fanout=False)
+        self.conn.create_consumer(node_topic, rpc_dispatcher, fanout=False)
 
-        self.conn.create_consumer(self.topic, self, fanout=True)
+        self.conn.create_consumer(self.topic, rpc_dispatcher, fanout=True)
 
         # Consume from all consumers in a thread
         self.conn.consume_in_thread()
 
+        self.manager.post_start_hook()
+
         if self.report_interval:
             pulse = utils.LoopingCall(self.report_state)
-            pulse.start(interval=self.report_interval)
+            pulse.start(interval=self.report_interval,
+                        initial_delay=self.report_interval)
             self.timers.append(pulse)
 
         if self.periodic_interval:
+            if self.periodic_fuzzy_delay:
+                initial_delay = random.randint(0, self.periodic_fuzzy_delay)
+            else:
+                initial_delay = None
+
             periodic = utils.LoopingCall(self.periodic_tasks)
-            periodic.start(interval=self.periodic_interval)
+            periodic.start(interval=self.periodic_interval,
+                           initial_delay=initial_delay)
             self.timers.append(periodic)
