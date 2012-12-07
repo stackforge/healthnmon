@@ -39,7 +39,7 @@ done
 
 
 if [ $run_tests -eq 1 ]; then
-    tox -ehealthnmon
+    tox -epy26
     status=$?
     if [[ $status -ne 0 ]]
     then

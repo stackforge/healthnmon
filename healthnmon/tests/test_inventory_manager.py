@@ -192,8 +192,7 @@ class InventoryManagerTestCase(test.TestCase):
 
         self.mox.StubOutWithMock(ComputeInventory, 'update_inventory')
 
-        InventoryCacheManager.get_all_compute_inventory()['compute1'
-                                                          ].update_inventory().AndRaise(Exception)
+        InventoryCacheManager.get_all_compute_inventory()['compute1'].update_inventory().AndRaise(Exception)
 
         self.mox.ReplayAll()
         im.update(None)
@@ -207,6 +206,7 @@ class InventoryManagerTestCase(test.TestCase):
         self._createInvCache()
         self.inv_manager_cls._compute_inventory = {}
         compute = _create_Compute(compute_id='compute1')
+        compute['hypervisor_type'] = 'QEMU'
         self.mox.StubOutWithMock(db, 'compute_node_get_all')
         db.compute_node_get_all(mox.IgnoreArg()).AndReturn([compute])
 
@@ -228,6 +228,7 @@ class InventoryManagerTestCase(test.TestCase):
         self._createInvCache()
         self.inv_manager_cls._compute_inventory = {}
         compute1 = _create_Compute(compute_id='compute1')
+        compute1['hypervisor_type'] = 'QEMU'
         compute2 = _create_Compute(compute_id='compute2')
         compute2['service'] = None
         self.mox.StubOutWithMock(db, 'compute_node_get_all')
