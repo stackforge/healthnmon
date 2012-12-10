@@ -54,39 +54,43 @@ def map_models():
                               foreign_keys=schema.PhysicalServer.c.osId),
            'deleted': [schema.PhysicalServer.c.deleted,
                        schema.VmHost.c.deleted],
-           'virtualSwitches': relationship(model.VirtualSwitch,
-                                           foreign_keys=schema.VirtualSwitch.c.vmHostId,
-                                           primaryjoin=(
-                                           and_(
-                                               schema.VmHost.c.id == schema.VirtualSwitch.c.vmHostId,
-                                           or_(
-                                           schema.VirtualSwitch.c.deleted == False, schema.VirtualSwitch.c.deleted == None))),
-                                           cascade='all, delete, delete-orphan'),
-           'portGroups': relationship(model.PortGroup,
-                                      foreign_keys=schema.PortGroup.c.vmHostId,
-                                      primaryjoin=(
-                                      and_(
-                                          schema.VmHost.c.id == schema.PortGroup.c.vmHostId,
-                                      or_(
-                                      schema.PortGroup.c.deleted == False, schema.PortGroup.c.deleted == None))),
-                                      cascade='all, delete, delete-orphan'),
-           'ipAddresses': relationship(model.IpProfile,
-                                       foreign_keys=schema.IpProfile.c.vmHostId,
-                                       cascade='all, delete, delete-orphan'
-                                       ),
+           'virtualSwitches': relationship(
+               model.VirtualSwitch,
+               foreign_keys=schema.VirtualSwitch.c.vmHostId,
+               primaryjoin=(and_(
+                   schema.VmHost.c.id == schema.VirtualSwitch.c.vmHostId,
+                   or_(schema.VirtualSwitch.c.deleted == False,
+                       schema.VirtualSwitch.c.deleted == None))),
+               cascade='all, delete, delete-orphan'),
+           'portGroups': relationship(
+               model.PortGroup,
+               foreign_keys=schema.PortGroup.c.vmHostId,
+               primaryjoin=(and_(
+                   schema.VmHost.c.id == schema.PortGroup.c.vmHostId,
+                   or_(schema.PortGroup.c.deleted == False,
+                       schema.PortGroup.c.deleted == None))),
+               cascade='all, delete, delete-orphan'),
+           'ipAddresses': relationship(
+               model.IpProfile,
+               foreign_keys=schema.IpProfile.c.vmHostId,
+               cascade='all, delete, delete-orphan'),
            })
 
     mapper(model.Subnet, schema.Subnet, properties={
-        'groupIdTypes': relationship(model.GroupIdType,
-                                     foreign_keys=schema.GroupIdType.c.subnetId),
-        'resourceTags': relationship(model.ResourceTag,
-                                     foreign_keys=schema.ResourceTag.c.subnetId),
-        'ipAddressRanges': relationship(model.IpAddressRange,
-                                        foreign_keys=schema.IpAddressRange.c.subnetId,
-                                        cascade='all, delete, delete-orphan'),
-        'usedIpAddresses': relationship(model.IpAddress,
-                                        foreign_keys=schema.IpAddress.c.subnetId,
-                                        cascade='all, delete, delete-orphan'),
+        'groupIdTypes': relationship(
+            model.GroupIdType,
+            foreign_keys=schema.GroupIdType.c.subnetId),
+        'resourceTags': relationship(
+            model.ResourceTag,
+            foreign_keys=schema.ResourceTag.c.subnetId),
+        'ipAddressRanges': relationship(
+            model.IpAddressRange,
+            foreign_keys=schema.IpAddressRange.c.subnetId,
+            cascade='all, delete, delete-orphan'),
+        'usedIpAddresses': relationship(
+            model.IpAddress,
+            foreign_keys=schema.IpAddress.c.subnetId,
+            cascade='all, delete, delete-orphan'),
         'networkSrc': relationship(SubnetNetworkSource, uselist=True,
                                    primaryjoin=schema.Subnet.c.id
                                    == schema.SubnetNetworkSources.c.subnetId,
@@ -94,32 +98,47 @@ def map_models():
         'dnsServer': relationship(SubnetDnsServer, uselist=True,
                                   primaryjoin=schema.Subnet.c.id
                                   == schema.SubnetDnsServers.c.subnetId),
-        'dnsSuffixes': relationship(SubnetDnsSearchSuffix,
-                                    uselist=True,
-                                    primaryjoin=schema.Subnet.c.id
-                                    == schema.SubnetDnsSearchSuffixes.c.subnetId),
-        'defaultGateway': relationship(SubnetDefaultGateway,
-                                       uselist=True, primaryjoin=schema.Subnet.c.id
-                                       == schema.SubnetDefaultGateways.c.subnetId,
-                                       cascade='all, delete, delete-orphan'),
-        'winsServer': relationship(SubnetWinServer, uselist=True,
-                                   primaryjoin=schema.Subnet.c.id
-                                   == schema.SubnetWinServers.c.subnetId),
-        'ntpDateServer': relationship(SubnetNtpDateServer,
-                                      uselist=True, primaryjoin=schema.Subnet.c.id
-                                      == schema.SubnetNtpDateServers.c.subnetId),
-        'deploymentService': relationship(SubnetDeploymentService,
-                                          uselist=True, primaryjoin=schema.Subnet.c.id
-                                          == schema.SubnetDeploymentServices.c.subnetId),
-        'parents': relationship(SubnetParentId, uselist=True,
-                                primaryjoin=schema.Subnet.c.id
-                                == schema.SubnetParentIds.c.subnetId),
-        'childs': relationship(SubnetChildId, uselist=True,
-                               primaryjoin=schema.Subnet.c.id
-                               == schema.SubnetChildIds.c.subnetId),
-        'redundancyPeer': relationship(SubnetRedundancyPeerId,
-                                       uselist=True, primaryjoin=schema.Subnet.c.id
-                                       == schema.SubnetRedundancyPeerIds.c.subnetId),
+        'dnsSuffixes': relationship(
+            SubnetDnsSearchSuffix,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetDnsSearchSuffixes.c.subnetId),
+        'defaultGateway': relationship(
+            SubnetDefaultGateway,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetDefaultGateways.c.subnetId,
+            cascade='all, delete, delete-orphan'),
+        'winsServer': relationship(
+            SubnetWinServer,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetWinServers.c.subnetId),
+        'ntpDateServer': relationship(
+            SubnetNtpDateServer,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetNtpDateServers.c.subnetId),
+        'deploymentService': relationship(
+            SubnetDeploymentService,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetDeploymentServices.c.subnetId),
+        'parents': relationship(
+            SubnetParentId,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetParentIds.c.subnetId),
+        'childs': relationship(
+            SubnetChildId,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetChildIds.c.subnetId),
+        'redundancyPeer': relationship(
+            SubnetRedundancyPeerId,
+            uselist=True,
+            primaryjoin=schema.Subnet.c.id
+            == schema.SubnetRedundancyPeerIds.c.subnetId),
     })
 
     mapper(model.GroupIdType, schema.GroupIdType,
@@ -154,13 +173,13 @@ def map_models():
                                                      'defaultGatewayId')
     mapper(SubnetDefaultGateway, schema.SubnetDefaultGateways)
     model.Subnet.dnsSearchSuffixes = association_proxy('dnsSuffixes',
-                                                      'dnsSuffixId')
+                                                       'dnsSuffixId')
     mapper(SubnetDnsSearchSuffix, schema.SubnetDnsSearchSuffixes)
     model.Subnet.winsServers = association_proxy('winsServer',
-            'winServerId')
+                                                 'winServerId')
     mapper(SubnetWinServer, schema.SubnetWinServers)
     model.Subnet.ntpDateServers = association_proxy('ntpDateServer',
-            'ntpDateServerId')
+                                                    'ntpDateServerId')
     mapper(SubnetNtpDateServer, schema.SubnetNtpDateServers)
     model.Subnet.deploymentServices = \
         association_proxy('deploymentService', 'deploymentServiceId')
@@ -173,26 +192,30 @@ def map_models():
                                                        'redundancyPeerId')
     mapper(SubnetRedundancyPeerId, schema.SubnetRedundancyPeerIds)
 
-    mapper(model.VirtualSwitch, schema.VirtualSwitch,
-           properties={
-            'portGroups': relationship(model.PortGroup,
-                            foreign_keys=schema.PortGroup.c.virtualSwitchId,
-                            primaryjoin=(
-                                and_(
-                                    schema.VirtualSwitch.c.id == schema.PortGroup.c.virtualSwitchId,
-                             or_(
-                                 schema.PortGroup.c.deleted == False, schema.PortGroup.c.deleted == None))),
-                            cascade='all, delete, delete-orphan'),
-            'cost': relationship(model.Cost,
-                            foreign_keys=schema.VirtualSwitch.c.costId),
-            'subnets': relationship(VirtualSwitchSubnetIds,
-                            uselist=True, primaryjoin=schema.VirtualSwitch.c.id
-                            == schema.VirtualSwitchSubnetIds.c.virtualSwitchId,
-                            cascade='all, delete, delete-orphan'),
-            'networks': relationship(VirtualSwitchInterfaces,
-                            uselist=True, primaryjoin=schema.VirtualSwitch.c.id
-                            == schema.NetworkInterfaces.c.vSwitchId,
-                            cascade='all, delete, delete-orphan')})
+    mapper(model.VirtualSwitch, schema.VirtualSwitch, properties={
+        'portGroups': relationship(
+            model.PortGroup,
+            foreign_keys=schema.PortGroup.c.virtualSwitchId,
+            primaryjoin=(
+                and_(schema.VirtualSwitch.c.id ==
+                     schema.PortGroup.c.virtualSwitchId,
+                     or_(schema.PortGroup.c.deleted == False,
+                         schema.PortGroup.c.deleted == None))),
+            cascade='all, delete, delete-orphan'),
+        'cost': relationship(model.Cost,
+                             foreign_keys=schema.VirtualSwitch.c.costId),
+        'subnets': relationship(
+            VirtualSwitchSubnetIds,
+            uselist=True,
+            primaryjoin=schema.VirtualSwitch.c.id
+            == schema.VirtualSwitchSubnetIds.c.virtualSwitchId,
+            cascade='all, delete, delete-orphan'),
+        'networks': relationship(
+            VirtualSwitchInterfaces,
+            uselist=True,
+            primaryjoin=schema.VirtualSwitch.c.id
+            == schema.NetworkInterfaces.c.vSwitchId,
+            cascade='all, delete, delete-orphan')})
 
     model.VirtualSwitch.subnetIds = association_proxy('subnets', 'subnetId')
 
@@ -200,11 +223,10 @@ def map_models():
     model.VirtualSwitch.networkInterfaces = association_proxy(
         'networks', 'interfaceId')
     mapper(VirtualSwitchInterfaces, schema.NetworkInterfaces)
-    mapper(model.PortGroup, schema.PortGroup,
-           properties={
-            'type_': schema.PortGroup.c.type,
-            'cost': relationship(model.Cost,
-                            foreign_keys=schema.PortGroup.c.costId)})
+    mapper(model.PortGroup, schema.PortGroup, properties={
+        'type_': schema.PortGroup.c.type,
+        'cost': relationship(model.Cost,
+                             foreign_keys=schema.PortGroup.c.costId)})
 
     mapper(model.Vm, schema.Vm, properties={
         'cost': relationship(model.Cost,
@@ -215,29 +237,35 @@ def map_models():
                                     foreign_keys=schema.IpProfile.c.vmId,
                                     cascade='all, delete, delete-orphan'
                                     ),
-        'vmNetAdapters': relationship(model.VmNetAdapter,
-                foreign_keys=schema.VmNetAdapter.c.vmId,
-                cascade='all, delete, delete-orphan'),
-        'vmScsiControllers': relationship(model.VmScsiController,
-                foreign_keys=schema.VmScsiController.c.vmId,
-                cascade='all, delete, delete-orphan'),
-        'vmDisks': relationship(model.VmDisk,
-                                foreign_keys=schema.VmDisk.c.vmId,
-                                cascade='all, delete, delete-orphan'),
-        'vmGenericDevices': relationship(model.VmGenericDevice,
-                foreign_keys=schema.VmGenericDevice.c.vmId,
-                cascade='all, delete, delete-orphan'),
-        'vmGlobalSettings': relationship(model.VmGlobalSettings,
-                foreign_keys=schema.Vm.c.globalSettingsId),
-        'cpuResourceAllocation': relationship(model.ResourceAllocation,
-                foreign_keys=schema.Vm.c.cpuResourceAllocationId,
-                primaryjoin=schema.Vm.c.cpuResourceAllocationId
-                == schema.ResourceAllocation.c.id),
-        'memoryResourceAllocation': relationship(model.ResourceAllocation,
-                foreign_keys=schema.Vm.c.memoryResourceAllocationId,
-                primaryjoin=schema.Vm.c.memoryResourceAllocationId
-                == schema.ResourceAllocation.c.id),
-        })
+        'vmNetAdapters': relationship(
+            model.VmNetAdapter,
+            foreign_keys=schema.VmNetAdapter.c.vmId,
+            cascade='all, delete, delete-orphan'),
+        'vmScsiControllers': relationship(
+            model.VmScsiController,
+            foreign_keys=schema.VmScsiController.c.vmId,
+            cascade='all, delete, delete-orphan'),
+        'vmDisks': relationship(
+            model.VmDisk,
+            foreign_keys=schema.VmDisk.c.vmId,
+            cascade='all, delete, delete-orphan'),
+        'vmGenericDevices': relationship(
+            model.VmGenericDevice,
+            foreign_keys=schema.VmGenericDevice.c.vmId,
+            cascade='all, delete, delete-orphan'),
+        'vmGlobalSettings': relationship(
+            model.VmGlobalSettings,
+            foreign_keys=schema.Vm.c.globalSettingsId),
+        'cpuResourceAllocation': relationship(
+            model.ResourceAllocation,
+            foreign_keys=schema.Vm.c.cpuResourceAllocationId,
+            primaryjoin=schema.Vm.c.cpuResourceAllocationId
+            == schema.ResourceAllocation.c.id),
+        'memoryResourceAllocation': relationship(
+            model.ResourceAllocation,
+            foreign_keys=schema.Vm.c.memoryResourceAllocationId,
+            primaryjoin=schema.Vm.c.memoryResourceAllocationId
+            == schema.ResourceAllocation.c.id)})
 
     mapper(model.VmGlobalSettings, schema.VmGlobalSettings)
 
@@ -250,8 +278,7 @@ def map_models():
            == schema.VmNetAdapterIpProfiles.c.netAdapterId,
            cascade='all, delete, delete-orphan')})
 
-    model.VmNetAdapter.ipAddresses = association_proxy('ipAdd',
-            'ipAddress')
+    model.VmNetAdapter.ipAddresses = association_proxy('ipAdd', 'ipAddress')
     mapper(VmNetAdapterIpProfile, schema.VmNetAdapterIpProfiles)
 
     mapper(model.VmDisk, schema.VmDisk)
@@ -338,8 +365,8 @@ class SubnetDnsSearchSuffix(object):
 class SubnetDefaultGateway(object):
 
     member_data_items_ = \
-        {'defaultGatewayId': MemberSpec_('defaultGatewayId', 'xs:string',
-                 0), 'subnetId': MemberSpec_('subnetId', 'xs:string', 0)}
+        {'defaultGatewayId': MemberSpec_('defaultGatewayId', 'xs:string', 0),
+         'subnetId': MemberSpec_('subnetId', 'xs:string', 0)}
 
     def __init__(self, defaultGatewayId=None, subnetId=None):
         self.defaultGatewayId = defaultGatewayId
@@ -395,8 +422,8 @@ class SubnetParentId(object):
 
 class SubnetChildId(object):
 
-    member_data_items_ = {'childId': MemberSpec_('childId', 'xs:string',
-                           0), 'subnetId': MemberSpec_('subnetId',
+    member_data_items_ = {'childId': MemberSpec_('childId', 'xs:string', 0),
+                          'subnetId': MemberSpec_('subnetId',
                           'xs:string', 0)}
 
     def __init__(self, childId=None, subnetId=None):

@@ -82,10 +82,10 @@ class VMController(base.Controller):
         (ctx, proj_id) = util.get_project_context(req)
         vm_xml = util.dump_resource_xml(vm, self._model_name)
         out_dict = {}
-        vm_xml_update = util.replace_with_links(vm_xml,
-                                                self._get_resource_tag_dict_list(req.application_url,
-                                                                                 proj_id),
-                                                out_dict)
+        vm_xml_update = util.replace_with_links(
+            vm_xml,
+            self._get_resource_tag_dict_list(req.application_url, proj_id),
+            out_dict)
         field_list = util.get_query_fields(req)
         if field_list is not None:
             if 'utilization' in field_list:
@@ -105,19 +105,23 @@ class VMController(base.Controller):
             :param proj_id: project id
             :returns: list of tag dictionaries for virtual machine
         """
-        return   [{
+        return [{
             'tag': 'storageVolumeId',
             'tag_replacement': 'storagevolume',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id, constants.STORAGEVOLUME_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id,
+                constants.STORAGEVOLUME_COLLECTION_NAME),
             'tag_attrib': None,
         }, {
             'tag': 'vmHostId',
             'tag_replacement': 'vmhost',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id, constants.VMHOSTS_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id,
+                constants.VMHOSTS_COLLECTION_NAME),
             'tag_attrib': None,
         }]
 

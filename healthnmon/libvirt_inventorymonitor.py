@@ -155,14 +155,15 @@ class LibvirtVmHost:
                   + self.compute_id))
         try:
             self.cachedvmHost = \
-                InventoryCacheManager.get_object_from_cache(self.compute_id,
+                InventoryCacheManager.get_object_from_cache(
+                    self.compute_id,
                     Constants.VmHost)
 
             """Check whether the compute is running else exit from polling"""
             compute_alive = self._get_compute_running_status()
             if not compute_alive:
                 LOG.debug(_('De-registering the host with ' +
-                            'compute_id %s for events ' % 
+                            'compute_id %s for events ' %
                             str(self.compute_id)))
                 self.libvirtEvents.deregister_libvirt_events()
                 self._set_host_as_disconnected()
@@ -170,19 +171,20 @@ class LibvirtVmHost:
                 return
             if not self.libvirtEvents.registered:
                 LOG.debug(_('Registering host with ' +
-                            'compute_id %s for events ' % 
+                            'compute_id %s for events ' %
                             str(self.compute_id)))
                 self.libvirtEvents.compute_id = self.compute_id
                 self.libvirtEvents.register_libvirt_events()
                 self.libvirtEvents.first_poll = True
             # Below are the scenarios in which the cachedvmHost would be None
-            # 1. SSH not setup before attempting to collect 
+            # 1. SSH not setup before attempting to collect
             #    inventory for the first time
-            # 2. SSH setup, but libvirt service is down, before attempting 
+            # 2. SSH setup, but libvirt service is down, before attempting
             #    to collect inventory for the first time
-            # If inventory has been collected atleast once,cachedvmHost 
-            # will not be None and the host connection state will be updated as disconnected
-            if (self.libvirtconn == None and self.cachedvmHost == None):
+            # If inventory has been collected atleast once,cachedvmHost
+            # will not be None and the host connection state will
+            # be updated as disconnected
+            if (self.libvirtconn is None and self.cachedvmHost is None):
                 return
 
             self.vmHost = VmHost()
@@ -350,13 +352,13 @@ class LibvirtVmHost:
         LOG.debug(_('Exiting _persist for host uuid '
                   + self.compute_id))
 
+
 class LibvirtVM:
 
-    def __init__(
-        self,
-        connection,
-        compute_id
-        ):
+    def __init__(self,
+                 connection,
+                 compute_id
+                 ):
         self.libvirtconn = connection
         self.Vm = None
         self.domainObj = None
@@ -365,14 +367,16 @@ class LibvirtVM:
         self.compute_id = compute_id
         self.cachedVm = None
         self.vmHost = \
-                InventoryCacheManager.get_object_from_cache(self.compute_id,
-                    Constants.VmHost)
+            InventoryCacheManager.get_object_from_cache(
+                self.compute_id,
+                Constants.VmHost)
         self.hostUUID = self.vmHost.uuid
         self.vmAdded = False
         self.vmDeleted = False
 
     def processUpdates(self):
-        ''' Method will iterate through the domainList and get the mapping done for Resource Model "Vm" '''
+        ''' Method will iterate through the domainList and get
+        the mapping done for Resource Model "Vm" '''
 
         LOG.debug(_('Entering processUpdates for vms on host '
                   + self.compute_id))
@@ -395,21 +399,26 @@ class LibvirtVM:
                 updatedVmIds.append(domainObj.UUIDString())
 
             self.vmHost.set_virtualMachineIds(updatedVmIds)
-            InventoryCacheManager.update_object_in_cache(self.compute_id,
-                    self.vmHost)
+            InventoryCacheManager.update_object_in_cache(
+                self.compute_id,
+                self.vmHost)
             self.processVmDeletes(vmIds, updatedVmIds)
             if (self.vmAdded or self.vmDeleted):
-                event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_UPDATED, self.vmHost)
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_UPDATED, self.vmHost)
         except Exception:
-            LOG.error(_('Could not proceed with process updates of Vm on host with id ' + self.compute_id))
+            LOG.error(_('Could not proceed with process updates of \
+                Vm on host with id ' + self.compute_id))
             self.utils.log_error(traceback.format_exc())
         LOG.debug(_('Exiting processUpdates for vms on host '
                   + self.compute_id))
 
     def process_updates_for_updated_VM(self, domainObj_notified):
-        ''' Method will process the domainobj and get the mapping done for Resource Model "Vm" '''
+        ''' Method will process the domainobj and get the mapping done
+        for Resource Model "Vm" '''
         try:
-            LOG.info(_('Processing updates for VM %s reported by libvirt event' % domainObj_notified.UUIDString()))
+            LOG.info(_('Processing updates for VM %s reported \
+            by libvirt event' % domainObj_notified.UUIDString()))
             vmIds = self.vmHost.get_virtualMachineIds()
             existingVmIds = []
 
@@ -427,22 +436,26 @@ class LibvirtVM:
             if domainObj_notified.UUIDString() in existingVmIds:
                 self._processVm(domainObj_notified)
                 self.vmHost.set_virtualMachineIds(existingVmIds)
-                InventoryCacheManager.update_object_in_cache(self.compute_id,
+                InventoryCacheManager.update_object_in_cache(
+                    self.compute_id,
                     self.vmHost)
             else:
                 self.vmHost.set_virtualMachineIds(existingVmIds)
-                InventoryCacheManager.update_object_in_cache(self.compute_id,
+                InventoryCacheManager.update_object_in_cache(
+                    self.compute_id,
                     self.vmHost)
                 self.processVmDeletes(vmIds, existingVmIds)
 
             if (self.vmAdded or self.vmDeleted):
-                event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_UPDATED, self.vmHost)
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_UPDATED, self.vmHost)
         except Exception:
-            LOG.error(_('Could not proceed with process updates of Vm on host with id ' + self.compute_id))
+            LOG.error(_('Could not proceed with process updates of Vm\
+            on host with id ' + self.compute_id))
             self.utils = XMLUtils()
             self.utils.log_error(traceback.format_exc())
-        LOG.info(_('Exiting processUpdates for vms on host '
-                  + self.compute_id))
+        LOG.info(_('Exiting processUpdates for vms on host ' +
+                   self.compute_id))
 
     def _processVm(self, domainObj):
         ''' Method to map the domain object to the Vm Object '''
@@ -454,7 +467,8 @@ class LibvirtVM:
             self.domainUuid = self.domainObj.UUIDString()
 
             self.cachedVm = \
-                InventoryCacheManager.get_object_from_cache(self.domainUuid,
+                InventoryCacheManager.get_object_from_cache(
+                    self.domainUuid,
                     Constants.Vm)
             self.Vm = Vm()
 
@@ -462,7 +476,8 @@ class LibvirtVM:
             # Sets the values into the self.Vm
             self._mapVmProperties()
             # Now compare the VmObject with the new Vm created
-            # Assuming that if both the objects are same compare() will return true, else false
+            # Assuming that if both the objects are same compare()
+            # will return true, else false
             diff_res_tup = self.utils.getdiff(self.cachedVm, self.Vm)
             if diff_res_tup[0]:
                 '''if cachedVm !=None:
@@ -470,76 +485,88 @@ class LibvirtVM:
                 if self.Vm !=None:
                     print "self.Vm :",self.Vm.__dict__'''
                 # Persist the Vm in cache and in DB
-                InventoryCacheManager.update_object_in_cache(self.domainUuid,
-                        self.Vm)
+                InventoryCacheManager.update_object_in_cache(
+                    self.domainUuid,
+                    self.Vm)
                 self._persistVm()
-                # Generates the Event when Vm is added, Vm reconfigured  and if Vm state changes
-                if self.cachedVm == None:
+                # Generates the Event when Vm is added, Vm reconfigured
+                # mand if Vm state changes
+                if self.cachedVm is None:
                     LOG.audit(_('New Vm '
                               + domainObj.UUIDString() + ' created on host '
                               + self.compute_id))
                     event_api.notify(event_metadata.EVENT_TYPE_VM_CREATED,
-                            self.Vm)
+                                     self.Vm)
                     self.vmAdded = True
                 else:
                     currentVmState = self.Vm.get_powerState()
                     cachedVmState = self.cachedVm.get_powerState()
                     if currentVmState != cachedVmState:
                         if currentVmState \
-                            == Constants.VM_POWER_STATES[1]:
+                                == Constants.VM_POWER_STATES[1]:
                             if cachedVmState \
-                                == Constants.VM_POWER_STATES[3]:
+                                    == Constants.VM_POWER_STATES[3]:
                                 LOG.audit(_('Vm '
-                                        + domainObj.UUIDString()
-                                        + ' is resumed on host '
-                                        + self.compute_id))
-                                event_api.notify(event_metadata.EVENT_TYPE_VM_RESUMED,
-                                        self.Vm)
+                                            + domainObj.UUIDString()
+                                            + ' is resumed on host '
+                                            + self.compute_id))
+                                event_api.notify(
+                                    event_metadata.EVENT_TYPE_VM_RESUMED,
+                                    self.Vm)
                             else:
                                 LOG.audit(_('Vm '
+                                            + domainObj.UUIDString()
+                                            + ' is started on host '
+                                            + self.compute_id))
+                                event_api.notify(
+                                    event_metadata.EVENT_TYPE_VM_STARTED,
+                                    self.Vm)
+                        elif currentVmState \
+                                == Constants.VM_POWER_STATES[3]:
+                            LOG.audit(_('Vm '
                                         + domainObj.UUIDString()
-                                        + ' is started on host '
+                                        + ' is suspended on host '
                                         + self.compute_id))
-                                event_api.notify(event_metadata.EVENT_TYPE_VM_STARTED,
-                                        self.Vm)
+                            event_api.notify(
+                                event_metadata.EVENT_TYPE_VM_SUSPENDED,
+                                self.Vm)
                         elif currentVmState \
-                            == Constants.VM_POWER_STATES[3]:
+                                == Constants.VM_POWER_STATES[5]:
                             LOG.audit(_('Vm '
-                                    + domainObj.UUIDString()
-                                    + ' is suspended on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_VM_SUSPENDED,
-                                    self.Vm)
+                                        + domainObj.UUIDString()
+                                        + ' is stopped on host '
+                                        + self.compute_id))
+                            event_api.notify(
+                                event_metadata.EVENT_TYPE_VM_STOPPED,
+                                self.Vm)
                         elif currentVmState \
-                            == Constants.VM_POWER_STATES[5]:
+                                == Constants.VM_POWER_STATES[4]:
                             LOG.audit(_('Vm '
-                                    + domainObj.UUIDString()
-                                    + ' is stopped on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_VM_STOPPED,
-                                    self.Vm)
-                        elif currentVmState \
-                            == Constants.VM_POWER_STATES[4]:
-                            LOG.audit(_('Vm '
-                                    + domainObj.UUIDString()
-                                    + ' is shutdown on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_VM_SHUTDOWN,
-                                    self.Vm)
+                                        + domainObj.UUIDString()
+                                        + ' is shutdown on host '
+                                        + self.compute_id))
+                            event_api.notify(
+                                event_metadata.EVENT_TYPE_VM_SHUTDOWN,
+                                self.Vm)
 
                     # Vm Reconfigured events
 
                     changed_attr = \
-                        events_util.getChangedAttributesForUpdateEvent(self.Vm,
+                        events_util.getChangedAttributesForUpdateEvent(
+                            self.Vm,
                             diff_res_tup[1])
-                    if changed_attr is not None and len(changed_attr) \
-                        > 0:
+                    if changed_attr is not None and len(changed_attr) > 0:
                         LOG.audit(_('Vm '
-                                  + domainObj.UUIDString() + ' is reconfigured on host '
-                                   + self.compute_id))
-                        event_api.notify(event_metadata.EVENT_TYPE_VM_RECONFIGURED,
-                                self.Vm,
-                                changed_attributes=changed_attr)
+                                    + domainObj.UUIDString()
+                                    + ' is reconfigured on host '
+                                    + self.compute_id))
+                        event_api.notify(
+                            event_metadata.EVENT_TYPE_VM_RECONFIGURED,
+                            self.Vm,
+                            changed_attributes=changed_attr)
             LOG.debug(_('Exiting _processVm for vm '
-                      + domainObj.UUIDString() + ' on host '
-                      + self.compute_id))
+                        + domainObj.UUIDString() + ' on host '
+                        + self.compute_id))
         except Exception:
             self.utils.log_error(traceback.format_exc())
 
@@ -555,11 +582,13 @@ class LibvirtVM:
             self.Vm.set_vmHostId(self.compute_id)
             self.Vm.set_virtualizationType('QEMU')
             try:
-                self.vm_info = db.instance_get_by_uuid(get_admin_context(), self.domainUuid)
+                self.vm_info = db.instance_get_by_uuid(get_admin_context(),
+                                                       self.domainUuid)
                 self.Vm.set_name(str(self.vm_info['display_name']))
             except Exception:
                 self.Vm.set_name(self.domainObj.name())
-                LOG.error(_('Instance %s does not exist in nova') % self.domainUuid)
+                LOG.error(_('Instance %s does not exist in nova') %
+                          self.domainUuid)
 
             vmXML = self.domainObj.XMLDesc(0)
 
@@ -584,22 +613,23 @@ class LibvirtVM:
         LOG.debug(_('Entering _mapGenericVmInfo for vm '
                   + self.domainUuid + ' on host ' + self.compute_id))
         memorySize = self.utils.parseXML(vmXML, "//domain/memory")
-        if (memorySize != None):
+        if (memorySize is not None):
             self.Vm.set_memorySize(long(memorySize))
         memoryConsumed = self.utils.parseXML(vmXML, "//domain/currentMemory")
-        if (memoryConsumed != None):
+        if (memoryConsumed is not None):
             self.Vm.set_memoryConsumed(long(memoryConsumed))
         hostInfo = self.libvirtconn.getInfo()
         self.Vm.set_processorArchitecture(hostInfo[0].upper())
         self.Vm.set_processorSpeedMhz(hostInfo[3])
-        processorCores = self.utils.parseXMLAttributes(vmXML,
-                 "//domain/cpu/topology", "cores")
-        if (processorCores != None):
+        processorCores = self.utils.parseXMLAttributes(
+            vmXML,
+            "//domain/cpu/topology", "cores")
+        if (processorCores is not None):
             self.Vm.set_processorCoresCount(int(processorCores))
         processorCount = self.utils.parseXML(vmXML, "//domain/vcpu")
-        if (processorCount != None):
+        if (processorCount is not None):
             self.Vm.set_processorCount(int(processorCount))
-        if hostInfo[3] != None and processorCores != None:
+        if hostInfo[3] is not None and processorCores is not None:
             processorSpeedTotalMhz = int(hostInfo[3]) \
                 * int(processorCores)
             self.Vm.set_processorSpeedTotalMhz(processorSpeedTotalMhz)
@@ -612,55 +642,58 @@ class LibvirtVM:
 
         LOG.debug(_('Entering _mapVmDisk for vm ' + self.domainUuid
                   + ' on host ' + self.compute_id))
-        disksAttached = self.utils.getNodeXML(vmXML,
-                "//domain/devices/disk[@device='disk']")
+        disksAttached = self.utils.getNodeXML(
+            vmXML,
+            "//domain/devices/disk[@device='disk']")
         vmDiskList = []
         for disk in disksAttached:
             vmDisk = VmDisk()
             diskXmlStr = str(disk)
-            if self.utils.parseXMLAttributes(diskXmlStr, '//disk/source', 'file') != None:
-                filePath = self.utils.parseXMLAttributes(diskXmlStr,
-                        '//disk/source', 'file')
-            elif self.utils.parseXMLAttributes(diskXmlStr,
-                    '//disk/source', 'dev') != None:
-
-                filePath = self.utils.parseXMLAttributes(diskXmlStr,
-                        '//disk/source', 'dev')
+            if self.utils.parseXMLAttributes(
+                    diskXmlStr, '//disk/source', 'file') is not None:
+                filePath = self.utils.parseXMLAttributes(
+                    diskXmlStr, '//disk/source', 'file')
+            elif self.utils.parseXMLAttributes(
+                    diskXmlStr,
+                    '//disk/source', 'dev') is not None:
+                filePath = self.utils.parseXMLAttributes(
+                    diskXmlStr,
+                    '//disk/source', 'dev')
             vmDisk.set_fileName(filePath)
             vmDisk.set_id(filePath)
-            channel = self.utils.parseXMLAttributes(diskXmlStr,
-                                "//disk/address", "unit")
-            if (channel != None):
+            channel = self.utils.parseXMLAttributes(
+                diskXmlStr, "//disk/address", "unit")
+            if (channel is not None):
                 vmDisk.set_channel(int(channel))
-            controllerId = self.utils.parseXMLAttributes(diskXmlStr,
-                                "//disk/address", "controller")
-            if (controllerId != None):
+            controllerId = self.utils.parseXMLAttributes(
+                diskXmlStr, "//disk/address", "controller")
+            if (controllerId is not None):
                 vmDisk.set_controllerId(int(controllerId))
-            vmDisk.set_controllerType(self.utils.parseXMLAttributes(diskXmlStr,
-                    '//disk/target', 'bus'))
+            vmDisk.set_controllerType(
+                self.utils.parseXMLAttributes(diskXmlStr,
+                                              '//disk/target', 'bus'))
             vmDisk.set_mode(None)
             storageVolPath = filePath
             try:
-                diskSize = self.domainObj.blockInfo(storageVolPath,
-                        0)[0]
+                diskSize = self.domainObj.blockInfo(storageVolPath, 0)[0]
                 vmDisk.set_diskSize(diskSize)
-                fileSize = self.domainObj.blockInfo(storageVolPath,
-                        0)[1]
+                fileSize = self.domainObj.blockInfo(storageVolPath, 0)[1]
                 vmDisk.set_fileSize(fileSize)
                 poolUUID = None
                 storagePoolsPaths = self._getStoragePoolPath()
                 storageVolPath = \
-                    self._getStorageVolumePath(storagePoolsPaths,
-                        storageVolPath)
-                if storageVolPath != None:
+                    self._getStorageVolumePath(
+                        storagePoolsPaths, storageVolPath)
+                if storageVolPath is not None:
                     storageVol = \
                         self.libvirtconn.storageVolLookupByPath(storageVolPath)
                     poolObj = storageVol.storagePoolLookupByVolume()
                     poolUUID = poolObj.UUIDString()
                 else:
-                    LOG.debug(_('There is no storage pool present for this storage volume '
-                               + self.domainUuid + ' on host '
-                              + self.compute_id))
+                    LOG.debug(_('There is no storage pool present for this \
+                    storage volume ' + self.domainUuid
+                                     + ' on host '
+                                     + self.compute_id))
 
                 vmDisk.set_storageVolumeId(poolUUID)
             except Exception:
@@ -673,8 +706,10 @@ class LibvirtVM:
                   + ' on host ' + self.compute_id))
 
     def _getStoragePoolPath(self):
-        ''' if this is a openstack volume (check /var/lib/nova ) then remove the disk from path
-            if /var/lib/nova/instances/instance-00000004/disk is path then new path will be
+        ''' if this is a openstack volume (check /var/lib/nova )
+            then remove the disk from path
+            if /var/lib/nova/instances/instance-00000004/disk is path
+            then new path will be
                 /var/lib/nova/instances/instance-00000004 '''
 
         LOG.debug(_('Entering _getStoragePoolPath for vm '
@@ -711,48 +746,59 @@ class LibvirtVM:
         '''Mapper method to handle the VmNetAdapter Object '''
 
         LOG.debug(_('Entering _mapVmNetAdapter for vm '
-                  + self.domainUuid + ' on host ' + self.compute_id))
-        vmNetAdapterAttached = self.utils.getNodeXML(vmXML,
-                '//domain/devices/interface')
+                    + self.domainUuid + ' on host ' + self.compute_id))
+        vmNetAdapterAttached = self.utils.getNodeXML(
+            vmXML,
+            '//domain/devices/interface')
         vmNetAdapterList = []
         ipProfileList = []
         for netAdapter in vmNetAdapterAttached:
             vmNetAdapter = VmNetAdapter()
             interfaceXml = str(netAdapter)
-            vmNetAdapter.set_adapterType(self.utils.parseXMLAttributes(interfaceXml,
-                    '//interface/model', 'type'))
-            vmNetAdapter.set_addressType(self.utils.parseXMLAttributes(interfaceXml,
+            vmNetAdapter.set_adapterType(
+                self.utils.parseXMLAttributes(interfaceXml,
+                                              '//interface/model', 'type'))
+            vmNetAdapter.set_addressType(
+                self.utils.parseXMLAttributes(
+                    interfaceXml,
                     '//interface/address', 'type'))
-            mac_address = self.utils.parseXMLAttributes(interfaceXml,
-                    '//interface/mac', 'address')
+            mac_address = self.utils.parseXMLAttributes(
+                interfaceXml,
+                '//interface/mac', 'address')
             vmNetAdapter.set_macAddress(mac_address)
             vmNetAdapter.set_id(mac_address)
-            filterrefobjs = self.utils.getNodeXML(interfaceXml, '//interface/filterref')
+            filterrefobjs = self.utils.getNodeXML(interfaceXml,
+                                                  '//interface/filterref')
             ipAddress = []
             for filterobj in filterrefobjs:
                 filterrefobjxml = str(filterobj)
-                ip = self.utils.parseXMLAttributes(filterrefobjxml,
+                ip = self.utils.parseXMLAttributes(
+                    filterrefobjxml,
                     "//filterref/parameter[@name='IP']", 'value', False)
                 ipAddress.append(ip)
             if ipAddress:
                 vmNetAdapter.set_ipAddresses(ipAddress)
                 for ip in ipAddress:
                     ipProfile = self._mapIpProfile(ip)
-                    if ipProfile is not None and    \
-                    self.utils.is_profile_in_list(ipProfile, ipProfileList) != True:
+                    if ipProfile is not None and \
+                        self.utils.is_profile_in_list(
+                            ipProfile, ipProfileList) is not True:
                         ipProfileList.append(ipProfile)
 
             vmNetAdapter.set_switchType('vSwitch')
-            network_type = self.utils.parseXMLAttributes(interfaceXml,
-                    '//interface', 'type')
+            network_type = self.utils.parseXMLAttributes(
+                interfaceXml,
+                '//interface', 'type')
             networkName = None
             if network_type == 'bridge':
                 networkName = \
-                    self.utils.parseXMLAttributes(interfaceXml,
+                    self.utils.parseXMLAttributes(
+                        interfaceXml,
                         '//interface/source', 'bridge')
             elif network_type == 'network':
                 networkName = \
-                    self.utils.parseXMLAttributes(interfaceXml,
+                    self.utils.parseXMLAttributes(
+                        interfaceXml,
                         '//interface/source', 'network')
             vmNetAdapter.set_networkName(networkName)
 
@@ -768,8 +814,9 @@ class LibvirtVM:
 
         LOG.debug(_('Entering _mapScsiController for vm '
                   + self.domainUuid + ' on host ' + self.compute_id))
-        scsiControllerAttached = self.utils.getNodeXML(vmXML,
-                "//domain/devices/controller[@type='scsi']")
+        scsiControllerAttached = self.utils.getNodeXML(
+            vmXML,
+            "//domain/devices/controller[@type='scsi']")
         scsiControllerList = []
         for scsiController in scsiControllerAttached:
             vmScsiController = VmScsiController()
@@ -777,10 +824,10 @@ class LibvirtVM:
 
             controllerId = \
                 self.utils.parseXMLAttributes(scsiControllerXmlStr,
-                    '//controller', 'index')
+                                              '//controller', 'index')
             controllerType = \
                 self.utils.parseXMLAttributes(scsiControllerXmlStr,
-                    '//controller', 'type')
+                                              '//controller', 'type')
             controllerName = controllerType + ':' + str(controllerId)
             vmScsiController.set_id(self.domainUuid + '_'
                                     + controllerName)
@@ -824,13 +871,13 @@ class LibvirtVM:
         LOG.debug(_('Entering _mapBootOrder for vm ' + self.domainUuid
                   + ' on host ' + self.compute_id))
         try:
-            bootorderobject = self.utils.getNodeXML(vmXML, '//domain/os'
-                    )
+            bootorderobject = self.utils.getNodeXML(vmXML, '//domain/os')
             bootpath = None
             for bo in bootorderobject:
                 bootorderXMLStr = str(bo)
-                path_list = self.utils.parseXMLAttributes(bootorderXMLStr,
-                        '//os/boot', 'dev', True)
+                path_list = self.utils.parseXMLAttributes(
+                    bootorderXMLStr,
+                    '//os/boot', 'dev', True)
                 if path_list:
                     bootpath = ",".join(path_list)
             self.Vm.set_bootOrder(bootpath)
@@ -846,8 +893,9 @@ class LibvirtVM:
             LOG.debug(_('Entering _mapGenericDevices for vm '
                       + self.domainUuid + ' on host '
                       + self.compute_id))
-            deviceAttached = self.utils.getNodeXML(vmXML,
-                    "//domain/devices/disk[@device != 'disk']")
+            deviceAttached = self.utils.getNodeXML(
+                vmXML,
+                "//domain/devices/disk[@device != 'disk']")
             vmDeviceList = []
             genericdevice = None
             genericdeviceList = []
@@ -855,7 +903,7 @@ class LibvirtVM:
             for device in deviceAttached:
                 deviceXmlStr = str(device)
 
-                if self.cachedVm != None:
+                if self.cachedVm is not None:
                     genericdeviceList = \
                         self.cachedVm.get_vmGenericDevices()
 
@@ -865,29 +913,40 @@ class LibvirtVM:
                     for gendevice in genericdeviceList:
                         genericdevice = gendevice
                         if genericdevice.get_name() \
-                            == self.utils.parseXMLAttributes(deviceXmlStr,
+                            == self.utils.parseXMLAttributes(
+                                deviceXmlStr,
                                 '//disk', 'device'):
                             break
 
-                genericdevice.set_name(self.utils.parseXMLAttributes(deviceXmlStr,
+                genericdevice.set_name(
+                    self.utils.parseXMLAttributes(
+                        deviceXmlStr,
                         '//disk', 'device'))
                 properties = genericdevice.get_properties()
-                self._updateProperties(properties, 'type', 'type',
-                        self.utils.parseXMLAttributes(deviceXmlStr,
-                        '//disk/address', 'type'))
-                controller_type = self.utils.parseXMLAttributes(deviceXmlStr,
-                        '//disk/target', 'bus')
-                self._updateProperties(properties, 'controller_type',
-                        'controller_type', controller_type)
-                self._updateProperties(properties, 'controller',
-                        'controller',
-                        self.utils.parseXMLAttributes(deviceXmlStr,
-                        '//disk/address', 'controller'))
-                bus = self.utils.parseXMLAttributes(deviceXmlStr,
-                        '//disk/address', 'bus')
+                self._updateProperties(
+                    properties, 'type', 'type',
+                    self.utils.parseXMLAttributes(deviceXmlStr,
+                                                  '//disk/address', 'type'))
+                controller_type = self.utils.parseXMLAttributes(
+                    deviceXmlStr,
+                    '//disk/target', 'bus')
+                self._updateProperties(properties,
+                                       'controller_type',
+                                       'controller_type',
+                                       controller_type)
+                self._updateProperties(properties,
+                                       'controller',
+                                       'controller',
+                                       self.utils.parseXMLAttributes(
+                                           deviceXmlStr,
+                                           '//disk/address',
+                                           'controller'))
+                bus = self.utils.parseXMLAttributes(
+                    deviceXmlStr,
+                    '//disk/address', 'bus')
                 self._updateProperties(properties, 'bus', 'bus', bus)
                 unit = self.utils.parseXMLAttributes(deviceXmlStr,
-                        '//disk/address', 'unit')
+                                                     '//disk/address', 'unit')
                 self._updateProperties(properties, 'unit', 'unit', unit)
 
                 genericdevice.set_id(controller_type + bus + ':' + unit)
@@ -920,13 +979,12 @@ class LibvirtVM:
         LOG.debug(_('Exiting _mapGlobalSettings for vm '
                   + self.domainUuid + ' on host ' + self.compute_id))
 
-    def _updateProperties(
-        self,
-        properties,
-        name,
-        note,
-        value,
-        ):
+    def _updateProperties(self,
+                          properties,
+                          name,
+                          note,
+                          value,
+                          ):
 
         LOG.debug(_('Entering _updateProperties for vm '
                   + self.domainUuid + ' on host ' + self.compute_id))
@@ -939,7 +997,7 @@ class LibvirtVM:
                     prop = pty
                     found = True
                     break
-            if found == True:
+            if found is True:
                 prop.set_note(note)
                 prop.set_value(value)
             else:
@@ -981,18 +1039,17 @@ class LibvirtVM:
         # Should remove the corresponding vm object from cache and DB
         # Should update the host object's vm list in both cache and DB
 
-        deletion_list = self.utils.getDeletionList(oldVmIds,
-                updatedVmIds)
+        deletion_list = self.utils.getDeletionList(oldVmIds, updatedVmIds)
         if len(deletion_list) != 0:
             # Delete object from cache
             vm_deleted_list = []
             for vmId in deletion_list:
                 obj = InventoryCacheManager.get_object_from_cache(vmId,
-                        Constants.Vm)
+                                                                  Constants.Vm)
                 if obj is not None:
                     vm_deleted_list.append(obj)
                 InventoryCacheManager.delete_object_in_cache(vmId,
-                        Constants.Vm)
+                                                             Constants.Vm)
             api.vm_delete_by_ids(get_admin_context(), deletion_list)
             for vm_deleted in vm_deleted_list:
                 LOG.audit(_('Vm '
@@ -1014,11 +1071,10 @@ class LibvirtVM:
 
 class LibvirtStorageVolume:
 
-    def __init__(
-        self,
-        connection,
-        compute_id,
-        ):
+    def __init__(self,
+                 connection,
+                 compute_id,
+                 ):
 
         self.libvirtconn = connection
         self.vmHost = None
@@ -1027,16 +1083,19 @@ class LibvirtStorageVolume:
         self.hostUUID = None
 
     def processUpdates(self):
-        ''' Method will iterate through the list of storage pools and map the data to Resource Model object "StorageVolume" '''
+        ''' Method will iterate through the list of storage pools
+        and map the data to Resource Model object "StorageVolume" '''
 
         LOG.debug(_('Entering processUpdates for Storage Volumes on host '
-                   + self.compute_id))
+                    + self.compute_id))
         try:
-            self.vmHost = InventoryCacheManager.get_object_from_cache(self.compute_id,
-                    Constants.VmHost)
+            self.vmHost = InventoryCacheManager.get_object_from_cache(
+                self.compute_id,
+                Constants.VmHost)
             self.hostUUID = self.vmHost.get_uuid()
             hostStorageVolIds = self.vmHost.get_storageVolumeIds()
-            # Checks if a storage pool already exists for the path specified in nova.conf and creates the same if not present
+            # Checks if a storage pool already exists for the path
+            # specified in nova.conf and creates the same if not present
             self._createNovaPool()
             poolList = self._getAllStoragePools()
             updatedStorageVolIds = []
@@ -1055,49 +1114,59 @@ class LibvirtStorageVolume:
 
             self.vmHost.set_storageVolumeIds(updatedStorageVolIds)
             InventoryCacheManager.update_object_in_cache(self.compute_id,
-                    self.vmHost)
+                                                         self.vmHost)
 
-            if (self.cur_total_storage_size != self.old_total_storage_size) or \
-                                (self.curr_storage_free != self.old_storage_free):
-                        event_api.notify_host_update(event_metadata.EVENT_TYPE_HOST_UPDATED, self.vmHost)
+            if (self.cur_total_storage_size != self.old_total_storage_size) \
+                    or (self.curr_storage_free != self.old_storage_free):
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_UPDATED, self.vmHost)
 
             self.processStorageDeletes(hostStorageVolIds,
                                        updatedStorageVolIds)
         except Exception:
-            LOG.error(_('Could not proceed with process updates of Storage Volumes on host with id ' + self.compute_id))
+            LOG.error(_('Could not proceed with process updates of Storage \
+            Volumes on host with id ' + self.compute_id))
             self.utils.log_error(traceback.format_exc())
         LOG.debug(_('Exiting processUpdates for Storage Volumes on host '
-                   + self.compute_id))
+                    + self.compute_id))
 
     def _createNovaPool(self):
-        """ Checks if a storage pool already exists for the path specified in nova.conf and creates the same if not present """
+        """ Checks if a storage pool already exists for the path
+        specified in nova.conf and creates the same if not present """
 
         LOG.debug(_('Entering createNovaPool for Storage Volumes on host '
-                   + self.compute_id))
+                    + self.compute_id))
         # Default value for state_path is /var/lib/nova
         # Default value for instances_path is state_path + "/instances"
         novaPoolPath = getFlagByKey('instances_path')
         pools = self._getAllStoragePools()
         if len(pools) != 0:
             for poolName in pools:
-                storagePool = self.libvirtconn.storagePoolLookupByName(poolName)
+                storagePool = self.libvirtconn.storagePoolLookupByName(
+                    poolName)
                 storageXML = storagePool.XMLDesc(0)
                 path = self.utils.parseXML(storageXML, '//pool/target/path')
                 if (path == novaPoolPath):
                     return
         poolName = "nova-storage-pool"
-        poolXML = "<pool type='dir'>" + "<name>%s</name>" % poolName + " <target>" + " <path>%s</path>" % novaPoolPath + " </target>" + "</pool>"
+        poolXML = "<pool type='dir'>" \
+            + "<name>%s</name>" % poolName \
+            + " <target>" + " <path>%s</path>" % novaPoolPath \
+            + " </target>" + "</pool>"
         poolobj = self.libvirtconn.storagePoolDefineXML(poolXML, 0)
-        LOG.debug(_('Created storage pool ' + poolName + ' on host ' + self.compute_id))
+        LOG.debug(_('Created storage pool '
+                    + poolName + ' on host ' + self.compute_id))
         # Pool will be autostarted if host or libvirt service is restarted
         poolobj.setAutostart(1)
         # Creates the path on filesystem if folder does not exist already.
         poolobj.build(0)
-        # Starts the pool and changes state as active, since storagePoolDefineXML creates an inactive pool by default
+        # Starts the pool and changes state as active,
+        # since storagePoolDefineXML creates an inactive pool by default
         poolobj.create(0)
-        LOG.debug(_('Storage pool ' + poolName + ' started in path ' + novaPoolPath + ' on host ' + self.compute_id))
+        LOG.debug(_('Storage pool ' + poolName + ' started in path '
+                    + novaPoolPath + ' on host ' + self.compute_id))
         LOG.debug(_('Exiting createNovaPool for Storage Volumes on host '
-                   + self.compute_id))
+                    + self.compute_id))
 
     def _processStorage(self, poolObj):
         ''' Method to map the pool object to the Storage Volume Object '''

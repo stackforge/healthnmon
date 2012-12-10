@@ -78,10 +78,10 @@ class VmHostsController(base.Controller):
         (ctx, proj_id) = util.get_project_context(req)
         host_xml = util.dump_resource_xml(host, self._model_name)
         out_dict = {}
-        host_xml_update = util.replace_with_links(host_xml,
-                                                  self._get_resource_tag_dict_list(req.application_url,
-                                                                                   proj_id),
-                                                  out_dict)
+        host_xml_update = util.replace_with_links(
+            host_xml,
+            self._get_resource_tag_dict_list(req.application_url, proj_id),
+            out_dict)
         field_list = util.get_query_fields(req)
         if field_list is not None:
             if 'utilization' in field_list:
@@ -103,43 +103,48 @@ class VmHostsController(base.Controller):
             :returns: list of tag dictionaries for vmhosts
         """
 
-        return  [{
+        return [{
             'tag': 'virtualSwitches',
             'tag_replacement': 'virtualswitch',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id,
-                                               constants.VIRTUAL_SWITCH_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id,
+                constants.VIRTUAL_SWITCH_COLLECTION_NAME),
             'tag_attrib': ['name', 'switchType'],
         }, {
             'tag': 'storageVolumeIds',
             'tag_replacement': 'storagevolume',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id,
-                                               constants.STORAGEVOLUME_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id,
+                constants.STORAGEVOLUME_COLLECTION_NAME),
             'tag_attrib': None,
         }, {
             'tag': 'virtualMachineIds',
             'tag_replacement': 'virtualmachine',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id, constants.VM_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id, constants.VM_COLLECTION_NAME),
             'tag_attrib': None,
         }, {
             'tag': 'virtualSwitchId',
             'tag_replacement': 'virtualswitch',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id,
-                                               constants.VIRTUAL_SWITCH_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id,
+                constants.VIRTUAL_SWITCH_COLLECTION_NAME),
             'tag_attrib': None,
         }, {
             'tag': 'subnetIds',
             'tag_replacement': 'subnet',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id, constants.SUBNET_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id, constants.SUBNET_COLLECTION_NAME),
             'tag_attrib': None,
         }]
 

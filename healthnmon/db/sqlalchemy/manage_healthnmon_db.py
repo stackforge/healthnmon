@@ -137,8 +137,10 @@ ResourceLimit = Table(
 VmHost = Table(
     'healthnmon_vm_host',
     meta,
-    Column('id', String(255), ForeignKey('healthnmon_physical_server.id',
-                                         ondelete='CASCADE'), primary_key=True),
+    Column('id', String(255),
+           ForeignKey('healthnmon_physical_server.id',
+           ondelete='CASCADE'),
+           primary_key=True),
     Column('resourceManagerId', String(255)),
     Column('virtualizationType', Enum(
         'ESX',
@@ -256,7 +258,8 @@ HostMountPoint = Table(
            'healthnmon_vm_host.id', ondelete='CASCADE'), primary_key=True),
     Column('storageVolumeId', String(255),
            ForeignKey(
-           'healthnmon_storage_volume.id', ondelete='CASCADE'), primary_key=True),
+           'healthnmon_storage_volume.id', ondelete='CASCADE'),
+           primary_key=True),
 )
 
 ResourceAllocation = Table(
@@ -273,10 +276,13 @@ ResourceAllocation = Table(
 )
 
 VmCapacityPool = Table(
-    #    Although extended from ResourceCapacityPool, it is made to extend from Resource table
-    #    as there is no additional attribute in ResourceCapacityPool. Need to handle in Mapper level
-    #     ForeignKey to VmCluster.entityId or VmHost.entityId . Currently it is kept as is without FK
-    #    capacityPools:  Many to One relationship with VmHost table
+    # Although extended from ResourceCapacityPool,
+    # it is made to extend from Resource table
+    # as there is no additional attribute in ResourceCapacityPool.
+    # Need to handle in Mapper level
+    # ForeignKey to VmCluster.entityId or VmHost.entityId
+    # Currently it is kept as is without FK
+    # capacityPools:  Many to One relationship with VmHost table
     'healthnmon_vm_capacity_pool',
     meta,
     Column('id', String(255), primary_key=True),
@@ -410,23 +416,25 @@ VmGlobalSettings = Table(
 
 
 Vm = Table(
-    #    os : One-to-One relation with OsProfile
-    #   ipAddresses: One-to-Many Relation handled in IpProfile table
-    #   VmNetAdapters: One-to-Many Relation handled in VmNetAdapter table
-    #   VmScsiControllers: One-to-Many Relation handled in VmScsiController table
-    #   VmDisks: One-to-Many Relation handled in VmDisk table
-    #   VmGenericDevice: One-to-Many Relation handled in VmGenericDevice table
-    #   vmGlobalSettings: One-to-One Relation with vmGlobalSettings
-    #    Column('autoStartAction',String(255)),
-    #    Column('autoStopAction',String(255)),
-    #   capabilities : One-to-One Relation with VmCapabilities
-    #    Column('templateId', String(255), ForeignKey('healthnmon_vm_template.id')), TBD
-    #   vmHostId: One-to-many Relation with VmHost
-    #   One-to-One Relation with ResourceAllocation
-    #   One-to-One Relation with ResourceAllocation
-    #   vmClusterId: One-to-many Relation with vmCluster
-    #    Column('vmClusterId', String(255), ForeignKey('healthnmon_vm_cluster.id')),TBD
-    #   vmCapacityPoolId: One-to-many Relation with vmCapacityPool
+    # os : One-to-One relation with OsProfile
+    # ipAddresses: One-to-Many Relation handled in IpProfile table
+    # VmNetAdapters: One-to-Many Relation handled in VmNetAdapter table
+    # VmScsiControllers: One-to-Many Relation handled in VmScsiController table
+    # VmDisks: One-to-Many Relation handled in VmDisk table
+    # VmGenericDevice: One-to-Many Relation handled in VmGenericDevice table
+    # vmGlobalSettings: One-to-One Relation with vmGlobalSettings
+    # Column('autoStartAction',String(255)),
+    # Column('autoStopAction',String(255)),
+    # capabilities : One-to-One Relation with VmCapabilities
+    # Column('templateId', String(255),
+    #         ForeignKey('healthnmon_vm_template.id')), TBD
+    # vmHostId: One-to-many Relation with VmHost
+    # One-to-One Relation with ResourceAllocation
+    # One-to-One Relation with ResourceAllocation
+    # vmClusterId: One-to-many Relation with vmCluster
+    # Column('vmClusterId', String(255),
+    #        ForeignKey('healthnmon_vm_cluster.id')),TBD
+    # vmCapacityPoolId: One-to-many Relation with vmCapacityPool
     'healthnmon_vm',
     meta,
     Column('id', String(255), primary_key=True),
@@ -531,7 +539,8 @@ VmScsiController = Table(
 VmDisk = Table(
     # CHANGE to list TBD
     # CHANGE to list  TBD
-    #    storageVolumeId: Foreginkey to storageVolume.entityId or sanvolume.entityId
+    #    storageVolumeId: Foreginkey to storageVolume.entityId or
+    #    sanvolume.entityId
     #    Need to handle in Mapper appropriately
     'healthnmon_vm_disk',
     meta,
@@ -563,7 +572,9 @@ VmDisk = Table(
 VmGenericDevice = Table('healthnmon_vm_generic_device', meta,
                         Column('id', String(255), primary_key=True),
                         Column('name', String(255)),
-                        Column('vmId', String(255), ForeignKey('healthnmon_vm.id', ondelete='CASCADE')))
+                        Column('vmId', String(255),
+                               ForeignKey('healthnmon_vm.id',
+                                          ondelete='CASCADE')))
 
 VmProperty = Table(
     'healthnmon_vm_property',
@@ -635,7 +646,8 @@ VmCluster = Table(
 
 #    hosts:    One-to-many relationship handled in VmHost
 
-#    TODO: One-to-many : Will volumeId of StorageValome have any relation with this ?
+#    TODO: One-to-many : Will volumeId of StorageValome have
+#          any relation with this ?
 
 #    Verify: Handle relationship with VirtualSwitches
 #    Verify: Handle relationship with PortGroup
@@ -718,7 +730,7 @@ CloudImage = Table('healthnmon_cloud_image', meta, Column('id',
                    String(255),
                    ForeignKey('healthnmon_deployable_software.id',
                    ondelete='CASCADE'), primary_key=True),
-                   Column('sourceCapacityPoolIds', String(255)))  # Verify : Probably needs relationship
+                   Column('sourceCapacityPoolIds', String(255)))
 
 Image = Table('healthnmon_image', meta, Column('id', String(255),
               ForeignKey('healthnmon_deployable_software.id',
@@ -727,305 +739,333 @@ Image = Table('healthnmon_image', meta, Column('id', String(255),
               Column('dsType', Enum('RDP', 'SA', 'IGNITE_UX', 'CUSTOM',
               name='DeploymentServiceTypeEnum')))
 
-VmTemplate = Table(
-                    #    vmNetAdapters: One-to-Many relation with vmNetAdapter
-                     #    vmScsiControllers: One-to-Many relation with vmScsiController
-                     #    vmDisks: One-to-Many relation with vmDisk
-                     #    vmGenericDevices: One-to-Many relation with VmGenericDevice
-                     #    vmGlobalSettings: One-to-Many relation with VmGlobalSetting
-                     #    vmDisks: One-to-Many relation with vmDisk
-    'healthnmon_vm_template',
-    meta,
-    Column('id', String(255),
-           ForeignKey('healthnmon_deployable_software.id',
-           ondelete='CASCADE'), primary_key=True),
-    Column('virtualizationType', Enum(
-        'ESX',
-        'XEN',
-        'HYPER_V',
-        'MSVS',
-        'GSX',
-        'INTEGRITY_VM',
-        'CLOUD',
-        'KVM',
-        'QEMU',
-        'UNKNOWN',
-        name='VirtualizationEnum_template',
-        )),
-    Column('autoStartAction', String(255)),
-    Column('autoStopAction', String(255)),
-    Column('vmHostId', String(255), ForeignKey('healthnmon_vm_host.id'
-           )),
-    Column('cpuResourceAllocation', Integer,
-           ForeignKey('healthnmon_resource_allocation.id')),
-    Column('memoryResourceAllocation', Integer,
-           ForeignKey('healthnmon_resource_allocation.id')),
-    )
+VmTemplate = Table(  # vmNetAdapters: One-to-Many relation with vmNetAdapter
+                     # vmScsiControllers: One-to-Many relation
+                     #                    with vmScsiController
+                     # vmDisks: One-to-Many relation with vmDisk
+                     # vmGenericDevices: One-to-Many relation with
+                     #                   VmGenericDevice
+                     # vmGlobalSettings: One-to-Many relation with
+                     #                   VmGlobalSetting
+                     # vmDisks: One-to-Many relation with vmDisk
+                     'healthnmon_vm_template',
+                     meta,
+                     Column('id', String(255),
+                     ForeignKey('healthnmon_deployable_software.id',
+                     ondelete='CASCADE'), primary_key=True),
+                     Column('virtualizationType',
+                            Enum('ESX',
+                                 'XEN',
+                                 'HYPER_V',
+                                 'MSVS',
+                                 'GSX',
+                                 'INTEGRITY_VM',
+                                 'CLOUD',
+                                 'KVM',
+                                 'QEMU',
+                                 'UNKNOWN',
+                                 name='VirtualizationEnum_template',
+                                 )),
+                     Column('autoStartAction', String(255)),
+                     Column('autoStopAction', String(255)),
+                     Column('vmHostId', String(255),
+                            ForeignKey('healthnmon_vm_host.id')),
+                     Column('cpuResourceAllocation', Integer,
+                            ForeignKey('healthnmon_resource_allocation.id')),
+                     Column('memoryResourceAllocation', Integer,
+                            ForeignKey('healthnmon_resource_allocation.id')),
+                     )
 
 # ========== VmTemplate Tables End ===================
 # ========== SAN Volume Tables Start ===================
 
-SanVolumeTemplate = Table(
-                        # tags: One-to-Many relation handled in ResourceTags
-                        # TODO : A list
-                        # TODO : A list
-    'healthnmon_san_volume_template',
-    meta,
-    Column('id', String(255), primary_key=True),
-    Column('name', String(255)),
-    Column('note', String(255)),
-    Column('costId', Integer, ForeignKey('healthnmon_cost.id')),
-    Column('resourceManagerId', String(255)),
-    Column('spmId', String(255)),
-    Column('description', String(255)),
-    Column('storageTemplateType', Enum('UNKNOWN', 'SPM', 'SPMDEFAULT',
-           'LSMDEFAULT', name='StorageTemplateTypeEnum')),
-    Column('spmTemplateId', String(255)),
-    Column('provisioningType', Enum('THICK', 'THIN', 'UNKNOWN',
-           name='StorageProvisioningTypeEnum')),
-    Column('size', BigInteger),
-    Column('raidLevel', Enum(
-        'RAID0',
-        'RAID1',
-        'RAID3',
-        'RAID4',
-        'RAID5',
-        'RAID6',
-        'RAID01',
-        'RAID05',
-        'RAID10',
-        'RAID50',
-        'RAID60',
-        'AUTO',
-        'UNSPECIFIED',
-        name='RaidLevelEnum',
-        )),
-    Column('osType', Enum(
-        'WINDOWS',
-        'WINDOWS_2008',
-        'WINDOWS_LH',
-        'LINUX',
-        'HP_UX',
-        'VMWARE',
-        'HYPER_V',
-        'KVM',
-        'CITRIX_XEN',
-        'SOLARIS',
-        'AIX',
-        'OPEN_VMS',
-        'UNKNOWN',
-        'UNSPECIFIED',
-        name='OsTypeEnum_San_Vm',
-        )),
-    Column('minSize', BigInteger),
-    Column('maxSize', BigInteger),
-    Column('allowedRaidLevels', Enum(
-        'RAID0',
-        'RAID1',
-        'RAID3',
-        'RAID4',
-        'RAID5',
-        'RAID6',
-        'RAID01',
-        'RAID05',
-        'RAID10',
-        'RAID50',
-        'RAID60',
-        'AUTO',
-        'UNSPECIFIED',
-        name='RaidLevelEnum_Sec',
-        )),
-    Column('allowedOsTypes', Enum(
-        'WINDOWS',
-        'WINDOWS_2008',
-        'WINDOWS_LH',
-        'LINUX',
-        'HP_UX',
-        'VMWARE',
-        'HYPER_V',
-        'KVM',
-        'CITRIX_XEN',
-        'SOLARIS',
-        'AIX',
-        'OPEN_VMS',
-        'UNKNOWN',
-        'UNSPECIFIED',
-        name='OsTypeEnum_San_Vm_Sec',
-        )),
-    Column('requiredTags', String(255)),
-    Column('excludeTags', String(255)),
-    *(__common_columns())
-    )
+SanVolumeTemplate = Table(  # tags: One-to-Many relation handled in
+                            #       ResourceTags
+                            # TODO : A list
+                            # TODO : A list
+                            'healthnmon_san_volume_template',
+                            meta,
+                            Column('id', String(255), primary_key=True),
+                            Column('name', String(255)),
+                            Column('note', String(255)),
+                            Column('costId', Integer,
+                                   ForeignKey('healthnmon_cost.id')),
+                            Column('resourceManagerId', String(255)),
+                            Column('spmId', String(255)),
+                            Column('description', String(255)),
+                            Column('storageTemplateType',
+                                   Enum('UNKNOWN', 'SPM', 'SPMDEFAULT',
+                                        'LSMDEFAULT',
+                                        name='StorageTemplateTypeEnum')),
+                            Column('spmTemplateId', String(255)),
+                            Column('provisioningType',
+                                   Enum('THICK', 'THIN', 'UNKNOWN',
+                                        name='StorageProvisioningTypeEnum')),
+                            Column('size', BigInteger),
+                            Column('raidLevel',
+                                   Enum('RAID0',
+                                        'RAID1',
+                                        'RAID3',
+                                        'RAID4',
+                                        'RAID5',
+                                        'RAID6',
+                                        'RAID01',
+                                        'RAID05',
+                                        'RAID10',
+                                        'RAID50',
+                                        'RAID60',
+                                        'AUTO',
+                                        'UNSPECIFIED',
+                                        name='RaidLevelEnum',
+                                        )),
+                            Column('osType',
+                                   Enum('WINDOWS',
+                                        'WINDOWS_2008',
+                                        'WINDOWS_LH',
+                                        'LINUX',
+                                        'HP_UX',
+                                        'VMWARE',
+                                        'HYPER_V',
+                                        'KVM',
+                                        'CITRIX_XEN',
+                                        'SOLARIS',
+                                        'AIX',
+                                        'OPEN_VMS',
+                                        'UNKNOWN',
+                                        'UNSPECIFIED',
+                                        name='OsTypeEnum_San_Vm',
+                                        )),
+                            Column('minSize', BigInteger),
+                            Column('maxSize', BigInteger),
+                            Column('allowedRaidLevels',
+                                   Enum('RAID0',
+                                        'RAID1',
+                                        'RAID3',
+                                        'RAID4',
+                                        'RAID5',
+                                        'RAID6',
+                                        'RAID01',
+                                        'RAID05',
+                                        'RAID10',
+                                        'RAID50',
+                                        'RAID60',
+                                        'AUTO',
+                                        'UNSPECIFIED',
+                                        name='RaidLevelEnum_Sec',
+                                        )),
+                            Column('allowedOsTypes',
+                                   Enum('WINDOWS',
+                                        'WINDOWS_2008',
+                                        'WINDOWS_LH',
+                                        'LINUX',
+                                        'HP_UX',
+                                        'VMWARE',
+                                        'HYPER_V',
+                                        'KVM',
+                                        'CITRIX_XEN',
+                                        'SOLARIS',
+                                        'AIX',
+                                        'OPEN_VMS',
+                                        'UNKNOWN',
+                                        'UNSPECIFIED',
+                                        name='OsTypeEnum_San_Vm_Sec',
+                                        )),
+                            Column('requiredTags', String(255)),
+                            Column('excludeTags', String(255)),
+                            *(__common_columns())
+                            )
 
 WwnConnection = Table(  # Verify: Do you need this id?
                         # Verify: Does it have foreign key to itself ?
-    'healthnmon_wwn_connection',
-    meta,
-    Column('id', Integer, autoincrement=True, primary_key=True),
-    Column('serverWwn', String(255)),
-    Column('targetWwns', String(255)),
-    Column('fabricId', String(255)),
-    Column('presentation', String(255)),
-    )
+                        'healthnmon_wwn_connection',
+                        meta,
+                        Column('id', Integer,
+                               autoincrement=True, primary_key=True),
+                        Column('serverWwn', String(255)),
+                        Column('targetWwns', String(255)),
+                        Column('fabricId', String(255)),
+                        Column('presentation', String(255)),
+                        )
 
 ExtensibleRaidLevel = Table('healthnmon_extensible_raid_level', meta,
                             Column('id', Integer, autoincrement=True,
-                            primary_key=True), Column('raidLevelEnum',
-                            Enum(
-    'RAID0',
-    'RAID1',
-    'RAID3',
-    'RAID4',
-    'RAID5',
-    'RAID6',
-    'RAID01',
-    'RAID05',
-    'RAID10',
-    'RAID50',
-    'RAID60',
-    'AUTO',
-    'UNSPECIFIED',
-    name='RaidLevelEnum_third',
-    )), Column('extendedRaidLevel', String(255)))
+                                   primary_key=True),
+                            Column('raidLevelEnum',
+                                   Enum('RAID0',
+                                        'RAID1',
+                                        'RAID3',
+                                        'RAID4',
+                                        'RAID5',
+                                        'RAID6',
+                                        'RAID01',
+                                        'RAID05',
+                                        'RAID10',
+                                        'RAID50',
+                                        'RAID60',
+                                        'AUTO',
+                                        'UNSPECIFIED',
+                                        name='RaidLevelEnum_third',
+                                        )),
+                            Column('extendedRaidLevel', String(255)))
 
-DiskArray = Table(
-    'healthnmon_disk_array',
-    meta,
-    Column('id', String(255), primary_key=True),
-    Column('name', String(255)),
-    Column('note', String(255)),
-    Column('costId', Integer, ForeignKey('healthnmon_cost.id')),
-    Column('resourceManagerId', String(255)),
-    *(__common_columns())
-    )
+DiskArray = Table('healthnmon_disk_array',
+                  meta,
+                  Column('id', String(255), primary_key=True),
+                  Column('name', String(255)),
+                  Column('note', String(255)),
+                  Column('costId', Integer, ForeignKey('healthnmon_cost.id')),
+                  Column('resourceManagerId', String(255)),
+                  *(__common_columns())
+                  )
 
 #    sanVolumes: One-to-many relation handled in SanVolume
 
 SanVolume = Table(  # TODO Relation with ResourceTag
-    'healthnmon_san_volume',
-    meta,
-    Column('id', String(255), primary_key=True),
-    Column('name', String(255)),
-    Column('note', String(255)),
-    Column('costId', Integer, ForeignKey('healthnmon_cost.id')),
-    Column('resourceManagerId', String(255)),
-    Column('size', BigInteger),
-    Column('extensibleRaidLevel',
-           ForeignKey('healthnmon_extensible_raid_level.id')),
-    Column('osType', Enum(
-        'WINDOWS',
-        'WINDOWS_2008',
-        'WINDOWS_LH',
-        'LINUX',
-        'HP_UX',
-        'VMWARE',
-        'HYPER_V',
-        'KVM',
-        'CITRIX_XEN',
-        'SOLARIS',
-        'AIX',
-        'OPEN_VMS',
-        'UNKNOWN',
-        'UNSPECIFIED',
-        name='OsTypeEnum_San',
-        )),
-    Column('diskArrayId', ForeignKey('healthnmon_disk_array.id')),
-    Column('lunId', String(255)),
-    Column('tags', String(255)),
-    Column('groupId', String(255)),
-    Column('setId', String(255)),
-    Column('isMultiMemberSet', Boolean),
-    Column('setName', String(255)),
-    Column('availableConnectionCount', Integer),
-    Column('isBootable', Boolean),
-    Column('inUse', Boolean),
-    Column('isSinglePath', Boolean),
-    Column('volumeState', Enum('LSM', 'SPM_PRE_CARVED',
-           'SPM_NOT_CARVED', 'UNKNOWN', name='VolumeStateEnum')),
-    Column('provisioningType', Enum('THICK', 'THIN', 'UNKNOWN',
-           name='StorageProvisioningTypeEnum_Second')),
-    Column('wwnConnections', Integer,
-           ForeignKey('healthnmon_wwn_connection.id')),
-    Column('isAutoGenerated', Boolean),
-    Column('isManualZoningRequired', Boolean),
-    *(__common_columns())
-    )
+                    'healthnmon_san_volume',
+                    meta,
+                    Column('id', String(255), primary_key=True),
+                    Column('name', String(255)),
+                    Column('note', String(255)),
+                    Column('costId', Integer,
+                           ForeignKey('healthnmon_cost.id')),
+                    Column('resourceManagerId', String(255)),
+                    Column('size', BigInteger),
+                    Column('extensibleRaidLevel',
+                           ForeignKey('healthnmon_extensible_raid_level.id')),
+                    Column('osType', Enum('WINDOWS',
+                                          'WINDOWS_2008',
+                                          'WINDOWS_LH',
+                                          'LINUX',
+                                          'HP_UX',
+                                          'VMWARE',
+                                          'HYPER_V',
+                                          'KVM',
+                                          'CITRIX_XEN',
+                                          'SOLARIS',
+                                          'AIX',
+                                          'OPEN_VMS',
+                                          'UNKNOWN',
+                                          'UNSPECIFIED',
+                                          name='OsTypeEnum_San',
+                                          )),
+                    Column('diskArrayId',
+                           ForeignKey('healthnmon_disk_array.id')),
+                    Column('lunId', String(255)),
+                    Column('tags', String(255)),
+                    Column('groupId', String(255)),
+                    Column('setId', String(255)),
+                    Column('isMultiMemberSet', Boolean),
+                    Column('setName', String(255)),
+                    Column('availableConnectionCount', Integer),
+                    Column('isBootable', Boolean),
+                    Column('inUse', Boolean),
+                    Column('isSinglePath', Boolean),
+                    Column('volumeState', Enum('LSM', 'SPM_PRE_CARVED',
+                                               'SPM_NOT_CARVED', 'UNKNOWN',
+                                               name='VolumeStateEnum')),
+                    Column('provisioningType',
+                           Enum('THICK', 'THIN', 'UNKNOWN',
+                                name='StorageProvisioningTypeEnum_Second')),
+                    Column('wwnConnections', Integer,
+                           ForeignKey('healthnmon_wwn_connection.id')),
+                    Column('isAutoGenerated', Boolean),
+                    Column('isManualZoningRequired', Boolean),
+                    *(__common_columns())
+                    )
 
 # ========== SAN Volume Tables Ednd ===================
 # ========== List Tables Start ===================
 
-VirtualSwitchSubnetIds = Table('healthnmon_virtual_switch_subnet_ids', meta,
-                       Column('subnetId', String(255),
-                                      ForeignKey(
-                                          'healthnmon_subnet.id'), primary_key=True),
-                       Column('virtualSwitchId', String(255),
-                                      ForeignKey('healthnmon_virtual_switch.id'), primary_key=True))
+VirtualSwitchSubnetIds = Table(
+    'healthnmon_virtual_switch_subnet_ids',
+    meta,
+    Column('subnetId', String(255),
+           ForeignKey('healthnmon_subnet.id'),
+           primary_key=True),
+    Column('virtualSwitchId',
+           String(255),
+           ForeignKey('healthnmon_virtual_switch.id'),
+           primary_key=True))
 
 NetworkInterfaces = Table('healthnmon_network_interfaces', meta,
-                       Column('interfaceId', String(255), primary_key=True),
-                       Column('vSwitchId', String(255),
-                                 ForeignKey('healthnmon_virtual_switch.id'), primary_key=True))
+                          Column('interfaceId', String(255), primary_key=True),
+                          Column('vSwitchId', String(255),
+                                 ForeignKey('healthnmon_virtual_switch.id'),
+                                 primary_key=True))
 
 SubnetNetworkSources = Table('healthnmon_subnet_network_sources', meta,
-                       Column(
-                           'networkSourceId', String(255), primary_key=True),
-                       Column('subnetId', String(255),
-                                ForeignKey('healthnmon_subnet.id'), primary_key=True))
+                             Column('networkSourceId', String(255),
+                                    primary_key=True),
+                             Column('subnetId', String(255),
+                                    ForeignKey('healthnmon_subnet.id'),
+                                    primary_key=True))
 
 SubnetDnsServers = Table('healthnmon_subnet_dns_servers', meta,
-                       Column('dnsServerId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                         Column('dnsServerId', String(255), primary_key=True),
+                         Column('subnetId', String(255),
+                                ForeignKey('healthnmon_subnet.id')))
 
 SubnetDnsSearchSuffixes = Table('healthnmon_subnet_dns_search_suffixes', meta,
-                       Column('dnsSuffixId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                                Column('dnsSuffixId', String(255),
+                                       primary_key=True),
+                                Column('subnetId', String(255),
+                                       ForeignKey('healthnmon_subnet.id')))
 
 SubnetDefaultGateways = Table('healthnmon_subnet_default_gateways', meta,
-                      Column(
-                          'defaultGatewayId', String(255), primary_key=True),
-                      Column(
-                          'subnetId', String(
-                              255), ForeignKey('healthnmon_subnet.id'),
-                             primary_key=True))
+                              Column('defaultGatewayId', String(255),
+                                     primary_key=True),
+                              Column('subnetId', String(255),
+                                     ForeignKey('healthnmon_subnet.id'),
+                                     primary_key=True))
 
 SubnetWinServers = Table('healthnmon_subnet_win_servers', meta,
-                       Column('winServerId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                         Column('winServerId', String(255), primary_key=True),
+                         Column('subnetId', String(255),
+                                ForeignKey('healthnmon_subnet.id')))
 
 SubnetNtpDateServers = Table('healthnmon_subnet_ntp_date_servers', meta,
-                       Column(
-                           'ntpDateServerId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                             Column('ntpDateServerId', String(255),
+                                    primary_key=True),
+                             Column('subnetId', String(255),
+                                    ForeignKey('healthnmon_subnet.id')))
 
 SubnetDeploymentServices = Table('healthnmon_subnet_deployment_services', meta,
-                       Column('deploymentServiceId',
-                              String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                                 Column('deploymentServiceId', String(255),
+                                        primary_key=True),
+                                 Column('subnetId', String(255),
+                                        ForeignKey('healthnmon_subnet.id')))
 
 GroupIdTypeNetworkTypes = Table('healthnmon_groupid_type_network_type', meta,
-                       Column('id', Integer,
-                              autoincrement=True, primary_key=True),
-                       Column('networkTypeId', String(255)),
-                       Column('groupTypeId', String(255),
-                               ForeignKey('healthnmon_groupid_type.id')))
+                                Column('id', Integer, autoincrement=True,
+                                       primary_key=True),
+                                Column('networkTypeId', String(255)),
+                                Column('groupTypeId', String(255),
+                                       ForeignKey('healthnmon_groupid_type.id')
+                                       ))
 
 SubnetParentIds = Table('healthnmon_subnet_parent_ids', meta,
-                       Column('parentId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                        Column('parentId', String(255), primary_key=True),
+                        Column('subnetId', String(255),
+                               ForeignKey('healthnmon_subnet.id')))
 
 SubnetChildIds = Table('healthnmon_subnet_child_ids', meta,
                        Column('childId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                       Column('subnetId', String(255),
+                              ForeignKey('healthnmon_subnet.id')))
 
 SubnetRedundancyPeerIds = Table('healthnmon_subnet_redundancy_peer_ids', meta,
-                       Column(
-                           'redundancyPeerId', String(255), primary_key=True),
-                       Column('subnetId', String(255), ForeignKey('healthnmon_subnet.id')))
+                                Column('redundancyPeerId', String(255),
+                                       primary_key=True),
+                                Column('subnetId', String(255),
+                                       ForeignKey('healthnmon_subnet.id')))
 
 VmNetAdapterIpProfiles = Table('healthnmon_vm_netadapter_ip_address', meta,
-                       Column('ipAddress', String(255), primary_key=True),
-                       Column('netAdapterId', String(255),
-                              ForeignKey('healthnmon_vm_net_adapter.id'), primary_key=True))
+                               Column('ipAddress', String(255),
+                                      primary_key=True),
+                               Column('netAdapterId', String(255),
+                                      ForeignKey('healthnmon_vm_net_adapter.id'
+                                                 ),
+                                      primary_key=True))
 
 # ========== List Tables Start ===================
 
@@ -1080,11 +1120,11 @@ up_tables = [
     SubnetRedundancyPeerIds,
     GroupIdTypeNetworkTypes,
     IpAddress,
-    IpAddressRange
-    ]
+    IpAddressRange]
 
 
 def upgrade(migrate_engine):
+
     """
      Upgrade operations go here. Don't create your own engine;
      bind migrate_engine to your metadata
@@ -1104,6 +1144,7 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
+
     """
      Operations to reverse the above upgrade go here.
     """
