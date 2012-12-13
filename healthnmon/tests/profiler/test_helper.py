@@ -239,7 +239,7 @@ class HelperTestCase(test.TestCase):
         self.log = log.getLogger('healthnmon.example')
         self.assertEqual(logging.INFO, self.log.logger.getEffectiveLevel())
 
-        helper.setLogLevel('test', 'healthnmon')
+        self.assertRaises(ValueError, helper.setLogLevel, 'test', 'healthnmon')
         self.assertNotEqual(logging.DEBUG, self.log.logger.getEffectiveLevel())
         self.assertNotEqual(
             logging.DEBUG, logging.getLogger().getEffectiveLevel())
