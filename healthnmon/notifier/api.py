@@ -23,8 +23,6 @@ import uuid
 from nova.openstack.common import cfg
 from nova.openstack.common import timeutils, jsonutils, importutils
 from healthnmon import log as logging
-from nova.openstack.common import cfg
-from nova import exception
 import time
 from healthnmon.constants import Constants
 
@@ -107,7 +105,8 @@ def notify(context,
         try:
             driver.notify(context, msg)
         except Exception, e:
-            LOG.exception(_("Problem '%(e)s' attempting to send to healthnmon notification driver %(driver)s."
+            LOG.exception(_("Problem '%(e)s' attempting to send to \
+            healthnmon notification driver %(driver)s."
                             % locals()))
 
 
@@ -118,9 +117,4 @@ def _get_drivers():
         drivers = []
         for notification_driver in CONF.healthnmon_notification_drivers:
             drivers.append(importutils.import_module(notification_driver))
-#            try:
-#                drivers.append(importutils.import_module(notification_driver))
-#            except exception.ClassNotFound as e:
-#                LOG.exception(_("Problem in importing notification driver %(notification_driver)s."
-#                       % locals()))
     return drivers

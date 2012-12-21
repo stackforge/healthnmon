@@ -39,7 +39,10 @@ IMPL = utils.LazyPluggable('healthnmon_db_backend',
 #################################################
 
 def vm_host_save(context, vmhost):
-    """This API will create or update a VmHost object and its associations to DB. For the update to be working the VMHost object should have been one returned by DB API. Else it will be considered as a insert.
+    """This API will create or update a VmHost object and
+    its associations to DB. For the update to be working the
+    VMHost object should have been one returned by DB API.
+    Else it will be considered as a insert.
         Parameters:
         vmhost - VmHost type object to be saved
         context - nova.context.RequestContext object
@@ -80,7 +83,8 @@ def vm_host_delete_by_ids(context, ids):
 def vm_host_get_all_by_filters(context, filters, sort_key, sort_dir):
     """
         Get all the vm_hosts that match all filters and sorted with sort_key.
-        Deleted rows will be returned by default, unless there's a filter that says
+        Deleted rows will be returned by default,
+        unless there's a filter that says
         otherwise
         Arguments:
             context - nova.context.RequestContext object
@@ -88,24 +92,30 @@ def vm_host_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of VmHost model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'connectionState':'Connected', 'name':['n1', 'n2']} will filter as
+                      eg : {'connectionState':'Connected',
+                      'name':['n1', 'n2']} will filter as
                       connectionState = 'Connected' AND name in ('n1', 'n2')
                       Special filter :
                           changes-since : long value - time in epoch ms
-                                          Gets the hosts changed or deleted after the specified time
+                                          Gets the hosts changed or
+                                          deleted after the specified time
             sort_key - Column on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
             list of vm_hosts that match all filters and sorted with sort_key
     """
-    return IMPL.vm_host_get_all_by_filters(context, filters, sort_key, sort_dir)
+    return IMPL.vm_host_get_all_by_filters(context,
+                                           filters, sort_key, sort_dir)
 
 
 #################################################
 
 
 def vm_save(context, vm):
-    """This API will create or update a Vm object and its associations to DB. For the update to be working the VM object should have been one returned by DB API. Else it will be considered as a insert.
+    """This API will create or update a Vm object and its associations to DB.
+    For the update to be working the VM object should have been one returned
+    by DB API. Else it will be considered as a insert.
     Parameters:
         vm - Vm type object to be saved
         context - nova.context.RequestContext object
@@ -146,7 +156,8 @@ def vm_delete_by_ids(context, ids):
 def vm_get_all_by_filters(context, filters, sort_key, sort_dir):
     """
         Get all the vms that match all filters and sorted with sort_key.
-        Deleted rows will be returned by default, unless there's a filter that says
+        Deleted rows will be returned by default, unless
+        there's a filter that says
         otherwise
         Arguments:
             context - nova.context.RequestContext object
@@ -154,13 +165,16 @@ def vm_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of Vm model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'powerState':'ACTIVE', 'name':['n1', 'n2']} will filter as
+                      eg : {'powerState':'ACTIVE', 'name':['n1', 'n2']}
+                      will filter as
                       powerState = 'ACTIVE' AND name in ('n1', 'n2')
                       Special filter :
                           changes-since : long value - time in epoch ms
-                                          Gets the Vms changed or deleted after the specified time
+                                          Gets the Vms changed or deleted
+                                          after the specified time
             sort_key - Column on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
             list of vms that match all filters and sorted with sort_key
     """
@@ -170,7 +184,10 @@ def vm_get_all_by_filters(context, filters, sort_key, sort_dir):
 #################################################
 
 def storage_volume_save(context, storagevolume):
-    """This API will create or update a StorageVolume object and its associations to DB. For the update to be working the storagevolume object should have been one returned by DB API. Else it will be considered as a insert.
+    """This API will create or update a StorageVolume object and
+    its associations to DB. For the update to be working the
+    storagevolume object should have been one returned by DB API.
+    Else it will be considered as a insert.
     Parameters:
         storagevolume - StorageVolume type object to be saved
         context - nova.context.RequestContext object
@@ -180,7 +197,8 @@ def storage_volume_save(context, storagevolume):
 
 
 def storage_volume_get_by_ids(context, ids):
-    """This API will return a list of StorageVolume objects which corresponds to ids
+    """This API will return a list of StorageVolume objects
+    which corresponds to ids
     Parameters:
             ids - List of StorageVolume ids
             context - nova.context.RequestContext object
@@ -190,7 +208,8 @@ def storage_volume_get_by_ids(context, ids):
 
 
 def storage_volume_get_all(context):
-    """This API will return a list of all the StorageVolume objects present in Db
+    """This API will return a list of all the StorageVolume
+    objects present in Db
     Parameters:
         context - nova.context.RequestContext object
     """
@@ -210,8 +229,10 @@ def storage_volume_delete_by_ids(context, ids):
 
 def storage_volume_get_all_by_filters(context, filters, sort_key, sort_dir):
     """
-        Get all the storage volumes that match all filters and sorted with sort_key.
-        Deleted rows will be returned by default, unless there's a filter that says
+        Get all the storage volumes that match all filters
+        and sorted with sort_key.
+        Deleted rows will be returned by default,
+        unless there's a filter that says
         otherwise
         Arguments:
             context - nova.context.RequestContext object
@@ -219,24 +240,32 @@ def storage_volume_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of StorageVolume model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'size':1024, 'name':['vol1', 'vol2']} will filter as
+                      eg : {'size':1024, 'name':['vol1', 'vol2']}
+                      will filter as
                       size = 1024 AND name in ('vol1', 'vol2')
                       Special filter :
                           changes-since : long value - time in epoch ms
-                                          Gets the volumes changed or deleted after the specified time
+                                          Gets the volumes changed or
+                                          deleted after the specified time
             sort_key - Column on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
-            list of storage volumes that match all filters and sorted with sort_key
+            list of storage volumes that match all filters
+            and sorted with sort_key
     """
-    return IMPL.storage_volume_get_all_by_filters(context, filters, sort_key, sort_dir)
+    return IMPL.storage_volume_get_all_by_filters(context,
+                                                  filters, sort_key, sort_dir)
 
 
 # ====== VirtualSwitc APIs ===============
 
 
 def virtual_switch_save(context, virtual_switch):
-    """This API will create or update a VirtualSwitch object and its associations to DB. For the update to be working the VirtualSwitch object should have been one returned by DB API. Else it will be considered as a insert.
+    """This API will create or update a VirtualSwitch object and
+    its associations to DB. For the update to be working the
+    VirtualSwitch object should have been one returned by DB API.
+    Else it will be considered as a insert.
     Parameters:
         virtual_switch - VirtualSwitch type object to be saved
         context - nova.context.RequestContext object
@@ -246,7 +275,8 @@ def virtual_switch_save(context, virtual_switch):
 
 
 def virtual_switch_get_by_ids(context, ids):
-    """This API will return a list of VirtualSwitch objects which corresponds to ids
+    """This API will return a list of VirtualSwitch
+    objects which corresponds to ids
     Parameters:
             ids - List of VirtualSwitch ids
             context - nova.context.RequestContext object
@@ -256,7 +286,8 @@ def virtual_switch_get_by_ids(context, ids):
 
 
 def virtual_switch_get_all(context):
-    """This API will return a list of all the VirtualSwitch objects present in DB
+    """This API will return a list of all the VirtualSwitch
+    objects present in DB
     Parameters:
         context - nova.context.RequestContext object
     """
@@ -277,8 +308,10 @@ def virtual_switch_delete_by_ids(context, ids):
 
 def virtual_switch_get_all_by_filters(context, filters, sort_key, sort_dir):
     """
-        Get all the virtual_switch that match all filters and sorted with sort_key.
-        Deleted rows will be returned by default, unless there's a filter that says
+        Get all the virtual_switch that match all filters
+        and sorted with sort_key.
+        Deleted rows will be returned by default,
+        unless there's a filter that says
         otherwise
         Arguments:
             context - nova.context.RequestContext object
@@ -286,24 +319,34 @@ def virtual_switch_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of VirtualSwitch model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'switchType':'abc', 'name':['n1', 'n2']} will filter as
+                      eg : {'switchType':'abc', 'name':['n1', 'n2']}
+                      will filter as
                       switchType = 'abc' AND name in ('n1', 'n2')
                       Special filter :
                           changes-since : long value - time in epoch ms
-                                          Gets the virtual switches changed or deleted after the specified time
+                                          Gets the virtual switches
+                                          changed or deleted after
+                                          the specified time
             sort_key - Column on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
-            list of virtual_switch that match all filters and sorted with sort_key
+            list of virtual_switch that match all filters
+            and sorted with sort_key
     """
-    return IMPL.virtual_switch_get_all_by_filters(context, filters, sort_key, sort_dir)
+    return IMPL.virtual_switch_get_all_by_filters(context,
+                                                  filters,
+                                                  sort_key,
+                                                  sort_dir)
 
 
 # ====== PortGroup APIs ===============
 
 
 def port_group_save(context, port_group):
-    """This API will create or update a PortGroup and its associations to DB. For the update to be working the port group object should have been one returned by DB API. Else it will be considered as a insert.
+    """This API will create or update a PortGroup and its associations to DB.
+    For the update to be working the port group object should have been one
+    returned by DB API. Else it will be considered as a insert.
 
         Parameters:
         port group - PortGroup type object to be saved
@@ -348,7 +391,9 @@ def port_group_delete_by_ids(context, ids):
 # ====== Subnet APIs ===============
 
 def subnet_save(context, subnet):
-    """This API will create or update a Subnet object and its associations to DB. For the update to be working the Subnet object should have been one returned by DB API. Else it will be considered as a insert.
+    """This API will create or update a Subnet object and its associations
+    to DB. For the update to be working the Subnet object should have been
+    one returned by DB API. Else it will be considered as a insert.
 
         Parameters:
         subnet - Subnet type object to be saved
@@ -393,7 +438,8 @@ def subnet_delete_by_ids(context, ids):
 def subnet_get_all_by_filters(context, filters, sort_key, sort_dir):
     """
         Get all the subnet that match all filters and sorted with sort_key.
-        Deleted rows will be returned by default, unless there's a filter that says
+        Deleted rows will be returned by default,
+        unless there's a filter that says
         otherwise
         Arguments:
             context - nova.context.RequestContext object
@@ -401,13 +447,16 @@ def subnet_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of Subnet model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'isPublic':True, 'name':['n1', 'n2']} will filter as
+                      eg : {'isPublic':True, 'name':['n1', 'n2']}
+                      will filter as
                       isPublic = True AND name in ('n1', 'n2')
                       Special filter :
                           changes-since : long value - time in epoch ms
-                                          Gets the subnets changed or deleted after the specified time
+                                          Gets the subnets changed or
+                                          deleted after the specified time
             sort_key - Column on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
             list of subnet that match all filters and sorted with sort_key
     """

@@ -43,8 +43,9 @@ class VmHostEventsTest(test.TestCase):
 
     def __mock_service_get_all_by_topic(self):
         self.mox.StubOutWithMock(nova_db_api, 'service_get_all_by_topic')
-        nova_db_api.service_get_all_by_topic(mox.IgnoreArg(),
-                                             mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db_api.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
     def setUp(self):
         super(VmHostEventsTest, self).setUp()
@@ -67,8 +68,8 @@ class VmHostEventsTest(test.TestCase):
         self.libvirtVmHost = LibvirtVmHost(
             self.connection._wrapped_conn, '1', libvirtEvents)
         self.connection.compute_rmcontext = rm_context
-        self.flags(healthnmon_notification_drivers=['nova.notifier.test_notifier'
-                                                    ])
+        self.flags(healthnmon_notification_drivers=[
+            'nova.notifier.test_notifier'])
         test_notifier.NOTIFICATIONS = []
 
     def test_host_connected_event(self):
@@ -176,8 +177,9 @@ class VmHostEventsTest(test.TestCase):
                 self.libvirtVmHost.compute_id,
                 Constants.VmHost).AndReturn(fake.get_connection())
 
-            InventoryCacheManager.get_object_from_cache(compute_id,
-                                                        Constants.VmHost).AndReturn(cachedHost)
+            InventoryCacheManager.get_object_from_cache(
+                compute_id,
+                Constants.VmHost).AndReturn(cachedHost)
             self.mox.StubOutWithMock(api, 'vm_host_save')
 
             api.vm_host_save(mox.IgnoreArg(),
@@ -221,26 +223,29 @@ class VmHostEventsTest(test.TestCase):
         nova_db.compute_node_get_all(mox.IgnoreArg()).AndReturn([])
         self.mox.StubOutWithMock(api, 'vm_host_delete_by_ids')
 
-        api.vm_host_delete_by_ids(mox.IgnoreArg(),
-                                  mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.vm_host_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver('compute1',
-                                                      Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            'compute1',
+            Constants.VmHost).AndReturn(fake.get_connection())
         self.mox.ReplayAll()
         compute_service = dict(host='host1')
         compute = dict(id='compute1', hypervisor_type='fake',
                        service=compute_service)
         rm_context = \
-            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                                                      ], rmIpAddress=compute_service['host'],
-                                       rmUserName='ubuntu164', rmPassword='password')
+            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'],
+                                       rmIpAddress=compute_service['host'],
+                                       rmUserName='ubuntu164',
+                                       rmPassword='password')
 
         InventoryCacheManager.get_all_compute_inventory().clear()
 
-        InventoryCacheManager.get_all_compute_inventory()['compute1'
-                                                          ] = ComputeInventory(rm_context)
+        InventoryCacheManager.get_all_compute_inventory()['compute1'] = \
+            ComputeInventory(rm_context)
         InventoryCacheManager.get_compute_inventory(
             'compute1').update_compute_info(rm_context, deleted_host)
         self.assertEquals(
@@ -277,28 +282,31 @@ class VmHostEventsTest(test.TestCase):
         nova_db.compute_node_get_all(mox.IgnoreArg()).AndReturn([])
         self.mox.StubOutWithMock(api, 'vm_host_delete_by_ids')
 
-        api.vm_host_delete_by_ids(mox.IgnoreArg(),
-                                  mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.vm_host_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_compute_conn_driver')
 
-        InventoryCacheManager.get_compute_conn_driver('compute1',
-                                                      Constants.VmHost).AndReturn(fake.get_connection())
+        InventoryCacheManager.get_compute_conn_driver(
+            'compute1',
+            Constants.VmHost).AndReturn(fake.get_connection())
         self.mox.ReplayAll()
 
         compute_service = dict(host='host1')
         compute = dict(id='compute1', hypervisor_type='fake',
                        service=compute_service)
         rm_context = \
-            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                                                      ], rmIpAddress=compute_service['host'],
-                                       rmUserName='ubuntu164', rmPassword='password')
+            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'],
+                                       rmIpAddress=compute_service['host'],
+                                       rmUserName='ubuntu164',
+                                       rmPassword='password')
 
         InventoryCacheManager.get_all_compute_inventory().clear()
 
-        InventoryCacheManager.get_all_compute_inventory()['compute1'
-                                                          ] = ComputeInventory(rm_context)
+        InventoryCacheManager.get_all_compute_inventory()['compute1'] = \
+            ComputeInventory(rm_context)
         InventoryCacheManager.get_compute_inventory(
             'compute1').update_compute_info(rm_context, deleted_host)
         self.assertEquals(

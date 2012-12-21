@@ -36,9 +36,10 @@ class EventMetadataTest(test.TestCase):
         self.long_desc_tmpl = \
             'Long Description %(name)s : keyword_arg %(test_arg)s'
         self.priority = notifier.api.INFO
-        self.metadata = event_metadata.EventMetaData(self.event_type,
-                                                     self.event_category, self.short_desc_tmpl,
-                                                     self.long_desc_tmpl, self.priority)
+        self.metadata = event_metadata.EventMetaData(
+            self.event_type,
+            self.event_category, self.short_desc_tmpl,
+            self.long_desc_tmpl, self.priority)
 
     def testGet_EventMetaData(self):
         event_type = event_metadata.EVENT_TYPE_VM_CREATED

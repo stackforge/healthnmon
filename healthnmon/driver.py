@@ -15,12 +15,12 @@
 #    under the License.
 
 """
-heathnmon Service default driver - Manage communication with compute nodes and collects inventory and monitoring info
+heathnmon Service default driver - Manage communication with
+compute nodes and collects inventory and monitoring info
 """
 
 from nova.openstack.common import cfg
 from nova.openstack.common import importutils
-from nova.openstack.common import cfg
 from healthnmon import log as logging
 
 LOG = logging.getLogger('healthnmon.driver')
@@ -64,7 +64,9 @@ class Healthnmon(object):
         perfmon_type,
         window_minutes,
     ):
-        """ Return performance data for requested host/vm for last windowMinutes."""
+        """ Return performance data for requested host/vm
+        for last windowMinutes."""
 
-        return self.inventory_manager.get_resource_utilization(context,
-                                                               uuid, perfmon_type, window_minutes)
+        return self.inventory_manager.get_resource_utilization(
+            context,
+            uuid, perfmon_type, window_minutes)

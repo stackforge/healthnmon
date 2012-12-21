@@ -14,7 +14,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-""" Defines performance statistics required for sampling performance data for specified period """
+""" Defines performance statistics required for sampling
+performance data for specified period """
 
 
 class Stats(object):

@@ -37,9 +37,23 @@ class VMTest(unittest.TestCase):
 
     """ Tests for VM extension """
     expected_identifier_show_json = '{"Vm": {"id": "vm-01", "name": "vm-01"}}'
-    expected_identifier_detail_json = '{"virtualmachines": [{"id": "vm-01", "name": "vm-01"}, {"id": "vm-02", "name": "vm-02"}]}'
-    expected_identifier_show_xml = '<Vm><id>vm-01</id><vmDisks><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="datastore-999"><atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-999" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/datastore-999" rel="bookmark"/></storagevolume></vmDisks></Vm>'
-    expected_identifier_detail_xml = '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Vm><id>vm-01</id><vmDisks><storagevolume id="datastore-999"><atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-999" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/datastore-999" rel="bookmark"/></storagevolume></vmDisks></Vm><Vm/></virtualmachines>'
+    expected_identifier_detail_json = '{"virtualmachines": [{"id": \
+"vm-01", "name": "vm-01"}, {"id": "vm-02", "name": "vm-02"}]}'
+    expected_identifier_show_xml = '<Vm><id>vm-01</id><vmDisks>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" \
+id="datastore-999"><atom:link \
+href="http://localhost:8774/v2.0/storagevolumes/datastore-999" \
+rel="self"/><atom:link \
+href="http://localhost:8774/storagevolumes/datastore-999" \
+rel="bookmark"/></storagevolume></vmDisks></Vm>'
+    expected_identifier_detail_xml = '<virtualmachines \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Vm>\
+<id>vm-01</id><vmDisks><storagevolume id="datastore-999">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-999" \
+rel="self"/><atom:link \
+href="http://localhost:8774/storagevolumes/datastore-999" \
+rel="bookmark"/></storagevolume></vmDisks></Vm><Vm/></virtualmachines>'
 
     def setUp(self):
         """ Setup initial mocks and logging configuration """
@@ -54,11 +68,13 @@ class VMTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_vm_json(self):
-        expected_out_json = \
-            '{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}], "name": "vm-01"}, {"id": "vm-02", "links": \
-        [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}], "name": "vm-02"}]}'
+        expected_out_json = '{"virtualmachines": [{"id": "vm-01", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
+{"href": "http://localhost:8774/virtualmachines/vm-01", \
+"rel": "bookmark"}], "name": "vm-01"}, {"id": "vm-02", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, \
+{"href": "http://localhost:8774/virtualmachines/vm-02", \
+"rel": "bookmark"}], "name": "vm-02"}]}'
 
         vm_list = self.get_vm_list()
         self.mock.StubOutWithMock(api, 'vm_get_all_by_filters')
@@ -124,13 +140,16 @@ class VMTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_vm_xml(self):
-        expected_out_xml = \
-            '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
-        <vm id="vm-01" name="vm-01"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/></vm>\
-        <vm id="vm-02" name="vm-02"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualmachines/vm-02" rel="bookmark"/></vm>\
-        </virtualmachines>'
+        expected_out_xml = '<virtualmachines \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<vm id="vm-01" name="vm-01"><atom:link \
+href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/>\
+<atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/>\
+</vm><vm id="vm-02" name="vm-02">\
+<atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" \
+rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-02" \
+rel="bookmark"/></vm></virtualmachines>'
 
         vm_list = self.get_vm_list()
         self.mock.StubOutWithMock(api, 'vm_get_all_by_filters')
@@ -164,13 +183,16 @@ class VMTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_vm_xml_header(self):
-        expected_out_xml = \
-            '<virtualmachines xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
-        <vm id="vm-01" name="vm-01"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/></vm>\
-        <vm id="vm-02" name="vm-02"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualmachines/vm-02" rel="bookmark"/></vm>\
-        </virtualmachines>'
+        expected_out_xml = '<virtualmachines \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<vm id="vm-01" name="vm-01"><atom:link \
+href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/>\
+<atom:link href="http://localhost:8774/virtualmachines/vm-01" \
+rel="bookmark"/></vm><vm id="vm-02" name="vm-02">\
+<atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" \
+rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-02" \
+rel="bookmark"/></vm></virtualmachines>'
 
         virtualmachines = self.get_vm_list()
         self.mock.StubOutWithMock(api, 'vm_get_all_by_filters')
@@ -191,11 +213,14 @@ class VMTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_vm_json_header(self):
-        expected_out_json = \
-            '{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}], "name": "vm-01"}, \
-        {"id": "vm-02", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}], "name": "vm-02"}]}'
+        expected_out_json = '{"virtualmachines": [{"id": "vm-01", \
+"links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", \
+"rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-01", \
+"rel": "bookmark"}], "name": "vm-01"}, \
+{"id": "vm-02", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, \
+{"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}], \
+"name": "vm-02"}]}'
 
         virtualmachines = self.get_vm_list()
         self.mock.StubOutWithMock(api, 'vm_get_all_by_filters')
@@ -231,14 +256,19 @@ class VMTest(unittest.TestCase):
                          'Return json string')
 
     def test_vm_details_json(self):
-        expected_out_json = \
-            '{"Vm": {"vmDisks": [{"storagevolumes": [{"id": "datastore-939", \
-        "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/datastore-939", "rel": "self"}, \
-        {"href": "http://localhost:8774/storagevolumes/datastore-939", "rel": "bookmark"}]}], "id": "disk-01"}, \
-        {"storagevolumes": [{"id": "datastore-439", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/datastore-439", "rel": "self"}, \
-        {"href": "http://localhost:8774/storagevolumes/datastore-439", "rel": "bookmark"}]}], "id": "disk-02"}], \
-        "vmhosts": [{"id": "host-329", "links": [{"href": "http://localhost:8774/v2.0/vmhosts/host-329", "rel": "self"}, \
-        {"href": "http://localhost:8774/vmhosts/host-329", "rel": "bookmark"}]}], "id": "vm-01", "name": "vm-01"}}'
+        expected_out_json = '{"Vm": {"vmDisks": [{"storagevolumes": \
+[{"id": "datastore-939", "links": [{"href": \
+"http://localhost:8774/v2.0/storagevolumes/datastore-939", "rel": "self"}, \
+{"href": "http://localhost:8774/storagevolumes/datastore-939", \
+"rel": "bookmark"}]}], "id": "disk-01"}, \
+{"storagevolumes": [{"id": "datastore-439", "links": \
+[{"href": "http://localhost:8774/v2.0/storagevolumes/datastore-439", "rel": \
+"self"}, {"href": "http://localhost:8774/storagevolumes/datastore-439", \
+"rel": "bookmark"}]}], "id": "disk-02"}], \
+"vmhosts": [{"id": "host-329", "links": [{"href": \
+"http://localhost:8774/v2.0/vmhosts/host-329", "rel": "self"}, \
+{"href": "http://localhost:8774/vmhosts/host-329", \
+"rel": "bookmark"}]}], "id": "vm-01", "name": "vm-01"}}'
 
         vm_list = self.get_single_vm()
         self.mock.StubOutWithMock(api, 'vm_get_by_ids')
@@ -256,17 +286,24 @@ class VMTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_vm_details_xml(self):
-        expected_out_xml = \
-            '<Vm><id>vm-01</id><name>vm-01</name>\
-        <vmDisks><id>disk-01</id><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="datastore-939">\
-        <atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-939" rel="self"/>\
-        <atom:link href="http://localhost:8774/storagevolumes/datastore-939" rel="bookmark"/>\
-        </storagevolume></vmDisks><vmDisks><id>disk-02</id>\
-        <storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="datastore-439">\
-        <atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-439" rel="self"/>\
-        <atom:link href="http://localhost:8774/storagevolumes/datastore-439" rel="bookmark"/></storagevolume></vmDisks>\
-        <vmhost xmlns:atom="http://www.w3.org/2005/Atom" id="host-329"><atom:link href="http://localhost:8774/v2.0/vmhosts/host-329" rel="self"/>\
-        <atom:link href="http://localhost:8774/vmhosts/host-329" rel="bookmark"/></vmhost></Vm>'
+        expected_out_xml = '<Vm><id>vm-01</id><name>vm-01</name>\
+<vmDisks><id>disk-01</id><storagevolume \
+xmlns:atom="http://www.w3.org/2005/Atom" id="datastore-939">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-939" \
+rel="self"/>\
+<atom:link href="http://localhost:8774/storagevolumes/datastore-939" \
+rel="bookmark"/>\
+</storagevolume></vmDisks><vmDisks><id>disk-02</id>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" \
+id="datastore-439">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/datastore-439" \
+rel="self"/>\
+<atom:link href="http://localhost:8774/storagevolumes/datastore-439" \
+rel="bookmark"/></storagevolume></vmDisks>\
+<vmhost xmlns:atom="http://www.w3.org/2005/Atom" id="host-329">\
+<atom:link href="http://localhost:8774/v2.0/vmhosts/host-329" rel="self"/>\
+<atom:link href="http://localhost:8774/vmhosts/host-329" rel="bookmark"/>\
+</vmhost></Vm>'
 
         vm_list = self.get_single_vm()
         self.mock.StubOutWithMock(api, 'vm_get_by_ids')

@@ -74,8 +74,9 @@ class test_LibvirtVM(unittest.TestCase):
                              mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(
             InventoryCacheManager, 'get_compute_conn_driver')
 
@@ -102,8 +103,9 @@ class test_LibvirtVM(unittest.TestCase):
                              mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(
             InventoryCacheManager, 'get_compute_conn_driver')
 
@@ -140,8 +142,9 @@ class test_LibvirtVM(unittest.TestCase):
                              mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(
             InventoryCacheManager, 'get_compute_conn_driver')
 
@@ -163,8 +166,9 @@ class test_LibvirtVM(unittest.TestCase):
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(self.libvirtVM._processVm(libvirt.virDomain()),
                           None)
@@ -184,8 +188,9 @@ class test_LibvirtVM(unittest.TestCase):
                     mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(
             InventoryCacheManager, 'get_compute_conn_driver')
 
@@ -214,23 +219,26 @@ class test_LibvirtVM(unittest.TestCase):
                              mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mock.StubOutWithMock(InventoryCacheManager, 'get_object_from_cache'
-                                  )
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        self.mock.StubOutWithMock(InventoryCacheManager,
+                                  'get_object_from_cache')
         deleted_vm_id = '25f04dd3-e924-02b2-9eac-876e3c943123'
         deleted_vm = Vm()
         deleted_vm.id = deleted_vm_id
 
-        InventoryCacheManager.get_object_from_cache(deleted_vm_id,
-                                                    Constants.Vm).AndReturn(deleted_vm)
+        InventoryCacheManager.get_object_from_cache(
+            deleted_vm_id,
+            Constants.Vm).AndReturn(deleted_vm)
         self.mock.ReplayAll()
         cachedList = ['25f04dd3-e924-02b2-9eac-876e3c943262',
                       deleted_vm_id]
         updatedList = ['25f04dd3-e924-02b2-9eac-876e3c943262']
         self.assertEquals(self.libvirtVM.processVmDeletes(cachedList,
                           updatedList), None)
-        self.assertTrue(deleted_vm_id not in InventoryCacheManager.get_inventory_cache().keys())
+        self.assertTrue(deleted_vm_id not in
+                        InventoryCacheManager.get_inventory_cache().keys())
         self.mock.stubs.UnsetAll()
 
 
@@ -311,8 +319,9 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
             ComputeInventory(self.connection.compute_rmcontext)
         self.mock.StubOutWithMock(LibvirtConnection, '_connect')
 
-        self.connection._connect(mox.IgnoreArg(),
-                                 mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
+        self.connection._connect(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
         self.mock.ReplayAll()
         self.inventoryMonitor = LibvirtInventoryMonitor()
         libvirtEvents = LibvirtEvents()
@@ -365,7 +374,8 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
             Constants.VmHost).AndReturn(fake.get_connection())
 
         fake_computes = [{'id': '1', 'service': {'created_at':
-                                                 'created', 'updated_at':'updated'}}]
+                                                 'created',
+                                                 'updated_at':'updated'}}]
         self.mock.StubOutWithMock(novadb, 'compute_node_get_all')
         novadb.compute_node_get_all(mox.IgnoreArg()).AndReturn(fake_computes)
 
@@ -399,7 +409,8 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
             Constants.VmHost).AndReturn(fake.get_connection())
 
         fake_computes = [{'id': '1', 'service': {'created_at':
-                                                 'created', 'updated_at':'updated'}}]
+                                                 'created',
+                                                 'updated_at':'updated'}}]
         self.mock.StubOutWithMock(novadb, 'compute_node_get_all')
         novadb.compute_node_get_all(mox.IgnoreArg()).AndReturn(fake_computes)
 
@@ -438,8 +449,9 @@ class test_LibvirtStorage(unittest.TestCase):
     def test_processUpdates(self):
         self.mock.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
-        api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.storage_volume_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         defaultInstancesPath = cfg.CONF.instances_path
         cfg.CONF.set_override('instances_path',
@@ -462,8 +474,9 @@ class test_LibvirtStorage(unittest.TestCase):
     def test_processUpdatesException(self):
         self.mock.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
-        api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.storage_volume_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         mock_libvirtSV = LibvirtStorageVolume(self.connection, '1')
         self.mock.StubOutWithMock(mock_libvirtSV, 'processStorageDeletes')
         mock_libvirtSV.processStorageDeletes([], []).AndRaise(Exception)
@@ -476,8 +489,9 @@ class test_LibvirtStorage(unittest.TestCase):
     def test_processStorage(self):
         self.mock.StubOutWithMock(api, 'storage_volume_save')
 
-        api.storage_volume_save(mox.IgnoreArg(),
-                                mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.storage_volume_save(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(
             self.LibvirtStorageVolume._processStorage(
@@ -498,8 +512,9 @@ class test_LibvirtStorage(unittest.TestCase):
     def test_processStorageDeletes(self):
         self.mock.StubOutWithMock(api, 'storage_volume_delete_by_ids')
 
-        api.storage_volume_delete_by_ids(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.storage_volume_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         cachedList = ['3fbfbefb-17dd-07aa-2dac-13afbedf3be3',
                       '3fbfbefb-17dd-07aa-2dac-13afbedf1234',
@@ -513,7 +528,8 @@ class test_LibvirtStorage(unittest.TestCase):
         host = InventoryCacheManager.get_object_from_cache(
             '1', Constants.VmHost)
         self.assertTrue(storage is None)
-        self.assertTrue('3fbfbefb-17dd-07aa-2dac-13afbedf1234' not in host.get_storageVolumeIds())
+        self.assertTrue('3fbfbefb-17dd-07aa-2dac-13afbedf1234' not in
+                        host.get_storageVolumeIds())
         self.mock.stubs.UnsetAll()
 
     def test_processStorageException(self):
@@ -553,8 +569,9 @@ class test_LibvirtNetwork(unittest.TestCase):
         api.vm_host_save(mox.IgnoreArg(),
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
-        api.subnet_delete_by_ids(mox.IgnoreArg(),
-                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.subnet_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.subnet_save(mox.IgnoreArg(),
                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
@@ -579,8 +596,9 @@ class test_LibvirtNetwork(unittest.TestCase):
         api.vm_host_save(mox.IgnoreArg(),
                          mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
-        api.subnet_delete_by_ids(mox.IgnoreArg(),
-                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.subnet_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         api.subnet_save(mox.IgnoreArg(),
                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
@@ -596,8 +614,9 @@ class test_LibvirtNetwork(unittest.TestCase):
     def testProcessNetworkInterface(self):
         self.mock.StubOutWithMock(api, 'subnet_delete_by_ids')
 
-        api.subnet_delete_by_ids(mox.IgnoreArg(),
-                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.subnet_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
         self.assertEquals(self.LibvirtNetwork._processNetworkInterface(
             libvirt.virLibvirtInterfaceEth0()),
@@ -626,8 +645,9 @@ class test_LibvirtNetwork(unittest.TestCase):
     def testProcessnetworkDeletes(self):
         self.mock.StubOutWithMock(api, 'subnet_delete_by_ids')
 
-        api.subnet_delete_by_ids(mox.IgnoreArg(),
-                                 mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.subnet_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
         self.mock.ReplayAll()
 #        cachedSwitchList = ['52:54:00:34:14:AC',
 #                            '52:54:00:34:14:AB',
@@ -678,8 +698,9 @@ class test_LibvirtInventoryMonitor(unittest.TestCase):
             ComputeInventory(self.connection.compute_rmcontext)
         self.mock.StubOutWithMock(LibvirtConnection, '_connect')
 
-        self.connection._connect(mox.IgnoreArg(),
-                                 mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
+        self.connection._connect(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndRaise(libvirt.libvirtError)
         self.mock.ReplayAll()
         self.inventoryMonitor = LibvirtInventoryMonitor()
 #        self.libvirtVmHost = LibvirtVmHost(self.connection, '1')

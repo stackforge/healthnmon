@@ -41,7 +41,10 @@ class SSHClient (object):
 
 class FakeSSHOutput(object):
 
-    memstats = ['total  :              2053208 kB\n', 'free   :               711092 kB\n', 'buffers:               171236 kB\n', 'cached :               266116 kB\n', '\n']
+    memstats = ['total  :              2053208 kB\n',
+                'free   :               711092 kB\n',
+                'buffers:               171236 kB\n',
+                'cached :               266116 kB\n', '\n']
 
     def __init__(self, type):
         self.type = type

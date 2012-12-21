@@ -31,14 +31,54 @@ class SubnetTest(unittest.TestCase):
 
     """ Tests for Subnet extension """
 
-    expected_limited_detail_xml = '<subnets xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Subnet><id>subnet-02</id><name>subnet-02</name></Subnet><atom:link href="http://localhost:8774/v2.0/subnets?limit=1" rel="previous"/></subnets>'
-    expected_detail_xml = '<subnets xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Subnet><id>subnet-01</id><name>subnet-01</name></Subnet><Subnet><id>subnet-02</id><name>subnet-02</name></Subnet></subnets>'
-    expected_index_json = '{"subnets": [{"id": "subnet-01", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-01", "rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-01", "rel": "bookmark"}], "name": "subnet-01"}, {"id": "subnet-02", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-02", "rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-02", "rel": "bookmark"}], "name": "subnet-02"}]}'
-    expected_index_detail = '<subnets xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><subnet id="subnet-01" name="subnet-01"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-01" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-01" rel="bookmark"/></subnet><subnet id="subnet-02" name="subnet-02"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-02" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-02" rel="bookmark"/></subnet></subnets>'
-    expected_xml_header = '<subnets xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><subnet id="subnet-01" name="subnet-01"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-01" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-01" rel="bookmark"/></subnet><subnet id="subnet-02" name="subnet-02"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-02" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-02" rel="bookmark"/></subnet></subnets>'
-    expected_json_header = '{"subnets": [{"id": "subnet-01", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-01", "rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-01", "rel": "bookmark"}], "name": "subnet-01"}, {"id": "subnet-02", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-02", "rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-02", "rel": "bookmark"}], "name": "subnet-02"}]}'
-    expected_limited_json = '{"Subnet": {"id": "subnet-01", "name": "subnet-01"}}'
-    expected_limited_xml = '<Subnet>\n    <id>subnet-01</id>\n    <name>subnet-01</name>\n</Subnet>\n'
+    expected_limited_detail_xml = '<subnets \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Subnet>\
+<id>subnet-02</id><name>subnet-02</name></Subnet>\
+<atom:link href="http://localhost:8774/v2.0/subnets?limit=1" \
+rel="previous"/></subnets>'
+    expected_detail_xml = '<subnets \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Subnet>\
+<id>subnet-01</id><name>subnet-01</name></Subnet><Subnet>\
+<id>subnet-02</id><name>subnet-02</name></Subnet></subnets>'
+    expected_index_json = '{"subnets": [{"id": "subnet-01", \
+"links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-01", \
+"rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-01", \
+"rel": "bookmark"}], "name": "subnet-01"}, {"id": "subnet-02", \
+"links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-02", \
+"rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-02", \
+"rel": "bookmark"}], "name": "subnet-02"}]}'
+    expected_index_detail = '<subnets \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<subnet id="subnet-01" name="subnet-01"><atom:link \
+href="http://localhost:8774/v2.0/subnets/subnet-01" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-01" rel="bookmark"/>\
+</subnet><subnet id="subnet-02" name="subnet-02">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-02" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-02" rel="bookmark"/>\
+</subnet></subnets>'
+    expected_xml_header = '<subnets xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<subnet id="subnet-01" name="subnet-01">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-01" \
+rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-01" \
+rel="bookmark"/></subnet><subnet id="subnet-02" name="subnet-02">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-02" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-02" rel="bookmark"/>\
+</subnet></subnets>'
+    expected_json_header = '{"subnets": [{"id": "subnet-01", \
+"links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-01", \
+"rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-01", \
+"rel": "bookmark"}], "name": "subnet-01"}, {"id": "subnet-02", \
+"links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-02", \
+"rel": "self"}, {"href": "http://localhost:8774/subnets/subnet-02", \
+"rel": "bookmark"}], "name": "subnet-02"}]}'
+    expected_limited_json = '{"Subnet": {"id": "subnet-01", \
+"name": "subnet-01"}}'
+    expected_limited_xml = '<Subnet>\n    <id>subnet-01</id>\n    \
+<name>subnet-01</name>\n</Subnet>\n'
 
     def setUp(self):
         """ Setup initial mocks and logging configuration """

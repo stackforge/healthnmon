@@ -27,7 +27,8 @@ def generate_resource_model():
     xsdfile = 'healthnmonResourceModel.xsd'
     usermethodspec = 'generateDs_add_reconstructor_method'
     command = \
-        'generateDS.py -o %s -m --member-specs=dict --user-methods=%s -q -f %s' \
+        'generateDS.py -o %s -m --member-specs=dict \
+        --user-methods=%s -q -f %s' \
         % (outfile, usermethodspec, xsdfile)
 
     print 'Generating %s from %s using generateDs' % (outfile, xsdfile)

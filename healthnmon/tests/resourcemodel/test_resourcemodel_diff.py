@@ -350,7 +350,8 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue('storageVolumeId' in diff_res[self.update][vmDisks][
             self.update]['disk-01'][self.update])
         self.assertEquals(diff_res[self.update][vmDisks][self.update][
-                          'disk-01'][self.update]['storageVolumeId'], 'datastore-939-999')
+                          'disk-01'][self.update]['storageVolumeId'],
+                          'datastore-939-999')
 
         self.assertTrue('vmHostId' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['vmHostId'], 'host-329-999')
@@ -555,9 +556,10 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(isinstance(diff_res[self.update][mountPoints][
                         self.add][key], HostMountPoint))
         addMount = diff_res[self.update][mountPoints][self.add][key]
-        self.assertEquals(addMount.pathProp,
-                          {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc',
-                           '2': 'host-20'})
+        self.assertEquals(
+            addMount.pathProp,
+            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5dc',
+             '2': 'host-20'})
 
         self.assertTrue('id' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['id'], 'datastore-114')
@@ -617,9 +619,10 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertTrue(isinstance(diff_res[self.update][mountPoints][
                         self.delete][key], HostMountPoint))
         delMount = diff_res[self.update][mountPoints][self.delete][key]
-        self.assertEquals(delMount.pathProp,
-                          {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
-                           '2': 'host-9'})
+        self.assertEquals(
+            delMount.pathProp,
+            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db',
+             '2': 'host-9'})
 
         self.assertTrue('id' in diff_res[self.update])
         self.assertEquals(diff_res[self.update]['id'], 'datastore-114')
@@ -628,8 +631,9 @@ class ResourceModelDiffTestCase(test.TestCase):
         self.assertEquals(diff_res[self.update]['name'], 'datastore-114')
 
         self.assertTrue('volumeId' in diff_res[self.update])
-        self.assertEquals(diff_res[self.update]['volumeId'],
-                          {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'})
+        self.assertEquals(
+            diff_res[self.update]['volumeId'],
+            {'1': '/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db'})
 
     def test_diff_resourcemodel_virtualSwitch_withadd(self):
         cachedHost = VmHost()
@@ -863,5 +867,6 @@ class ResourceModelDiffTestCase(test.TestCase):
             self.update]['disk-01'])
         self.assertTrue('storageVolumeId' in diff_res[self.update][vmDisks][
             self.update]['disk-01'][self.update])
-        self.assertEquals(diff_res[self.update][vmDisks][self.update][
-                          'disk-01'][self.update]['storageVolumeId'], 'datastore-939-999')
+        self.assertEquals(
+            diff_res[self.update][vmDisks][self.update]['disk-01'][
+                self.update]['storageVolumeId'], 'datastore-939-999')

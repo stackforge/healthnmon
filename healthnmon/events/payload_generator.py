@@ -133,14 +133,16 @@ class PayloadGenerator(object):
             payload['creation_time'] = ''
         else:
             payload['creation_time'] = time.strftime(
-                Constants.DATE_TIME_FORMAT, time.gmtime(long(createEpoch) / 1000))
+                Constants.DATE_TIME_FORMAT,
+                time.gmtime(long(createEpoch) / 1000))
         lastModifiedEpoch = _getattr_no_none(obj,
                                              'lastModifiedEpoch')
         if lastModifiedEpoch == '':
             payload['modified_time'] = ''
         else:
             payload['modified_time'] = time.strftime(
-                Constants.DATE_TIME_FORMAT, time.gmtime(long(lastModifiedEpoch) / 1000))
+                Constants.DATE_TIME_FORMAT,
+                time.gmtime(long(lastModifiedEpoch) / 1000))
         return payload
 
 
@@ -169,9 +171,12 @@ class VmHostPayloadGenerator(PayloadGenerator):
                 event_metadata - EventMetaData object for this event
                 obj - VmHost object for which this event is to be generated
             Keyword arguments:
-                additional_data - Any additional data that needs to be added for this event.
-                                  This goes in the additional_data field of the message payload
-                other key word arguments - This will have all the placeholder values that are to be substituted for event's long desc and short desc
+                additional_data - Any additional data that needs to be
+                added for this event. This goes in the additional_data
+                field of the message payload
+                other key word arguments - This will have all the
+                placeholder values that are to be substituted
+                for event's long desc and short desc
             Returns:
                 A dictionary having all the attributes of the payload
         """
@@ -207,11 +212,12 @@ class VmHostPayloadGenerator(PayloadGenerator):
         if utilization_data is not None:
             memoryConsumed = utilization_data.get_totalMemory(
             ) - utilization_data.get_freeMemory()
-            utilization_sample = {'cpuUserLoad': utilization_data.get_cpuUserLoad(),
-                                  'processorCoresCount': utilization_data.get_ncpus(),
-                                  'totalMemory': utilization_data.get_totalMemory(),
-                                  'memoryConsumed': memoryConsumed,
-                                  }
+            utilization_sample = \
+                {'cpuUserLoad': utilization_data.get_cpuUserLoad(),
+                 'processorCoresCount': utilization_data.get_ncpus(),
+                 'totalMemory': utilization_data.get_totalMemory(),
+                 'memoryConsumed': memoryConsumed,
+                 }
             payload['utilizationSampleStatus'] = utilization_data.get_status()
             payload['utilizationSample'] = utilization_sample
 
@@ -254,8 +260,8 @@ class VmPayloadGenerator(PayloadGenerator):
                                                 ),
             Constants.VM_POWER_STATE_STOPPED: _('VM is in stopped state'
                                                 ),
-            Constants.VM_POWER_STATE_SOFT_DELETE: _('VM underwent a soft delete'
-                                                    ),
+            Constants.VM_POWER_STATE_SOFT_DELETE: _(
+                'VM underwent a soft delete'),
             Constants.VM_POWER_STATE_MIGRATING: _('VM is being migrated'
                                                   ),
             Constants.VM_POWER_STATE_RESIZING: _('VM is being resized'
@@ -282,9 +288,12 @@ class VmPayloadGenerator(PayloadGenerator):
                 event_metadata - EventMetaData object for this event
                 obj - Vm object for which this event is to be generated
             Keyword arguments:
-                additional_data - Any additional data that needs to be added for this event.
-                                  This goes in the additional_data field of the message payload
-                other key word arguments - This will have all the placeholder values that are to be substituted for event's long desc and short desc
+                additional_data - Any additional data that needs
+                to be added for this event. This goes in the additional_data
+                field of the message payload
+                other key word arguments - This will have all the
+                placeholder values that are to be substituted
+                for event's long desc and short desc
             Returns:
                 A dictionary having all the attributes of the payload
         """
@@ -334,11 +343,15 @@ class StorageVolumePayloadGenerator(PayloadGenerator):
 
             Parameters:
                 event_metadata - EventMetaData object for this event
-                obj - StorageVolume object for which this event is to be generated
+                obj - StorageVolume object for which this
+                event is to be generated
             Keyword arguments:
-                additional_data - Any additional data that needs to be added for this event.
-                                  This goes in the additional_data field of the message payload
-                other key word arguments - This will have all the placeholder values that are to be substituted for event's long desc and short desc
+                additional_data - Any additional data that needs to be
+                added for this event. This goes in the additional_data
+                field of the message payload
+                other key word arguments - This will have all the
+                placeholder values that are to be substituted
+                for event's long desc and short desc
             Returns:
                 A dictionary having all the attributes of the payload
         """
@@ -392,11 +405,15 @@ class VirtualSwitchPayloadGenerator(PayloadGenerator):
 
             Parameters:
                 event_metadata - EventMetaData object for this event
-                obj - VirtualSwitch object for which this event is to be generated
+                obj - VirtualSwitch object for which this
+                event is to be generated
             Keyword arguments:
-                additional_data - Any additional data that needs to be added for this event.
-                                  This goes in the additional_data field of the message payload
-                other key word arguments - This will have all the placeholder values that are to be substituted for event's long desc and short desc
+                additional_data - Any additional data that needs to be
+                added for this event. This goes in the additional_data
+                field of the message payload
+                other key word arguments - This will have all the
+                placeholder values that are to be substituted
+                for event's long desc and short desc
             Returns:
                 A dictionary having all the attributes of the payload
         """
@@ -431,15 +448,18 @@ class PortGroupPayloadGenerator(PayloadGenerator):
         obj,
         **kwargs
     ):
-        """Generate the virtual switch specific payload
+        """Generate the Port Group specific payload
 
             Parameters:
                 event_metadata - EventMetaData object for this event
                 obj - PortGroup object for which this event is to be generated
             Keyword arguments:
-                additional_data - Any additional data that needs to be added for this event.
-                                  This goes in the additional_data field of the message payload
-                other key word arguments - This will have all the placeholder values that are to be substituted for event's long desc and short desc
+                additional_data - Any additional data that needs to be
+                added for this event. This goes in the additional_data
+                field of the message payload
+                other key word arguments - This will have all the
+                placeholder values that are to be substituted for
+                event's long desc and short desc
             Returns:
                 A dictionary having all the attributes of the payload
         """

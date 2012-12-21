@@ -692,8 +692,7 @@ class LibvirtVM:
                 else:
                     LOG.debug(_('There is no storage pool present for this \
                     storage volume ' + self.domainUuid
-                                     + ' on host '
-                                     + self.compute_id))
+                                + ' on host ' + self.compute_id))
 
                 vmDisk.set_storageVolumeId(poolUUID)
             except Exception:
@@ -1179,22 +1178,27 @@ class LibvirtStorageVolume:
             self.storageUuid = self.poolObj.UUIDString()
 
             storageObjCached = \
-                InventoryCacheManager.get_object_from_cache(self.storageUuid,
+                InventoryCacheManager.get_object_from_cache(
+                    self.storageUuid,
                     Constants.StorageVolume)
             self.storageVolume = StorageVolume()
 
             # Sets the values into the self.storageVolume
             self._mapStorageProperties(poolObj)
 
-            # Comparator is called to check whether the object needs to be persisted or not '''
-            diff_res_tup = self.utils.getdiff(storageObjCached,
-                    self.storageVolume)
+            # Comparator is called to check whether the object
+            # needs to be persisted or not '''
+            diff_res_tup = self.utils.getdiff(
+                storageObjCached,
+                self.storageVolume)
             if diff_res_tup[0]:
                 # Persist the StorageVolume object in cache and in DB.
-                InventoryCacheManager.update_object_in_cache(self.storageUuid,
-                        self.storageVolume)
+                InventoryCacheManager.update_object_in_cache(
+                    self.storageUuid,
+                    self.storageVolume)
                 self._persistStorage()
-                # Generates the Events for Storage added and Storage state changes
+                # Generates the Events for Storage
+                # added and Storage state changes
                 if storageObjCached is None:
 
                     # Storage.Added
@@ -1202,46 +1206,52 @@ class LibvirtStorageVolume:
                     LOG.audit(_('New Storage Volume '
                               + self.storageVolume.get_id()
                               + ' added on host ' + self.compute_id))
-                    event_api.notify(event_metadata.EVENT_TYPE_STORAGE_ADDED,
-                            self.storageVolume)
+                    event_api.notify(
+                        event_metadata.EVENT_TYPE_STORAGE_ADDED,
+                        self.storageVolume)
                 else:
                     currConnState = \
                         self.storageVolume.get_connectionState()
                     oldConnState = \
                         storageObjCached.get_connectionState()
                     if currConnState != oldConnState:
-                        if currConnState \
-                            == Constants.STORAGE_STATE_ACTIVE:
+                        if currConnState == Constants.STORAGE_STATE_ACTIVE:
                             # Storage.Enabled
                             LOG.audit(_('Storage Volume '
-                                    + str(self.storageVolume.get_id())
-                                    + ' on host '
-                                    + str(self.compute_id) + ' enabled'
-                                    ))
-                            event_api.notify(event_metadata.EVENT_TYPE_STORAGE_ENABLED,
-                                    self.storageVolume)
-                        elif currConnState \
-                            == Constants.STORAGE_STATE_INACTIVE:
+                                        + str(self.storageVolume.get_id())
+                                        + ' on host '
+                                        + str(self.compute_id) + ' enabled'
+                                        ))
+                            event_api.notify(
+                                event_metadata.EVENT_TYPE_STORAGE_ENABLED,
+                                self.storageVolume)
+                        elif currConnState == Constants.STORAGE_STATE_INACTIVE:
                             # Storage.Disabled
                             LOG.audit(_('Storage Volume '
-                                    + str(self.storageVolume.get_id())
-                                    + ' on host '
-                                    + str(self.compute_id))
-                                    + ' disabled')
-                            event_api.notify(event_metadata.EVENT_TYPE_STORAGE_DISABLED,
-                                    self.storageVolume)
+                                        + str(self.storageVolume.get_id())
+                                        + ' on host ' + str(self.compute_id))
+                                      + ' disabled')
+                            event_api.notify(
+                                event_metadata.EVENT_TYPE_STORAGE_DISABLED,
+                                self.storageVolume)
 
                     # total/free space info of nova storage pool where
                     # nova instances will be provisioned
                     #
-                    # TBD: need to aggregate size if we support multiple nova instance paths
-                    storage_pool_path = self.storageVolume.get_mountPoints()[0].get_path()
+                    # TBD: need to aggregate size if we support multiple
+                    # nova instance paths
+                    storage_pool_path = self.storageVolume.\
+                        get_mountPoints()[0].get_path()
                     novaPoolPath = getFlagByKey('instances_path')
                     if (storage_pool_path == novaPoolPath):
-                        self.cur_total_storage_size = long(self.storageVolume.get_size())
-                        self.curr_storage_free = long(self.storageVolume.get_free())
-                        self.old_total_storage_size = long(storageObjCached.get_size())
-                        self.old_storage_free = long(storageObjCached.get_free())
+                        self.cur_total_storage_size = \
+                            long(self.storageVolume.get_size())
+                        self.curr_storage_free = \
+                            long(self.storageVolume.get_free())
+                        self.old_total_storage_size = \
+                            long(storageObjCached.get_size())
+                        self.old_storage_free = \
+                            long(storageObjCached.get_free())
         except Exception:
             self.utils.log_error(traceback.format_exc())
         LOG.debug(_('Exiting _processStorage for Storage Volume '
@@ -1251,19 +1261,22 @@ class LibvirtStorageVolume:
         ''' Mapping attributes for StorageVolume '''
 
         LOG.debug(_('Entering _mapStorageProperties for Storage Volume '
-                   + self.storageUuid + ' of host ' + self.compute_id))
+                    + self.storageUuid + ' of host ' + self.compute_id))
         self.storageVolume.set_resourceManagerId(self.hostUUID)
         self.storageVolume.set_id(self.poolObj.UUIDString())
         self.storageVolume.set_name(self.poolObj.name())
 
         if self.poolObj.isActive():
-            self.storageVolume.set_connectionState(Constants.STORAGE_STATE_ACTIVE)
+            self.storageVolume.set_connectionState(
+                Constants.STORAGE_STATE_ACTIVE)
         else:
-            self.storageVolume.set_connectionState(Constants.STORAGE_STATE_INACTIVE)
+            self.storageVolume.set_connectionState(
+                Constants.STORAGE_STATE_INACTIVE)
 
         storageXML = self.poolObj.XMLDesc(0)
 
-        # Call the setter methods to pass the StoragePool Xml and set in self.StorageVolume
+        # Call the setter methods to pass the StoragePool Xml and
+        # set in self.StorageVolume
         self.storageVolume.set_name(self.utils.parseXML(storageXML,
                                     '//pool/name'))
 
@@ -1283,23 +1296,26 @@ class LibvirtStorageVolume:
 
         # self.storageVolume.set_volumeType("DAS")
 
-        self.storageVolume.set_volumeType(self.utils.parseXMLAttributes(storageXML,
-                '//pool', 'type').upper())
+        self.storageVolume.set_volumeType(
+            self.utils.parseXMLAttributes(storageXML,
+                                          '//pool', 'type').upper())
         self.storageVolume.set_volumeId(self.storageUuid)
         LOG.debug(_('Exiting _mapStorageProperties for Storage Volume '
-                  + self.storageUuid + ' of host ' + self.compute_id))
+                    + self.storageUuid + ' of host ' + self.compute_id))
 
     def processStorageDeletes(self, hostStorageVolIds,
                               updatedStorageVolIds):
-        LOG.debug(_('Entering processStorageDeletes of Storage Volumes of host '
-                   + self.compute_id))
+        LOG.debug(_('Entering processStorageDeletes of \
+        Storage Volumes of host ' + self.compute_id))
 
         # Should identify storageVolumes which have been deleted
         # Should remove the corresponding storage object from cache and DB
-        # Should update the host object's storageVolume list in both cache and DB
+        # Should update the host object's storageVolume list
+        # in both cache and DB
 
-        deletion_list = self.utils.getDeletionList(hostStorageVolIds,
-                updatedStorageVolIds)
+        deletion_list = self.utils.getDeletionList(
+            hostStorageVolIds,
+            updatedStorageVolIds)
 
         if len(deletion_list) != 0:
 
@@ -1308,23 +1324,27 @@ class LibvirtStorageVolume:
             storage_deleted_list = []
             for storageId in deletion_list:
                 obj = \
-                    InventoryCacheManager.get_object_from_cache(storageId,
+                    InventoryCacheManager.get_object_from_cache(
+                        storageId,
                         Constants.StorageVolume)
                 if obj is not None:
                     storage_deleted_list.append(obj)
-                InventoryCacheManager.delete_object_in_cache(storageId,
-                        Constants.StorageVolume)
-            api.storage_volume_delete_by_ids(get_admin_context(),
-                    deletion_list)
+                InventoryCacheManager.delete_object_in_cache(
+                    storageId,
+                    Constants.StorageVolume)
+            api.storage_volume_delete_by_ids(
+                get_admin_context(),
+                deletion_list)
             # Generate storage deleted event
             for storage_deleted in storage_deleted_list:
                 LOG.audit(_('Storage volume '
-                           + str(storage_deleted.get_id()) + ' deleted on host '
-                           + str(self.compute_id)))
+                            + str(storage_deleted.get_id())
+                            + ' deleted on host '
+                            + str(self.compute_id)))
                 event_api.notify(event_metadata.EVENT_TYPE_STORAGE_DELETED,
                                  storage_deleted)
         LOG.debug(_('Exiting processStorageDeletes of Storage Volumes of host '
-                   + self.compute_id))
+                    + self.compute_id))
 
     def _persistStorage(self):
         LOG.debug(_('Entering _persistStorage for Storage Volume '
@@ -1347,13 +1367,13 @@ class LibvirtNetwork:
 
     ''' LibvirtNetwork class to collect network inventory '''
 
-    def __init__(
-        self,
-        connection,
-        compute_id,
-        ):
+    def __init__(self,
+                 connection,
+                 compute_id,
+                 ):
 
-        self.rmContext = InventoryCacheManager.get_compute_inventory(compute_id).compute_rmcontext
+        self.rmContext = InventoryCacheManager.get_compute_inventory(
+            compute_id).compute_rmcontext
         self.libvirtconn = connection
         self.vmHost = None
         self.hostUUID = None
@@ -1367,13 +1387,16 @@ class LibvirtNetwork:
 #        self.vmHost = vmHost
 
     def processUpdates(self):
-        ''' Method will iterate through the list of libvirt network objects and map the data to Resource Model objects "Virtual Switch" and "Subnet" '''
+        ''' Method will iterate through the list of libvirt network objects
+        and map the data to Resource Model objects
+        "Virtual Switch" and "Subnet" '''
 
         LOG.debug(_('Entering processUpdates of Network for host '
                   + self.compute_id))
         try:
             self.cachedVmHost = \
-                InventoryCacheManager.get_object_from_cache(self.compute_id,
+                InventoryCacheManager.get_object_from_cache(
+                    self.compute_id,
                     Constants.VmHost)
             self.vmHost = copy.deepcopy(self.cachedVmHost)
             self.hostUUID = self.vmHost.get_uuid()
@@ -1388,7 +1411,8 @@ class LibvirtNetwork:
                 for net in inactiveNetworks:
                     networks.append(net)
 
-            # Inventory collection for new virtual networks and updated virtual networks
+            # Inventory collection for new virtual networks and
+            # updated virtual networks
 
             for net in networks:
                 networkObj = self.libvirtconn.networkLookupByName(net)
@@ -1400,7 +1424,8 @@ class LibvirtNetwork:
                 for net in inactiveInterfaces:
                     interfaces.append(net)
 
-            # Inventory collection for new virtual networks and updated virtual networks
+            # Inventory collection for new virtual networks and
+            # updated virtual networks
 
             for net in interfaces:
                 interfaceObj = self.libvirtconn.interfaceLookupByName(net)
@@ -1411,15 +1436,17 @@ class LibvirtNetwork:
             self.vmHost.set_portGroups(self.portGroups)
             if self.utils.getdiff(self.cachedVmHost, self.vmHost)[0]:
                 # Perist the Host object in cache and in DB.
-                InventoryCacheManager.update_object_in_cache(str(self.vmHost.get_id()),
-                        self.vmHost)
+                InventoryCacheManager.update_object_in_cache(
+                    str(self.vmHost.get_id()),
+                    self.vmHost)
                 self._persistVmHost()
                 self._processNetworkEvents(self.cachedVmHost, self.vmHost)
 
             self._processNetworkDeletes(self.cachedSubnetIds,
                                         self.updatedSubnetIds)
         except Exception:
-            LOG.error(_('Could not proceed with process updates of Network on host with id ' + self.compute_id))
+            LOG.error(_('Could not proceed with process updates of \
+            Network on host with id ' + self.compute_id))
             self.utils.log_error(traceback.format_exc())
         LOG.debug(_('Exiting processUpdates of Network of host '
                   + self.compute_id))
@@ -1437,98 +1464,134 @@ class LibvirtNetwork:
         connectionState = 'connectionState'
         diff_tup = self.utils.getdiff(oldobj, newobj)
         diffdict = diff_tup[1]
-        if diffdict != None:
-            if update in diffdict:
-                if virtualSwitches in diffdict[update]:
-                    if add in diffdict[update][virtualSwitches]:
-                        for vswitch in \
-                            diffdict[update][virtualSwitches][add].values():
-                            # Network.Added
-                            LOG.audit(_('New Network '
-                                    + str(vswitch.get_name())
-                                    + ' added on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_NETWORK_ADDED,
-                                    vswitch, host_id=self.compute_id)
+        if diffdict is not None and update in diffdict and\
+                virtualSwitches in diffdict[update]:
+            if add in diffdict[update][virtualSwitches]:
+                for vswitch in \
+                        diffdict[update][
+                            virtualSwitches][add].values():
+                    # Network.Added
+                    LOG.audit(_('New Network '
+                                + str(vswitch.get_name())
+                                + ' added on host '
+                                + self.compute_id))
+                    event_api.notify(
+                        event_metadata.EVENT_TYPE_NETWORK_ADDED,
+                        vswitch, host_id=self.compute_id)
 
-                    if delete in diffdict[update][virtualSwitches]:
-                        for vswitch in \
-                            diffdict[update][virtualSwitches][delete].values():
-                            # Network.Deleted
-                            LOG.audit(_('Network '
-                                    + str(vswitch.get_name())
-                                    + ' deleted on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_NETWORK_DELETED,
-                                    vswitch, host_id=self.compute_id)
+            if delete in diffdict[update][virtualSwitches]:
+                for vswitch in \
+                        diffdict[update][
+                            virtualSwitches][delete].values():
+                    # Network.Deleted
+                    LOG.audit(_('Network '
+                                + str(vswitch.get_name())
+                                + ' deleted on host '
+                                + self.compute_id))
+                    event_api.notify(
+                        event_metadata.EVENT_TYPE_NETWORK_DELETED,
+                        vswitch, host_id=self.compute_id)
 
-                    if update in diffdict[update][virtualSwitches]:
-                        for vswitchid in \
-                            diffdict[update][virtualSwitches][update]:
-                            for vswitch in newobj.get_virtualSwitches():
-                                if vswitchid == vswitch.get_id():
-                                    if connectionState in diffdict[update][virtualSwitches][update][vswitchid][update]:
-                                        # Network.Enabled
-                                        if diffdict[update][virtualSwitches][update][vswitchid][update][connectionState] \
-                                                == Constants.VIRSWITCH_STATE_ACTIVE:
-                                            LOG.audit(_('Network ' + str(vswitch.get_name()) + ' enabled on host ' + self.compute_id))
-                                            event_api.notify(event_metadata.EVENT_TYPE_NETWORK_ENABLED, vswitch, host_id=self.compute_id)
-                                        # Network.Disabled
-                                        if diffdict[update][virtualSwitches][update][vswitchid][update][connectionState] \
-                                                == Constants.VIRSWITCH_STATE_INACTIVE:
-                                            LOG.audit(_('Network ' + str(vswitch.get_name()) + ' disabled on host ' + self.compute_id))
-                                            event_api.notify(event_metadata.EVENT_TYPE_NETWORK_DISABLED, vswitch, host_id=self.compute_id)
-                                    break
+            if update in diffdict[update][virtualSwitches]:
+                for vswitchid in \
+                        diffdict[update][virtualSwitches][update]:
+                    for vswitch in newobj.get_virtualSwitches():
+                        if vswitchid == vswitch.get_id():
+                            if connectionState in diffdict[
+                                    update][virtualSwitches][
+                                        update][vswitchid][update]:
+                                # Network.Enabled
+                                if diffdict[update][virtualSwitches][
+                                        update][vswitchid][
+                                            update][connectionState] \
+                                        == Constants.\
+                                        VIRSWITCH_STATE_ACTIVE:
+                                    LOG.audit(_('Network '
+                                                + str(vswitch.
+                                                      get_name())
+                                                + ' enabled on host '
+                                                + self.compute_id))
+                                    event_api.notify(
+                                        event_metadata.
+                                        EVENT_TYPE_NETWORK_ENABLED,
+                                        vswitch,
+                                        host_id=self.compute_id)
+                                # Network.Disabled
+                                if diffdict[update][virtualSwitches][update][
+                                        vswitchid][update][
+                                            connectionState] == \
+                                        Constants.VIRSWITCH_STATE_INACTIVE:
+                                    LOG.audit(_('Network '
+                                                + str(vswitch.get_name())
+                                                + ' disabled on host '
+                                                + self.compute_id))
+                                    event_api.\
+                                        notify(event_metadata.
+                                               EVENT_TYPE_NETWORK_DISABLED,
+                                               vswitch,
+                                               host_id=self.compute_id)
+                            break
 
-                if portGroups in diffdict[update]:
-                    if add in diffdict[update][portGroups]:
-                        for portGroup in \
-                            diffdict[update][portGroups][add].values():
-                            # PortGroup.Added
-                            LOG.audit(_('New PortGroup '
-                                    + str(portGroup.get_name())
-                                    + ' added to virtual switch '
-                                    + str(portGroup.get_virtualSwitchId())
-                                    + ' on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_PORTGROUP_ADDED,
-                                    portGroup)
+        if diffdict is not None and update in diffdict and\
+                portGroups in diffdict[update]:
+            if add in diffdict[update][portGroups]:
+                for portGroup in \
+                        diffdict[update][portGroups][add].values():
+                    # PortGroup.Added
+                    LOG.audit(_('New PortGroup '
+                                + str(portGroup.get_name())
+                                + ' added to virtual switch '
+                                + str(portGroup.get_virtualSwitchId())
+                                + ' on host ' + self.compute_id))
+                    event_api.notify(
+                        event_metadata.EVENT_TYPE_PORTGROUP_ADDED,
+                        portGroup)
 
-                    if delete in diffdict[update][portGroups]:
-                        for portGroup in \
-                            diffdict[update][portGroups][delete].values():
-                            # PortGroup.Deleted
-                            LOG.audit(_('PortGroup '
-                                    + str(portGroup.get_name())
-                                    + ' deleted from virtual switch '
-                                    + str(portGroup.get_virtualSwitchId())
-                                    + ' on host ' + self.compute_id))
-                            event_api.notify(event_metadata.EVENT_TYPE_PORTGROUP_DELETED,
-                                    portGroup)
+            if delete in diffdict[update][portGroups]:
+                for portGroup in \
+                        diffdict[update][portGroups][delete].values():
+                    # PortGroup.Deleted
+                    LOG.audit(_('PortGroup '
+                                + str(portGroup.get_name())
+                                + ' deleted from virtual switch '
+                                + str(portGroup.get_virtualSwitchId())
+                                + ' on host ' + self.compute_id))
+                    event_api.notify(
+                        event_metadata.EVENT_TYPE_PORTGROUP_DELETED,
+                        portGroup)
 
-                    if update in diffdict[update][portGroups]:
-                        for portGroupid in \
-                            diffdict[update][portGroups][update]:
-                            # PortGroup.Reconfigured
-                            for portGroup in newobj.get_portGroups():
-                                if portGroupid == portGroup.get_id():
-                                    changed_attr = \
-                                        events_util.getChangedAttributesForUpdateEvent(portGroup,
-                                            diffdict[update][portGroups][update][portGroupid])
-                                    if changed_attr is not None and len(changed_attr) > 0:
-                                        LOG.audit(_('Port group '
-                                                + str(portGroup.get_name())
-                                                + ' attached to virtual switch '
-                                                + str(portGroup.get_virtualSwitchId())
-                                                + ' on host ' + self.compute_id
-                                                + ' is reconfigured'))
-                                        event_api.notify(
-                                            event_metadata.EVENT_TYPE_PORTGROUP_RECONFIGURED,
-                                            portGroup, changed_attributes=changed_attr)
+            if update in diffdict[update][portGroups]:
+                for portGroupid in \
+                        diffdict[update][portGroups][update]:
+                    # PortGroup.Reconfigured
+                    for portGroup in newobj.get_portGroups():
+                        if portGroupid == portGroup.get_id():
+                            changed_attr = \
+                                events_util.getChangedAttributesForUpdateEvent(
+                                    portGroup,
+                                    diffdict[update][portGroups][
+                                        update][portGroupid])
+                            if changed_attr is not None and\
+                                    len(changed_attr) > 0:
+                                LOG.audit(_('Port group '
+                                            + str(portGroup.get_name())
+                                            + ' attached to virtual switch '
+                                            + str(portGroup.
+                                                  get_virtualSwitchId())
+                                            + ' on host ' + self.compute_id
+                                            + ' is reconfigured'))
+                                event_api.notify(
+                                    event_metadata.
+                                    EVENT_TYPE_PORTGROUP_RECONFIGURED,
+                                    portGroup, changed_attributes=changed_attr)
         LOG.debug(_('Exiting NetworkEvents of host ' + self.compute_id))
 
     def _processNetworkInterface(self, interfaceObj):
         LOG.debug(_('Entering _processNetworkInterface of Networks on host '
-                   + self.compute_id))
+                    + self.compute_id))
         interfaceXML = interfaceObj.XMLDesc(0)
-        swType = self.utils.parseXMLAttributes(interfaceXML, '//interface', 'type')
+        swType = self.utils.parseXMLAttributes(interfaceXML,
+                                               '//interface', 'type')
         if swType.lower() == 'bridge':
             self.vswitch = VirtualSwitch()
             self.subnet = Subnet()
@@ -1545,15 +1608,18 @@ class LibvirtNetwork:
             self.subnet.set_resourceManagerId(str(self.hostUUID))
             self.portGroup.set_resourceManagerId(str(self.hostUUID))
             self.subnet.add_networkSources('VS_NETWORK')
-            interfaces = self.utils.getNodeXML(interfaceXML,
-                    "//interface/bridge/interface[@type='ethernet']")
+            interfaces = self.utils.getNodeXML(
+                interfaceXML,
+                "//interface/bridge/interface[@type='ethernet']")
             for element in interfaces:
                 interfaceNode = str(element)
                 interfaceName = \
-                    self.utils.parseXMLAttributes(interfaceNode,
+                    self.utils.parseXMLAttributes(
+                        interfaceNode,
                         '//interface', 'name')
                 mac = self.utils.parseXMLAttributes(interfaceNode,
-                        '//interface/mac', 'address')
+                                                    '//interface/mac',
+                                                    'address')
                 if self.vswitch.get_id() == mac:
                     self.vswitch.get_networkInterfaces().append(interfaceName)
                     break
@@ -1561,12 +1627,14 @@ class LibvirtNetwork:
             self.portGroup.set_virtualSwitchId(self.vswitch.get_id())
 
             self.subnetObjCached = \
-                InventoryCacheManager.get_object_from_cache(str(self.subnet.get_id()),
-                    Constants.Network)
+                InventoryCacheManager.get_object_from_cache(
+                    str(self.subnet.get_id()), Constants.Network)
             if interfaceObj.isActive():
-                self.vswitch.set_connectionState(Constants.VIRSWITCH_STATE_ACTIVE)
+                self.vswitch.set_connectionState(
+                    Constants.VIRSWITCH_STATE_ACTIVE)
             else:
-                self.vswitch.set_connectionState(Constants.VIRSWITCH_STATE_INACTIVE)
+                self.vswitch.set_connectionState(
+                    Constants.VIRSWITCH_STATE_INACTIVE)
             self.vswitch.set_switchType(swType)
             self.vswitch.add_subnetIds(self.subnet.get_id())
             self.vswitch.get_portGroups().append(self.portGroup)
@@ -1574,38 +1642,39 @@ class LibvirtNetwork:
             self.portGroups.append(self.portGroup)
             self.updatedSubnetIds.append(self.subnet.get_id())
             if self.utils.getdiff(self.subnetObjCached, self.subnet)[0]:
-                InventoryCacheManager.update_object_in_cache(str(self.subnet.get_id()),
-                        self.subnet)
+                InventoryCacheManager.update_object_in_cache(
+                    str(self.subnet.get_id()), self.subnet)
                 self._persistNetwork()
         # Mapping IP profile for host
 
-        name = self.utils.parseXMLAttributes(interfaceXML, '//interface', 'name')
+        name = self.utils.parseXMLAttributes(interfaceXML,
+                                             '//interface', 'name')
 
         # Ignoring loopback
 
         if name != 'lo':
             protocolNodes = self.utils.getNodeXML(interfaceXML,
-                    '//interface/protocol')
+                                                  '//interface/protocol')
             for protocol in protocolNodes:
                 ipNodes = self.utils.getNodeXML(str(protocol),
-                        '//protocol/ip')
+                                                '//protocol/ip')
                 for element in ipNodes:
                     ipProfile = IpProfile()
-                    ipProfile.set_ipAddress(self.utils.parseXMLAttributes(str(element),
-                            '//ip', 'address'))
-                    ipProfile.set_hostname(str(self.rmContext.rmIpAddress))
-                    ipProfile.set_ipType(self._getIpType(ipProfile.get_ipAddress()))
+                    ipProfile.set_ipAddress(
+                        self.utils.parseXMLAttributes(str(element),
+                                                      '//ip', 'address'))
+                    ipProfile.set_hostname(
+                        str(self.rmContext.rmIpAddress))
+                    ipProfile.set_ipType(
+                        self._getIpType(ipProfile.get_ipAddress()))
                     self.ipProfiles.append(ipProfile)
-#                    if ipProfile is not None and    \
-#                        self.utils.is_profile_in_list(ipProfile, self.vmHost.get_ipAddresses()) != True:
-#                        self.vmHost.get_ipAddresses().append(ipProfile)
 
         LOG.debug(_('Exiting _processNetworkInterface of Networks on host '
-                   + self.compute_id))
+                    + self.compute_id))
 
     def _processVirtualNetwork(self, networkObj):
         LOG.debug(_('Entering _processVirtualNetwork of Networks on host '
-                   + self.compute_id))
+                    + self.compute_id))
 
         networkXML = networkObj.XMLDesc(0)
         self.vswitch = VirtualSwitch()
@@ -1619,8 +1688,8 @@ class LibvirtNetwork:
         self.subnet.set_networkAddress(self.vswitch.get_id())
 
         self.subnetObjCached = \
-            InventoryCacheManager.get_object_from_cache(str(self.subnet.get_id()),
-                Constants.Network)
+            InventoryCacheManager.get_object_from_cache(
+                str(self.subnet.get_id()), Constants.Network)
 
         if networkObj.isActive():
             self.vswitch.set_connectionState('Active')
@@ -1634,18 +1703,19 @@ class LibvirtNetwork:
 
         self._mapVirtualNetworkProperties(networkXML)
 
-        # Comparator is called to check whether the object needs to be persisted or not
+        # Comparator is called to check whether the
+        # object needs to be persisted or not
 
         if self.utils.getdiff(self.subnetObjCached, self.subnet)[0]:
-            InventoryCacheManager.update_object_in_cache(str(self.subnet.get_id()),
-                    self.subnet)
+            InventoryCacheManager.update_object_in_cache(
+                str(self.subnet.get_id()), self.subnet)
             self._persistNetwork()
         LOG.debug(_('Exiting _processVirtualNetwork of Networks on host '
-                   + self.compute_id))
+                    + self.compute_id))
 
     def _mapVirtualNetworkProperties(self, networkXML):
-        LOG.debug(_('Entering _mapVirtualNetworkProperties of Networks on host '
-                   + self.compute_id))
+        LOG.debug(_('Entering _mapVirtualNetworkProperties of \
+        Networks on host ' + self.compute_id))
         self.vswitch.set_name(self.utils.parseXML(networkXML,
                               '//network/name'))
         self.subnet.set_name(self.vswitch.get_name())
@@ -1658,46 +1728,51 @@ class LibvirtNetwork:
         self.vswitch.set_switchType(self.utils.parseXMLAttributes(networkXML,
                                     '//network/forward', 'mode'))
         gateway = self.utils.parseXMLAttributes(networkXML,
-                '//network/ip', 'address')
+                                                '//network/ip', 'address')
         self.subnet.add_defaultGateways(str(gateway))
         self.subnet.set_networkMask(self.utils.parseXMLAttributes(networkXML,
                                     '//network/ip', 'netmask'))
         ipRange = IpAddressRange()
-#        if self.utils.parseXML(networkXML, '//network/ip/dhcp') != None:
-        if self.utils.parseXMLAttributes(networkXML, '//network/ip/dhcp/range', 'start') != None:
+        if self.utils.parseXMLAttributes(networkXML,
+                                         '//network/ip/dhcp/range',
+                                         'start') is not None:
             startIpAddress = IpAddress()
-            startIpAddress.set_address(self.utils.parseXMLAttributes(networkXML,
-                    '//network/ip/dhcp/range', 'start'))
+            startIpAddress.set_address(
+                self.utils.parseXMLAttributes(
+                    networkXML,
+                    '//network/ip/dhcp/range',
+                    'start'))
             ipRange.set_id(startIpAddress.get_address())
             startIpAddress.set_id(startIpAddress.get_address())
             startIpAddress.set_allocationType('DHCP')
             ipRange.set_startAddress(startIpAddress)
             endIpAddress = IpAddress()
-            endIpAddress.set_address(self.utils.parseXMLAttributes(networkXML,
-                    '//network/ip/dhcp/range', 'end'))
+            endIpAddress.set_address(
+                self.utils.parseXMLAttributes(
+                    networkXML,
+                    '//network/ip/dhcp/range',
+                    'end'))
             endIpAddress.set_id(endIpAddress.get_address())
             endIpAddress.set_allocationType('DHCP')
             ipRange.set_endAddress(endIpAddress)
             ipRange.set_allocationType('DHCP')
         else:
-
-#            ipRange = IpAddressRange()
-
             ipRange.set_id(self.subnet.get_id() + '_AUTO_STATIC')
             ipRange.set_allocationType('AUTO_STATIC')
 
         self.subnet.get_ipAddressRanges().append(ipRange)
-        self.subnet.set_ipType(self._getIpType(self.subnet.get_defaultGateways()[0]))
+        self.subnet.set_ipType(
+            self._getIpType(self.subnet.get_defaultGateways()[0]))
         self.vswitch.get_subnetIds().append(self.subnet.get_id())
         self.vswitch.get_portGroups().append(self.portGroup)
 
         self.vswitches.append(self.vswitch)
         self.portGroups.append(self.portGroup)
-        InventoryCacheManager.update_object_in_cache(str(self.subnet.get_id()),
-                self.subnet)
+        InventoryCacheManager.update_object_in_cache(
+            str(self.subnet.get_id()), self.subnet)
         self.updatedSubnetIds.append(self.subnet.get_id())
         LOG.debug(_('Exiting _mapVirtualNetworkProperties of Networks on host '
-                   + self.compute_id))
+                    + self.compute_id))
 
     def _getIpType(self, address):
         if ':' in address:
@@ -1727,13 +1802,12 @@ class LibvirtNetwork:
         LOG.debug(_('Exiting _persist for host uuid '
                   + self.compute_id))
 
-    def _processNetworkDeletes(
-        self,
-        cachedSubnetIds,
-        updatedSubnetIds):
+    def _processNetworkDeletes(self,
+                               cachedSubnetIds,
+                               updatedSubnetIds):
 
         LOG.debug(_('Entering processNetworkDeletes of Networks for host '
-                   + self.compute_id))
+                    + self.compute_id))
 
         # Should identify Subnets and vswitches which have been deleted
         # Should remove the corresponding subnet object from cache and DB
@@ -1742,29 +1816,24 @@ class LibvirtNetwork:
         try:
             deletion_list_subnets = \
                 self.utils.getDeletionList(cachedSubnetIds,
-                    updatedSubnetIds)
-
-#            deletion_list_vswitches = self.utils.getDeletionList(cachedSwitchIds, updatedSwitchIds)
-#
-#            if len(deletion_list_vswitches) != 0:
-#                # Delete objects from DB
-#                api.virtual_switch_delete_by_ids(deletion_list_vswitches)
+                                           updatedSubnetIds)
 
             if len(deletion_list_subnets) != 0:
 
                 # Delete objects from cache
 
                 for subnetId in deletion_list_subnets:
-                    InventoryCacheManager.delete_object_in_cache(subnetId,
-                            Constants.Network)
+                    InventoryCacheManager.delete_object_in_cache(
+                        subnetId,
+                        Constants.Network)
 
                 # Delete objects from DB
 
                 api.subnet_delete_by_ids(get_admin_context(),
-                        deletion_list_subnets)
+                                         deletion_list_subnets)
         except Exception:
 
             self.utils.log_error(traceback.format_exc())
 
         LOG.debug(_('Exiting processNetworkDeletes of Networks for host '
-                   + self.compute_id))
+                    + self.compute_id))

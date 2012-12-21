@@ -89,9 +89,9 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         self.assertFalse(storagevolumes is None,
                          'storage volume get by id returned a none list'
                          )
-        self.assertTrue(len(storagevolumes) > 0,
-                        'storage volume get by id returned invalid number of list'
-                        )
+        self.assertTrue(
+            len(storagevolumes) > 0,
+            'storage volume get by id returned invalid number of list')
         self.assertTrue(storagevolumes[0].id == 'SV1')
 
     def test_storagevolume_delete(self):
@@ -122,9 +122,9 @@ class StoragevolumeDbApiTestCase(test.TestCase):
         self.assertFalse(storagevolumes is None,
                          'storage volume get by id returned a none list'
                          )
-        self.assertTrue(len(storagevolumes) > 0,
-                        'storage volume get by id returned invalid number of list'
-                        )
+        self.assertTrue(
+            len(storagevolumes) > 0,
+            'storage volume get by id returned invalid number of list')
 
         healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context,
                                                        [storagevolume_id])
@@ -136,7 +136,10 @@ class StoragevolumeDbApiTestCase(test.TestCase):
                         == 0, 'Storage volume not deleted')
 
     def test_storagevolume_save_none(self):
-        self.assertTrue(healthnmon_db_api.storage_volume_save(self.admin_context, None) is None, 'The storage volume should save nothing')
+        self.assertTrue(
+            healthnmon_db_api.storage_volume_save(
+                self.admin_context, None) is None,
+            'The storage volume should save nothing')
 
     def test_storagevolume_get_by_id_none(self):
         storageVolumes = healthnmon_db_api.storage_volume_get_by_ids(
@@ -147,8 +150,9 @@ class StoragevolumeDbApiTestCase(test.TestCase):
 
     def test_storagevolume_delete_none(self):
         self.assertTrue(
-            healthnmon_db_api.storage_volume_delete_by_ids(self.admin_context,
-                                                           None) is None, 'Storage Volumes should be an empty list')
+            healthnmon_db_api.storage_volume_delete_by_ids(
+                self.admin_context,
+                None) is None, 'Storage Volumes should be an empty list')
 
     def test_storagevolume_save_throw_exception(self):
         self.assertRaises(Exception,
@@ -305,7 +309,8 @@ class StoragevolumeDbApiTestCase(test.TestCase):
 
     def test_timestamp_columns(self):
         """
-            Test the time stamp columns createEpoch, modifiedEpoch and deletedEpoch
+            Test the time stamp columns createEpoch,
+            modifiedEpoch and deletedEpoch
         """
         vol = StorageVolume()
         vol.set_id('vol-01')

@@ -129,21 +129,21 @@ class virConnect:
 
     def getSysinfo(self, flag):
         return """<sysinfo type='smbios'>
-                              <bios>
-                                <entry name='vendor'>HP</entry>
-                                <entry name='version'>A13</entry>
-                                <entry name='date'>02/21/2008</entry>
-                              </bios>
-                              <system>
-                                <entry name='manufacturer'>HP</entry>
-                                <entry name='product'>ProLiant BL465c G1  </entry>
-                                <entry name='version'>Not Specified</entry>
-                                <entry name='serial'>CN7816025C      </entry>
-                                <entry name='uuid'>34353438-3934-434E-3738-313630323543</entry>
-                                <entry name='sku'>454894-B21      </entry>
-                                <entry name='family'>ProLiant</entry>
-                              </system>
-                            </sysinfo>"""
+              <bios>
+                <entry name='vendor'>HP</entry>
+                <entry name='version'>A13</entry>
+                <entry name='date'>02/21/2008</entry>
+              </bios>
+              <system>
+                <entry name='manufacturer'>HP</entry>
+                <entry name='product'>ProLiant BL465c G1  </entry>
+                <entry name='version'>Not Specified</entry>
+                <entry name='serial'>CN7816025C      </entry>
+                <entry name='uuid'>34353438-3934-434E-3738-313630323543</entry>
+                <entry name='sku'>454894-B21      </entry>
+                <entry name='family'>ProLiant</entry>
+              </system>
+            </sysinfo>"""
 
     def getInfo(self):
         return [
@@ -254,113 +254,126 @@ class virDomain:
 
     def XMLDesc(self, flag):
         return """<domain type='qemu' id='1'>
-                  <name>TestVirtMgrVM7</name>
-                  <uuid>25f04dd3-e924-02b2-9eac-876e3c943262</uuid>
-                  <memory>1048576</memory>
-                  <currentMemory>1048576</currentMemory>
-                  <vcpu>1</vcpu>
-                  <os>
-                    <type arch='x86_64' machine='pc-0.14'>hvm</type>
-                    <boot dev='hd'/>
-                  </os>
-                  <features>
-                    <acpi/>
-                    <apic/>
-                    <pae/>
-                  </features>
-                  <clock offset='utc'/>
-                  <on_poweroff>destroy</on_poweroff>
-                  <on_reboot>restart</on_reboot>
-                  <on_crash>restart</on_crash>
-                  <devices>
-                    <emulator>/usr/bin/qemu-system-x86_64</emulator>
-                    <disk type='file' device='disk'>
-                      <driver name='qemu' type='raw'/>
-                      <source file='/var/lib/libvirt/images/TestVirtMgrVM7.img'/>
-                      <target dev='hda' bus='scsi'/>
-                      <alias name='ide0-0-0'/>
-                      <address type='drive' controller='0' bus='0' unit='0'/>
-                    </disk>
-                    <disk type='block' device='disk'>
-                      <driver name='qemu' type='raw'/>
-                      <source dev='/dev/disk/by-path/ip-10.10.4.21:3260-iscsi-iqn.2010-10.org.openstack:volume-00000001-lun-1'/>
-                      <target dev='vdb' bus='virtio'/>
-                      <alias name='virtio-disk1'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
-                    </disk>
-                      <disk type='block' device='disk'>
-                      <driver name='qemu' type='raw'/>
-                      <source junk='/dev/disk/by-path/ip-10.10.4.21:3260-iscsi-iqn.2010-10.org.openstack:volume-00000001-lun-1'/>
-                      <target dev='vdb' bus='virtio'/>
-                      <alias name='virtio-disk1'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
-                    </disk>
-                    <disk type='file' device='cdrom'>
-                      <driver name='qemu' type='raw'/>
-                      <source file='/home/ubuntu164/vmdks/ubuntu-11.10-desktop-i386.iso'/>
-                      <target dev='hdc' bus='ide'/>
-                      <readonly/>
-                      <alias name='ide0-1-0'/>
-                      <address type='drive' controller='0' bus='1' unit='0'/>
-                    </disk>
-                    <controller type='scsi' index='0'>
-                      <alias name='ide0'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
-                    </controller>
-                    <interface type='network'>
-                      <mac address='52:54:00:4c:82:63'/>
-                      <source network='default'/>
-                      <target dev='vnet0'/>
-                      <alias name='net0'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
-                       <filterref filter='nova-instance-instance-000002f2-fa163e7ab3f9'>
-                        <parameter name='DHCPSERVER' value='10.1.1.22'/>
-                        <parameter name='IP' value='10.1.1.19'/>
-                      </filterref>
-                    </interface>
-                    <interface type='bridge'>
-                      <mac address='52:54:00:4c:82:63'/>
-                      <source network='default'/>
-                      <target dev='br100'/>
-                      <alias name='net0'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
-                      <filterref filter='nova-instance-instance-000002f2-fa163e1b7489'>
-                        <parameter name='DHCPSERVER' value='10.2.1.22'/>
-                        <parameter name='IP' value='10.2.1.20'/>
-                      </filterref>
-                    </interface>
-                    <serial type='pty'>
-                      <source path='/dev/pts/1'/>
-                      <target port='0'/>
-                      <alias name='serial0'/>
-                    </serial>
-                    <console type='pty' tty='/dev/pts/1'>
-                      <source path='/dev/pts/1'/>
-                      <target type='serial' port='0'/>
-                      <alias name='serial0'/>
-                    </console>
-                    <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='5900' autoport='yes'/>
-                    <sound model='ich6'>
-                      <alias name='sound0'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
-                    </sound>
-                    <video>
-                      <model type='cirrus' vram='9216' heads='1'/>
-                      <alias name='video0'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
-                    </video>
-                    <memballoon model='virtio'>
-                      <alias name='balloon0'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
-                    </memballoon>
-                  </devices>
-                  <seclabel type='dynamic' model='apparmor'>
-                    <label>libvirt-25f04dd3-e924-02b2-9eac-876e3c943262</label>
-                    <imagelabel>libvirt-25f04dd3-e924-02b2-9eac-876e3c943262</imagelabel>
-                  </seclabel>
-                </domain>
-                """
+          <name>TestVirtMgrVM7</name>
+          <uuid>25f04dd3-e924-02b2-9eac-876e3c943262</uuid>
+          <memory>1048576</memory>
+          <currentMemory>1048576</currentMemory>
+          <vcpu>1</vcpu>
+          <os>
+            <type arch='x86_64' machine='pc-0.14'>hvm</type>
+            <boot dev='hd'/>
+          </os>
+          <features>
+            <acpi/>
+            <apic/>
+            <pae/>
+          </features>
+          <clock offset='utc'/>
+          <on_poweroff>destroy</on_poweroff>
+          <on_reboot>restart</on_reboot>
+          <on_crash>restart</on_crash>
+          <devices>
+            <emulator>/usr/bin/qemu-system-x86_64</emulator>
+            <disk type='file' device='disk'>
+              <driver name='qemu' type='raw'/>
+              <source file='/var/lib/libvirt/images/TestVirtMgrVM7.img'/>
+              <target dev='hda' bus='scsi'/>
+              <alias name='ide0-0-0'/>
+              <address type='drive' controller='0' bus='0' unit='0'/>
+            </disk>
+            <disk type='block' device='disk'>
+              <driver name='qemu' type='raw'/>
+              <source dev='/dev/disk/by-path/ip-10.10.4.21:3260-iscsi-iqn.\
+              2010-10.org.openstack:volume-00000001-lun-1'/>
+              <target dev='vdb' bus='virtio'/>
+              <alias name='virtio-disk1'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x07' \
+              function='0x0'/>
+            </disk>
+              <disk type='block' device='disk'>
+              <driver name='qemu' type='raw'/>
+              <source junk='/dev/disk/by-path/ip-10.10.4.21:3260-iscsi-iqn.\
+              2010-10.org.openstack:volume-00000001-lun-1'/>
+              <target dev='vdb' bus='virtio'/>
+              <alias name='virtio-disk1'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x07' \
+              function='0x0'/>
+            </disk>
+            <disk type='file' device='cdrom'>
+              <driver name='qemu' type='raw'/>
+              <source file='/home/ubuntu164/vmdks/ubuntu-11.\
+              10-desktop-i386.iso'/>
+              <target dev='hdc' bus='ide'/>
+              <readonly/>
+              <alias name='ide0-1-0'/>
+              <address type='drive' controller='0' bus='1' unit='0'/>
+            </disk>
+            <controller type='scsi' index='0'>
+              <alias name='ide0'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x01' \
+              function='0x1'/>
+            </controller>
+            <interface type='network'>
+              <mac address='52:54:00:4c:82:63'/>
+              <source network='default'/>
+              <target dev='vnet0'/>
+              <alias name='net0'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x03' \
+              function='0x0'/>
+               <filterref \
+               filter='nova-instance-instance-000002f2-fa163e7ab3f9'>
+                <parameter name='DHCPSERVER' value='10.1.1.22'/>
+                <parameter name='IP' value='10.1.1.19'/>
+              </filterref>
+            </interface>
+            <interface type='bridge'>
+              <mac address='52:54:00:4c:82:63'/>
+              <source network='default'/>
+              <target dev='br100'/>
+              <alias name='net0'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x03' \
+              function='0x0'/>
+              <filterref filter='nova-instance-instance-000002f2-fa163e1b7489'>
+                <parameter name='DHCPSERVER' value='10.2.1.22'/>
+                <parameter name='IP' value='10.2.1.20'/>
+              </filterref>
+            </interface>
+            <serial type='pty'>
+              <source path='/dev/pts/1'/>
+              <target port='0'/>
+              <alias name='serial0'/>
+            </serial>
+            <console type='pty' tty='/dev/pts/1'>
+              <source path='/dev/pts/1'/>
+              <target type='serial' port='0'/>
+              <alias name='serial0'/>
+            </console>
+            <input type='mouse' bus='ps2'/>
+            <graphics type='vnc' port='5900' autoport='yes'/>
+            <sound model='ich6'>
+              <alias name='sound0'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x04' \
+              function='0x0'/>
+            </sound>
+            <video>
+              <model type='cirrus' vram='9216' heads='1'/>
+              <alias name='video0'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x02' \
+              function='0x0'/>
+            </video>
+            <memballoon model='virtio'>
+              <alias name='balloon0'/>
+              <address type='pci' domain='0x0000' bus='0x00' slot='0x05' \
+              function='0x0'/>
+            </memballoon>
+          </devices>
+          <seclabel type='dynamic' model='apparmor'>
+            <label>libvirt-25f04dd3-e924-02b2-9eac-876e3c943262</label>
+            <imagelabel>libvirt-25f04dd3-e924-02b2-9eac-876e3c943262\
+            </imagelabel>
+          </seclabel>
+        </domain>
+        """
 
     def name(self):
         return 'TestVirtMgrVM7'
@@ -406,22 +419,22 @@ class virStoragePool:
 
     def XMLDesc(self, flag):
         return """<pool type='dir'>
-                                  <name>default</name>
-                                  <uuid>95f7101b-892c-c388-867a-8340e5fea27a</uuid>
-                                  <capacity>113595187200</capacity>
-                                  <allocation>11105746944</allocation>
-                                  <available>102489440256</available>
-                                  <source>
-                                  </source>
-                                  <target>
-                                    <path>/var/lib/libvirt/images</path>
-                                    <permissions>
-                                      <mode>0700</mode>
-                                      <owner>-1</owner>
-                                      <group>-1</group>
-                                    </permissions>
-                                  </target>
-                                </pool>"""
+                  <name>default</name>
+                  <uuid>95f7101b-892c-c388-867a-8340e5fea27a</uuid>
+                  <capacity>113595187200</capacity>
+                  <allocation>11105746944</allocation>
+                  <available>102489440256</available>
+                  <source>
+                  </source>
+                  <target>
+                    <path>/var/lib/libvirt/images</path>
+                    <permissions>
+                      <mode>0700</mode>
+                      <owner>-1</owner>
+                      <group>-1</group>
+                    </permissions>
+                  </target>
+                </pool>"""
 
     def name(self):
         return 'default'
@@ -439,22 +452,22 @@ class virDirPool:
 
     def XMLDesc(self, flag):
         return """<pool type='dir'>
-                                  <name>nova-storage-pool</name>
-                                  <uuid>95f7101b-892c-c388-867a-8340e5feadir</uuid>
-                                  <capacity>113595187200</capacity>
-                                  <allocation>11105746944</allocation>
-                                  <available>102489440256</available>
-                                  <source>
-                                  </source>
-                                  <target>
-                                    <path>/var/lib/nova/instances</path>
-                                    <permissions>
-                                      <mode>0700</mode>
-                                      <owner>-1</owner>
-                                      <group>-1</group>
-                                    </permissions>
-                                  </target>
-                                </pool>"""
+              <name>nova-storage-pool</name>
+              <uuid>95f7101b-892c-c388-867a-8340e5feadir</uuid>
+              <capacity>113595187200</capacity>
+              <allocation>11105746944</allocation>
+              <available>102489440256</available>
+              <source>
+              </source>
+              <target>
+                <path>/var/lib/nova/instances</path>
+                <permissions>
+                  <mode>0700</mode>
+                  <owner>-1</owner>
+                  <group>-1</group>
+                </permissions>
+              </target>
+            </pool>"""
 
     def name(self):
         return 'nova-storage-pool'
@@ -482,22 +495,22 @@ class virStoragePoolInactive:
 
     def XMLDesc(self, flag):
         return """<pool type='dir'>
-                                  <name>inactivePool</name>
-                                  <uuid>95f7101b-892c-c388-867a-8340e5fea27a</uuid>
-                                  <capacity>113595187200</capacity>
-                                  <allocation>11105746944</allocation>
-                                  <available>102489440256</available>
-                                  <source>
-                                  </source>
-                                  <target>
-                                    <path>/var/lib/libvirt/images</path>
-                                    <permissions>
-                                      <mode>0700</mode>
-                                      <owner>-1</owner>
-                                      <group>-1</group>
-                                    </permissions>
-                                  </target>
-                                </pool>"""
+                  <name>inactivePool</name>
+                  <uuid>95f7101b-892c-c388-867a-8340e5fea27a</uuid>
+                  <capacity>113595187200</capacity>
+                  <allocation>11105746944</allocation>
+                  <available>102489440256</available>
+                  <source>
+                  </source>
+                  <target>
+                    <path>/var/lib/libvirt/images</path>
+                    <permissions>
+                      <mode>0700</mode>
+                      <owner>-1</owner>
+                      <group>-1</group>
+                    </permissions>
+                  </target>
+                </pool>"""
 
     def name(self):
         return 'inactivePool'
@@ -525,17 +538,17 @@ class virLibvirtNetwork:
 
     def XMLDesc(self, flag):
         return """<network>
-                        <name>default</name>
-                        <uuid>3fbfbefb-17dd-07aa-2dac-13afbedf3be3</uuid>
-                        <forward mode='nat'/>
-                        <bridge name='virbr0' stp='on' delay='0' />
-                        <mac address='52:54:00:34:14:AE'/> \
-                        <ip address='192.168.122.1' netmask='255.255.255.0'>
-                            <dhcp>
-                                <range start='192.168.122.2' end='192.168.122.254' />
-                                </dhcp>
-                        </ip>
-                        </network>"""
+                <name>default</name>
+                <uuid>3fbfbefb-17dd-07aa-2dac-13afbedf3be3</uuid>
+                <forward mode='nat'/>
+                <bridge name='virbr0' stp='on' delay='0' />
+                <mac address='52:54:00:34:14:AE'/> \
+                <ip address='192.168.122.1' netmask='255.255.255.0'>
+                    <dhcp>
+                        <range start='192.168.122.2' end='192.168.122.254' />
+                        </dhcp>
+                </ip>
+                </network>"""
 
     def name(self):
         return 'default'

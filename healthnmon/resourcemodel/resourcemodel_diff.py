@@ -54,8 +54,8 @@ class ResourceModelDiff(object):
         """Unify decision making on the leaf node level."""
 
         res = None
-        if old_obj.__class__.__module__.startswith('healthnmon.resourcemodel.healthnmonResourceModel'
-                                                   ):
+        if old_obj.__class__.__module__.startswith(
+                'healthnmon.resourcemodel.healthnmonResourceModel'):
             res_dict = self.diff_resourcemodel(old_obj, new_obj)
             if len(res_dict) > 0:
                 res = res_dict
@@ -118,7 +118,8 @@ class ResourceModelDiff(object):
         """
         Method to check diff of list types
 
-        As we are processing two ResourceModel objects both the lists should be of same type
+        As we are processing two ResourceModel objects both
+        the lists should be of same type
         """
 
         result = {'_add': {}, '_delete': {}, '_update': {}}
@@ -181,7 +182,8 @@ class ResourceModelDiff(object):
         """
         Method to check diff of dictionary types
 
-        As we are processing two ResourceModel objects both the dictionaries should be of same type
+        As we are processing two ResourceModel objects both the
+        dictionaries should be of same type
         """
 
         old_keys = set()
@@ -218,7 +220,8 @@ class ResourceModelDiff(object):
         """
         Method to check diff of two resource model types
 
-        As we are processing two ResourceModel objects both objects should be of same type
+        As we are processing two ResourceModel objects
+        both objects should be of same type
         """
 
         if not old_obj and hasattr(self, 'old_modelobj'):
@@ -254,8 +257,8 @@ class ResourceModelDiff(object):
                                                             attribute_name)
             else:
                 res = self._diff_objects(getattr(old_obj,
-                                                 attribute_name), getattr(new_obj,
-                                                                          attribute_name))
+                                                 attribute_name),
+                                         getattr(new_obj, attribute_name))
                 if res is not None:
                     result['_update'][attribute_name] = res
 

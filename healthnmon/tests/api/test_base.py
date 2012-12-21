@@ -26,19 +26,98 @@ from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, IpProfile
 from healthnmon.constants import DbConstants
 
 
-expected_index_json = '{"accounts_links": [{"href": "http://marker", "rel": "next"}, {"href": "http://marker", "rel": "previous"}], "accounts": [{"id": "1", "links": [{"href": "http://localhost:8774/v2.0/accounts/1", "rel": "self"}, {"href": "http://localhost:8774/accounts/1", "rel": "bookmark"}], "name": "name_1"}, {"id": "2", "links": [{"href": "http://localhost:8774/v2.0/accounts/2", "rel": "self"}, {"href": "http://localhost:8774/accounts/2", "rel": "bookmark"}], "name": "name_2"}, {"id": "3", "links": [{"href": "http://localhost:8774/v2.0/accounts/3", "rel": "self"}, {"href": "http://localhost:8774/accounts/3", "rel": "bookmark"}], "name": "name_3"}, {"id": "4", "links": [{"href": "http://localhost:8774/v2.0/accounts/4", "rel": "self"}, {"href": "http://localhost:8774/accounts/4", "rel": "bookmark"}], "name": "name_4"}]}'
-expected_index_fields_json = '{"accounts_links": [{"href": "http://marker", "rel": "next"}, {"href": "http://marker", "rel": "previous"}], "accounts": [{"id": "1", "links": [{"href": "http://localhost:8774/v2.0/accounts/1?fields=id", "rel": "self"}, {"href": "http://localhost:8774/accounts/1", "rel": "bookmark"}], "name": "name_1"}, {"id": "2", "links": [{"href": "http://localhost:8774/v2.0/accounts/2?fields=id", "rel": "self"}, {"href": "http://localhost:8774/accounts/2", "rel": "bookmark"}], "name": "name_2"}, {"id": "3", "links": [{"href": "http://localhost:8774/v2.0/accounts/3?fields=id", "rel": "self"}, {"href": "http://localhost:8774/accounts/3", "rel": "bookmark"}], "name": "name_3"}, {"id": "4", "links": [{"href": "http://localhost:8774/v2.0/accounts/4?fields=id", "rel": "self"}, {"href": "http://localhost:8774/accounts/4", "rel": "bookmark"}], "name": "name_4"}]}'
-expected_index_xml = '<accounts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><account id="1" name="name_1"><atom:link href="http://localhost:8774/v2.0/accounts/1" rel="self"/><atom:link href="http://localhost:8774/accounts/1" rel="bookmark"/></account><account id="2" name="name_2"><atom:link href="http://localhost:8774/v2.0/accounts/2" rel="self"/><atom:link href="http://localhost:8774/accounts/2" rel="bookmark"/></account><account id="3" name="name_3"><atom:link href="http://localhost:8774/v2.0/accounts/3" rel="self"/><atom:link href="http://localhost:8774/accounts/3" rel="bookmark"/></account><account id="4" name="name_4"><atom:link href="http://localhost:8774/v2.0/accounts/4" rel="self"/><atom:link href="http://localhost:8774/accounts/4" rel="bookmark"/></account><atom:link href="http://marker" rel="next"/><atom:link href="http://marker" rel="previous"/></accounts>'
-expected_index_fields_xml = '<accounts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><account id="1" name="name_1"><atom:link href="http://localhost:8774/v2.0/accounts/1?fields=id" rel="self"/><atom:link href="http://localhost:8774/accounts/1" rel="bookmark"/></account><account id="2" name="name_2"><atom:link href="http://localhost:8774/v2.0/accounts/2?fields=id" rel="self"/><atom:link href="http://localhost:8774/accounts/2" rel="bookmark"/></account><account id="3" name="name_3"><atom:link href="http://localhost:8774/v2.0/accounts/3?fields=id" rel="self"/><atom:link href="http://localhost:8774/accounts/3" rel="bookmark"/></account><account id="4" name="name_4"><atom:link href="http://localhost:8774/v2.0/accounts/4?fields=id" rel="self"/><atom:link href="http://localhost:8774/accounts/4" rel="bookmark"/></account><atom:link href="http://marker" rel="next"/><atom:link href="http://marker" rel="previous"/></accounts>'
-expected_detail_xml = '<accounts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Account><id>1</id><name>name_1</name></Account><Account><id>2</id><name>name_2</name></Account><Account><id>3</id><name>name_3</name></Account><Account><id>4</id><name>name_4</name></Account><atom:link href="http://marker" rel="next"/><atom:link href="http://marker" rel="previous"/></accounts>'
-expected_detail_json = '{"accounts_links": [{"href": "http://marker", "rel": "next"}, {"href": "http://marker", "rel": "previous"}], "accounts": [{"id": "1", "name": "name_1"}, {"id": "2", "name": "name_2"}, {"id": "3", "name": "name_3"}, {"id": "4", "name": "name_4"}]}'
-expected_links = "[{'href': 'http://localhost:8774/v2.0/accounts?limit=1&marker=3', 'rel': 'next'}, {'href': 'http://localhost:8774/v2.0/accounts?limit=1&marker=1', 'rel': 'previous'}]"
+expected_index_json = '{"accounts_links": \
+[{"href": "http://marker", "rel": "next"}, \
+{"href": "http://marker", "rel": "previous"}], \
+"accounts": [{"id": "1", "links": \
+[{"href": "http://localhost:8774/v2.0/accounts/1", "rel": "self"}, \
+{"href": "http://localhost:8774/accounts/1", \
+"rel": "bookmark"}], "name": "name_1"}, \
+{"id": "2", "links": [{"href": "http://localhost:8774/v2.0/accounts/2", \
+"rel": "self"}, {"href": "http://localhost:8774/accounts/2", \
+"rel": "bookmark"}], "name": "name_2"}, {"id": "3", "links": \
+[{"href": "http://localhost:8774/v2.0/accounts/3", "rel": "self"}, \
+{"href": "http://localhost:8774/accounts/3", "rel": "bookmark"}], \
+"name": "name_3"}, {"id": "4", "links": \
+[{"href": "http://localhost:8774/v2.0/accounts/4", "rel": "self"}, \
+{"href": "http://localhost:8774/accounts/4", "rel": "bookmark"}], \
+"name": "name_4"}]}'
+expected_index_fields_json = '{"accounts_links": [{"href": "http://marker", \
+"rel": "next"}, {"href": "http://marker", "rel": "previous"}], \
+"accounts": [{"id": "1", "links": [{"href": \
+"http://localhost:8774/v2.0/accounts/1?fields=id", \
+"rel": "self"}, {"href": "http://localhost:8774/accounts/1", \
+"rel": "bookmark"}], "name": "name_1"}, {"id": "2", "links": \
+[{"href": "http://localhost:8774/v2.0/accounts/2?fields=id", \
+"rel": "self"}, {"href": "http://localhost:8774/accounts/2", \
+"rel": "bookmark"}], "name": "name_2"}, {"id": "3", "links": \
+[{"href": "http://localhost:8774/v2.0/accounts/3?fields=id", \
+"rel": "self"}, {"href": "http://localhost:8774/accounts/3", \
+"rel": "bookmark"}], "name": "name_3"}, {"id": "4", "links": \
+[{"href": "http://localhost:8774/v2.0/accounts/4?fields=id", \
+"rel": "self"}, {"href": "http://localhost:8774/accounts/4", \
+"rel": "bookmark"}], "name": "name_4"}]}'
+expected_index_xml = '<accounts xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<account id="1" name="name_1"><atom:link \
+href="http://localhost:8774/v2.0/accounts/1" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/1" \
+rel="bookmark"/></account><account id="2" name="name_2">\
+<atom:link href="http://localhost:8774/v2.0/accounts/2" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/2" \
+rel="bookmark"/></account><account id="3" name="name_3">\
+<atom:link href="http://localhost:8774/v2.0/accounts/3" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/3" \
+rel="bookmark"/></account><account id="4" name="name_4">\
+<atom:link href="http://localhost:8774/v2.0/accounts/4" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/4" \
+rel="bookmark"/></account><atom:link href="http://marker" \
+rel="next"/><atom:link href="http://marker" rel="previous"/></accounts>'
+expected_index_fields_xml = '<accounts \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<account id="1" name="name_1">\
+<atom:link href="http://localhost:8774/v2.0/accounts/1?fields=id" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/1" \
+rel="bookmark"/></account><account id="2" name="name_2">\
+<atom:link href="http://localhost:8774/v2.0/accounts/2?fields=id" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/2" \
+rel="bookmark"/></account><account id="3" name="name_3">\
+<atom:link href="http://localhost:8774/v2.0/accounts/3?fields=id" rel="self"/>\
+<atom:link href="http://localhost:8774/accounts/3" rel="bookmark"/>\
+</account><account id="4" name="name_4"><atom:link \
+href="http://localhost:8774/v2.0/accounts/4?fields=id" \
+rel="self"/><atom:link href="http://localhost:8774/accounts/4" \
+rel="bookmark"/></account><atom:link href="http://marker" rel="next"/>\
+<atom:link href="http://marker" rel="previous"/></accounts>'
+expected_detail_xml = '<accounts xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Account><id>1</id>\
+<name>name_1</name></Account><Account><id>2</id><name>name_2</name></Account>\
+<Account><id>3</id><name>name_3</name></Account><Account><id>4</id>\
+<name>name_4</name></Account><atom:link href="http://marker" rel="next"/>\
+<atom:link href="http://marker" rel="previous"/></accounts>'
+expected_detail_json = '{"accounts_links": [{"href": "http://marker", \
+"rel": "next"}, {"href": "http://marker", "rel": "previous"}], \
+"accounts": [{"id": "1", "name": "name_1"}, {"id": "2", "name": "name_2"}, \
+{"id": "3", "name": "name_3"}, {"id": "4", "name": "name_4"}]}'
+expected_links = "[{'href': 'http://localhost:8774/v2.0/accounts?\
+limit=1&marker=3', 'rel': 'next'}, \
+{'href': 'http://localhost:8774/v2.0/accounts?limit=1&marker=1', \
+'rel': 'previous'}]"
 expected_search_json = "({'deleted': 'false'}, 'id', 'desc')"
-expected_search_changes_since = "({'deleted': u'f', 'changes-since': 1336633200000L}, 'createEpoch', 'desc')"
+expected_search_changes_since = "({'deleted': u'f', \
+'changes-since': 1336633200000L}, 'createEpoch', 'desc')"
 expected_base_show_json = '{"Account": {"id": "1", "name": "name_1"}}'
-expected_base_detail_json = '{"accounts": [{"id": "1", "name": "name_1"}, {"id": "2", "name": "name_2"}, {"id": "3", "name": "name_3"}, {"id": "4", "name": "name_4"}]}'
+expected_base_detail_json = '{"accounts": [{"id": "1", "name": "name_1"}, \
+{"id": "2", "name": "name_2"}, {"id": "3", "name": "name_3"}, \
+{"id": "4", "name": "name_4"}]}'
 expected_base_show_xml = '<Account><id>1</id><name>name_1</name></Account>'
-expected_base_detail_xml = '<accounts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Account><id>1</id><name>name_1</name></Account><Account><id>2</id><name>name_2</name></Account><Account><id>3</id><name>name_3</name></Account><Account><id>4</id><name>name_4</name></Account></accounts>'
+expected_base_detail_xml = '<accounts \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><Account>\
+<id>1</id><name>name_1</name></Account><Account><id>2</id><name>name_2</name>\
+</Account><Account><id>3</id><name>name_3</name></Account><Account>\
+<id>4</id><name>name_4</name></Account></accounts>'
 
 
 class BaseControllerTest(unittest.TestCase):
@@ -54,79 +133,72 @@ class BaseControllerTest(unittest.TestCase):
         request = webob.Request.blank('/v2.0/accounts.json',
                                       base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = self.controller._index(request,
-                                      [FakeModel(str(x)) for x in range(1, 5)],
-                                      [{'rel': 'next', 'href': 'http://marker'},
-                                       {'rel': 'previous',
-                                       'href': 'http://marker'},
-                                       ])
+        resp = self.controller._index(
+            request,
+            [FakeModel(str(x)) for x in range(1, 5)],
+            [{'rel': 'next', 'href': 'http://marker'},
+             {'rel': 'previous', 'href': 'http://marker'}, ])
         self.assertEquals(expected_index_json, resp.body)
 
     def test__index_fields_json(self):
         request = webob.Request.blank('/v2.0/accounts.json?fields=id',
                                       base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = self.controller._index(request,
-                                      [FakeModel(str(x)) for x in range(1, 5)],
-                                      [{'rel': 'next', 'href': 'http://marker'},
-                                       {'rel': 'previous',
-                                       'href': 'http://marker'},
-                                       ])
+        resp = self.controller._index(
+            request,
+            [FakeModel(str(x)) for x in range(1, 5)],
+            [{'rel': 'next', 'href': 'http://marker'},
+             {'rel': 'previous', 'href': 'http://marker'}, ])
         self.assertEquals(expected_index_fields_json, resp.body)
 
     def test__index_xml(self):
         request = webob.Request.blank('/v2.0/accounts.xml',
                                       base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = self.controller._index(request,
-                                      [FakeModel(str(x)) for x in range(1, 5)],
-                                      [{'rel': 'next', 'href': 'http://marker'},
-                                       {'rel': 'previous',
-                                       'href': 'http://marker'},
-                                       ])
+        resp = self.controller._index(
+            request,
+            [FakeModel(str(x)) for x in range(1, 5)],
+            [{'rel': 'next', 'href': 'http://marker'},
+             {'rel': 'previous', 'href': 'http://marker'}, ])
         self.assertEquals(expected_index_xml, resp.body)
 
     def test__index_fields_xml(self):
         request = webob.Request.blank('/v2.0/accounts.xml?fields=id',
                                       base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = self.controller._index(request,
-                                      [FakeModel(str(x)) for x in range(1, 5)],
-                                      [{'rel': 'next', 'href': 'http://marker'},
-                                       {'rel': 'previous',
-                                       'href': 'http://marker'},
-                                       ])
+        resp = self.controller._index(
+            request,
+            [FakeModel(str(x)) for x in range(1, 5)],
+            [{'rel': 'next', 'href': 'http://marker'},
+             {'rel': 'previous', 'href': 'http://marker'}, ])
         self.assertEquals(expected_index_fields_xml, resp.body)
 
     def test__detail_json(self):
         request = webob.Request.blank('/v2.0/accounts/detail',
                                       base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = self.controller._detail(request,
-                                       [FakeModel(
-                                           str(x)) for x in range(1, 5)],
-                                       [{'rel': 'next', 'href': 'http://marker'},
-                                        {'rel': 'previous',
-                                         'href': 'http://marker'},
-                                        ])
+        resp = self.controller._detail(
+            request,
+            [FakeModel(str(x)) for x in range(1, 5)],
+            [{'rel': 'next', 'href': 'http://marker'},
+             {'rel': 'previous', 'href': 'http://marker'}, ])
         self.assertEqual(resp.body, expected_detail_json)
 
     def test__detail_xml(self):
         request = webob.Request.blank('/v2.0/accounts/detail.xml',
                                       base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
-        resp = self.controller._detail(request,
-                                       [FakeModel(
-                                           str(x)) for x in range(1, 5)],
-                                       [{'rel': 'next', 'href': 'http://marker'},
-                                        {'rel': 'previous',
-                                         'href': 'http://marker'},
-                                        ])
+        resp = self.controller._detail(
+            request,
+            [FakeModel(str(x)) for x in range(1, 5)],
+            [{'rel': 'next', 'href': 'http://marker'},
+             {'rel': 'previous', 'href': 'http://marker'}, ])
         self.assertEqual(resp.body, expected_detail_xml)
 
     def test_search_options_changes_since(self):
         request = webob.Request.blank(
-            '/v2.0/accounts/detail?changes-since=2012-05-10T00:00:00&deleted=false',
+            '/v2.0/accounts/detail?changes-since=\
+2012-05-10T00:00:00&deleted=false',
             base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller.get_search_options(request, VmHost)
@@ -141,7 +213,8 @@ class BaseControllerTest(unittest.TestCase):
 
     def test_search_options_composite(self):
         request = webob.Request.blank(
-            '/v2.0/accounts/detail?name=SRS&name=SRS111&os=windows&virtualizationType=QEMU',
+            '/v2.0/accounts/detail?name=\
+SRS&name=SRS111&os=windows&virtualizationType=QEMU',
             base_url='http://localhost:8774/v2.0/')
         request.environ['nova.context'] = self.admin_context
         resp = self.controller.get_search_options(request, VmHost)

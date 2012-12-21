@@ -111,7 +111,8 @@ class test_LibvirtEvents(unittest.TestCase):
         self.mock.VerifyAll()
 
     def test_domain_event_callback(self):
-        libvirt_event_monitor.pool_for_processing_updated_vm = eventlet.greenpool.GreenPool(200)
+        libvirt_event_monitor.pool_for_processing_updated_vm =\
+            eventlet.greenpool.GreenPool(200)
         self.mock.StubOutWithMock(
             libvirt_event_monitor.pool_for_processing_updated_vm, 'spawn_n')
         libvirt_event_monitor.pool_for_processing_updated_vm.spawn_n(

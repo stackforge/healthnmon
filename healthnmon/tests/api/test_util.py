@@ -83,17 +83,21 @@ class UtilTest(unittest.TestCase):
                     </parent>
                     </Vm>"""
 
-        expected_out_xml = \
-            '<Vm><outer><a><storage><id>33</id><name>ESA</name></storage></a></outer>\
-       <storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="88">\
-       <atom:link href="http://localhost/v2.0/storage/88" rel="self"/><atom:link href="http://localhost/storage/88" rel="bookmark"/>\
-       </storagevolume>\
-       <storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="89">\
-       <atom:link href="http://localhost/v2.0/storage/89" rel="self"/><atom:link href="http://localhost/storage/89" rel="bookmark"/>\
-       </storagevolume>\
-       <person xmlns:atom="http://www.w3.org/2005/Atom" name="testname" type="human" id="89">\
-       <atom:link href="http://localhost/v2.0/people/89" rel="self"/><atom:link href="http://localhost/people/89" rel="bookmark"/>\
-       </person></Vm>'
+        expected_out_xml = '<Vm><outer><a><storage><id>33</id>\
+<name>ESA</name></storage></a></outer>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="88">\
+<atom:link href="http://localhost/v2.0/storage/88" rel="self"/>\
+<atom:link href="http://localhost/storage/88" rel="bookmark"/>\
+</storagevolume>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="89">\
+<atom:link href="http://localhost/v2.0/storage/89" rel="self"/>\
+<atom:link href="http://localhost/storage/89" rel="bookmark"/>\
+</storagevolume>\
+<person xmlns:atom="http://www.w3.org/2005/Atom" \
+name="testname" type="human" id="89">\
+<atom:link href="http://localhost/v2.0/people/89" rel="self"/>\
+<atom:link href="http://localhost/people/89" rel="bookmark"/>\
+</person></Vm>'
 
         dict_tag_props = [{
             'tag': 'storageVolumeId',
@@ -126,17 +130,31 @@ class UtilTest(unittest.TestCase):
         #        print element.toxml('utf-8')
 
     def test_xml_to_dict_with_collections(self):
-        input_xml = '<Vm><outer><a><storage><id>33</id><name>ESA</name></storage></a></outer>\
-        <storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="88">\
-        <atom:link href="http://localhost/v2.0/storage/88" rel="self"/><atom:link href="http://localhost/storage/88" rel="bookmark"/>\
-        </storagevolume>\
-        <storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="89">\
-        <atom:link href="http://localhost/v2.0/storage/89" rel="self"/><atom:link href="http://localhost/storage/89" rel="bookmark"/>\
-        </storagevolume>\
-        <person xmlns:atom="http://www.w3.org/2005/Atom" name="testname" type="human" id="89">\
-        <atom:link href="http://localhost/v2.0/people/89" rel="self"/><atom:link href="http://localhost/people/89" rel="bookmark"/>\
-        </person></Vm>'
-        expected_json = '{"person": {"links": [{"href": "http://localhost/v2.0/people/89", "rel": "self"}, {"href": "http://localhost/people/89", "rel": "bookmark"}]}, "outer": {"a": {"storage": {"id": "33", "name": "ESA"}}}, "storagevolumes": [{"id": "88", "links": [{"href": "http://localhost/v2.0/storage/88", "rel": "self"}, {"href": "http://localhost/storage/88", "rel": "bookmark"}]}, {"id": "89", "links": [{"href": "http://localhost/v2.0/storage/89", "rel": "self"}, {"href": "http://localhost/storage/89", "rel": "bookmark"}]}]}'
+        input_xml = '<Vm><outer><a><storage><id>33</id>\
+<name>ESA</name></storage></a></outer>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="88">\
+<atom:link href="http://localhost/v2.0/storage/88" rel="self"/>\
+<atom:link href="http://localhost/storage/88" rel="bookmark"/>\
+</storagevolume>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="89">\
+<atom:link href="http://localhost/v2.0/storage/89" rel="self"/>\
+<atom:link href="http://localhost/storage/89" rel="bookmark"/>\
+</storagevolume>\
+<person xmlns:atom="http://www.w3.org/2005/Atom" \
+name="testname" type="human" id="89">\
+<atom:link href="http://localhost/v2.0/people/89" \
+rel="self"/><atom:link href="http://localhost/people/89" rel="bookmark"/>\
+</person></Vm>'
+        expected_json = '{"person": {"links": [{"href": \
+"http://localhost/v2.0/people/89", "rel": "self"}, {"href": \
+"http://localhost/people/89", "rel": "bookmark"}]}, \
+"outer": {"a": {"storage": {"id": "33", "name": "ESA"}}}, \
+"storagevolumes": [{"id": "88", "links": [{"href": \
+"http://localhost/v2.0/storage/88", "rel": "self"}, {"href": \
+"http://localhost/storage/88", "rel": "bookmark"}]}, \
+{"id": "89", "links": [{"href": "http://localhost/v2.0/storage/89", \
+"rel": "self"}, {"href": "http://localhost/storage/89", \
+"rel": "bookmark"}]}]}'
         self.assertEquals(
             json.dumps(util.xml_to_dict(input_xml)), expected_json)
 
@@ -406,15 +424,20 @@ xmlns:atom="http://www.w3.org/2005/Atom"><b:entity type="" id="0">\
                           '<outer xmlns="http://space/noprefix">\
 <a><sub>32</sub></a><c>32</c></outer>'
                           )
-        self.assertEquals(util.get_select_elements_xml(input_xml, ['c'], 'b'),
-                          '<outer xmlns="http://space/noprefix"><b>83</b><c>32</c></outer>')
+        self.assertEquals(
+            util.get_select_elements_xml(input_xml, ['c'], 'b'),
+            '<outer xmlns="http://space/noprefix"><b>83</b><c>32</c></outer>')
         prefix_xml = \
             '<p:Vm xmlns:p="http://localhost/prefix"><p:outer><p:a><p:storage>\
 <p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a></p:outer>\
 <p:storageVolumeId>88</p:storageVolumeId>\
 <p:storageVolumeId>89</p:storageVolumeId></p:Vm>'
         self.assertEquals(
-            '<p:Vm xmlns:p="http://localhost/prefix"><p:storageVolumeId>88</p:storageVolumeId><p:storageVolumeId>89</p:storageVolumeId><p:outer><p:a><p:storage><p:id>33</p:id><p:name>ESA</p:name></p:storage></p:a></p:outer></p:Vm>',
+            '<p:Vm xmlns:p="http://localhost/prefix">\
+<p:storageVolumeId>88</p:storageVolumeId>\
+<p:storageVolumeId>89</p:storageVolumeId>\
+<p:outer><p:a><p:storage><p:id>33</p:id>\
+<p:name>ESA</p:name></p:storage></p:a></p:outer></p:Vm>',
             util.get_select_elements_xml(prefix_xml,
                                          ['outer'], 'storageVolumeId'))
 

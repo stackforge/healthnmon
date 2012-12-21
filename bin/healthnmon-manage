@@ -90,7 +90,9 @@ class SSHCommands(object):
         service_records = db_api.service_get_all_by_host(
             context.get_admin_context(), hostname)
         if len(service_records) == 0:
-            print _("Unable to find the host '%s' in the list of compute nodes. For a list of known compute nodes try 'nova-manage service list'" % (hostname))
+            print _("Unable to find the host '%s' in the list of \
+            compute nodes. For a list of known compute nodes try \
+            'nova-manage service list'" % (hostname))
             return
 
         remoteuser = str(user) + "@" + str(hostname)
@@ -110,7 +112,11 @@ class ProfileCommands(object):
           help='module name for which CPU profiler decorator is applied')
     @args('--decorator', dest='decorator', metavar='<decorator>',
           help='CPU profiler decorator name')
-    def cputime(self, state, module, decorator='healthnmon.profiler.profile_cpu.profile_cputime_decorator'):
+    def cputime(self,
+                state,
+                module,
+                decorator='healthnmon.profiler.\
+                profile_cpu.profile_cputime_decorator'):
         """enables/disables decorator to profile CPU in healthnmon """
         if module is None:
             print _("Specify module name for profiling cpu time")
@@ -121,7 +127,8 @@ class ProfileCommands(object):
         elif state == 'enable':
             status = True
         else:
-            print _("Wrong arguments supplied. Possible arguments are enable/disable")
+            print _("Wrong arguments supplied. \
+            Possible arguments are enable/disable")
             return
 
         result = rpc.call(context.get_admin_context(),
@@ -134,12 +141,16 @@ class ProfileCommands(object):
     @args('--state', dest='state', metavar='<state>',
           help='Whether to enable/disable memory profile')
     @args('--method', dest='method', metavar='<method>',
-          help='method name for which memory profiler decorator need to be applied')
+          help='method name for which memory profiler \
+          decorator need to be applied')
     @args('--setref', dest='setref', action="store_true", default=False,
-          help='Whether to Set reference for enabling relative memory profling')
+          help='Whether to Set reference for enabling \
+          relative memory profling')
     @args('--decorator', dest='decorator', metavar='<decorator>',
           help='memory profiler decorator name')
-    def memory(self, state, method, decorator='healthnmon.profiler.profile_mem.profile_memory_decorator', setref=False):
+    def memory(self, state, method,
+               decorator='healthnmon.profiler.profile_mem.\
+               profile_memory_decorator', setref=False):
         """enables/disables decorator to profile memory in healthnmon """
         if method is None:
             print _("Specify method name for profiling memory")
@@ -150,7 +161,8 @@ class ProfileCommands(object):
         elif state == 'enable':
             status = True
         else:
-            print _("Wrong arguments supplied. Possible arguments are enable/disable")
+            print _("Wrong arguments supplied. Possible \
+            arguments are enable/disable")
             return
 
         result = rpc.call(context.get_admin_context(),

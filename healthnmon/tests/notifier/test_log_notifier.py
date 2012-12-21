@@ -15,7 +15,6 @@
 #    under the License.
 
 from nova import test
-from healthnmon.notifier import api
 import healthnmon.notifier.log_notifier
 from nova.openstack.common import context
 

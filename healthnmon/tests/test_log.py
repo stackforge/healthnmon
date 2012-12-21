@@ -42,15 +42,16 @@ class HealthnmonLoggerTestCase(test.TestCase):
     def setUp(self):
         super(HealthnmonLoggerTestCase, self).setUp()
 
-        self.flags(logging_greenthread_format_string="GTHREAD ID | "
-                                                     "%(levelname)s | "
-                                                     "%(gthread_id)d | "
-                                                     "%(message)s",
-                   logging_thread_format_string="THREAD ID | "
-                                                "%(thread)d | "
-                                                "%(message)s",
-                   healthnmon_log_config=self.log_config_file_path,
-                   healthnmon_manage_log_config=self.manage_log_config_file_path)
+        self.flags(
+            logging_greenthread_format_string="GTHREAD ID | "
+                                              "%(levelname)s | "
+                                              "%(gthread_id)d | "
+                                              "%(message)s",
+            logging_thread_format_string="THREAD ID | "
+                                         "%(thread)d | "
+                                         "%(message)s",
+            healthnmon_log_config=self.log_config_file_path,
+            healthnmon_manage_log_config=self.manage_log_config_file_path)
 
         logdir = 'healthnmon'
         if not os.path.exists(logdir):
@@ -177,7 +178,10 @@ class HealthnmonFormatterTestCase(test.TestCase):
             raise Exception('This is exceptional')
         except Exception as ex:
             exc_info = sys.exc_info()
-            logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, exc_info)
+            logrecord = logging.LogRecord(
+                'healthnmon', 10,
+                '/root/git/healthnmon/healthnmon/log.py',
+                117, 'foo', None, exc_info)
             logrecord.asctime = time.time()
             logrecord.instance = exc_info
             result = formatter.format(logrecord)
@@ -190,7 +194,10 @@ class HealthnmonFormatterTestCase(test.TestCase):
             raise Exception('This is exceptional')
         except Exception as ex:
             exc_info = sys.exc_info()
-            logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, exc_info)
+            logrecord = logging.LogRecord(
+                'healthnmon', 10,
+                '/root/git/healthnmon/healthnmon/log.py',
+                117, 'foo', None, exc_info)
             result = formatter.formatException(exc_info, logrecord)
             self.assert_(True)
 
@@ -201,7 +208,10 @@ class HealthnmonFormatterTestCase(test.TestCase):
             raise Exception('This is exceptional')
         except Exception as ex:
             exc_info = sys.exc_info()
-            logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, exc_info)
+            logrecord = logging.LogRecord(
+                'healthnmon', 10,
+                '/root/git/healthnmon/healthnmon/log.py',
+                117, 'foo', None, exc_info)
             logrecord.gthread_id = 10500
             result = formatter.formatException(exc_info, logrecord)
             self.assert_(True)
@@ -220,7 +230,15 @@ class HealthnmonFormatterTestCase(test.TestCase):
         self.mox.StubOutWithMock(self.log.logger, 'makeRecord')
         logrecord = logging.LogRecord(
             'healthnmon', 10, None, 117, 'foo', None, None, None)
-        self.log.logger.makeRecord(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg()).AndReturn(logrecord)
+        self.log.logger.makeRecord(mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg(),
+                                   mox.IgnoreArg()).AndReturn(logrecord)
         self.mox.ReplayAll()
 
         self.log.debug("foo")
@@ -248,18 +266,24 @@ class HealthnmonAuditFormatterTestCase(test.TestCase):
         self.log.logger.removeHandler(self.handler)
         super(HealthnmonAuditFormatterTestCase, self).tearDown()
 
-    def test_log_healthnmon_audit_formatter_format_without_optional_values(self):
+    def test_log_audit_formatter_format_without_optional_values(self):
         formatter = HealthnmonAuditFormatter()
 
-        logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, None)
+        logrecord = logging.LogRecord(
+            'healthnmon', 10,
+            '/root/git/healthnmon/healthnmon/log.py',
+            117, 'foo', None, None)
         logrecord.asctime = time.time()
         result = formatter.format(logrecord)
         self.assert_(True)
 
-    def test_log_healthnmon_audit_formatter_format_with_optional_values(self):
+    def test_log_audit_formatter_format_with_optional_values(self):
         formatter = HealthnmonAuditFormatter()
 
-        logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, None)
+        logrecord = logging.LogRecord(
+            'healthnmon', 10,
+            '/root/git/healthnmon/healthnmon/log.py',
+            117, 'foo', None, None)
         logrecord.componentId = "Healthnmon"
         logrecord.orgId = "TestOrgId"
         logrecord.domain = "TestDomain"
@@ -283,7 +307,10 @@ class HealthnmonAuditFormatterTestCase(test.TestCase):
             raise Exception('This is exceptional')
         except Exception as ex:
             exc_info = sys.exc_info()
-            logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, exc_info)
+            logrecord = logging.LogRecord(
+                'healthnmon', 10,
+                '/root/git/healthnmon/healthnmon/log.py',
+                117, 'foo', None, exc_info)
             logrecord.asctime = time.time()
             logrecord.instance = exc_info
             result = formatter.format(logrecord)
@@ -314,7 +341,10 @@ class HealthnmonAuditFilterTestCase(test.TestCase):
     def test_log_healthnmon_audit_filter_for_audit_log(self):
         filter = HealthnmonAuditFilter()
 
-        logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, None)
+        logrecord = logging.LogRecord(
+            'healthnmon', 10,
+            '/root/git/healthnmon/healthnmon/log.py',
+            117, 'foo', None, None)
         logrecord.objectDescription = "TestDescription"
         logrecord.asctime = time.time()
         logrecord.levelno = logging.AUDIT
@@ -324,7 +354,10 @@ class HealthnmonAuditFilterTestCase(test.TestCase):
     def test_log_healthnmon_audit_filter_for_nonaudit_log(self):
         filter = HealthnmonAuditFilter()
 
-        logrecord = logging.LogRecord('healthnmon', 10, '/root/git/healthnmon/healthnmon/log.py', 117, 'foo', None, None)
+        logrecord = logging.LogRecord(
+            'healthnmon', 10,
+            '/root/git/healthnmon/healthnmon/log.py',
+            117, 'foo', None, None)
         logrecord.objectDescription = "TestDescription"
         logrecord.asctime = time.time()
         logrecord.levelno = logging.INFO

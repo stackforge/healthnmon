@@ -19,14 +19,16 @@
 This module will be used by generateDs to add
 SQLAlchemy reconstructor methods to generated model classes.
 All the fields in model classes may not have a alchemy mapping
-The reconstructor method will add unmapped fields to the SQLAlchemy constructed objects.
+The reconstructor method will add unmapped fields
+to the SQLAlchemy constructed objects.
 
 """
 
 import re
 
 # MethodSpec class used by generateDs.
-# See http://www.rexx.com/~dkuhlman/generateDS.html#user-methods for more details.
+# See http://www.rexx.com/~dkuhlman/generateDS.html#user-methods
+# for more details.
 
 
 class MethodSpec(object):
@@ -115,7 +117,8 @@ class MethodSpec(object):
 
 
 #
-# Method specification for getting the member details of the class hierarchy recursively
+# Method specification for getting the member
+# details of the class hierarchy recursively
 #
 
 getallmems_method_spec = MethodSpec(name='get_all_members',
@@ -127,7 +130,7 @@ getallmems_method_spec = MethodSpec(name='get_all_members',
             member_items.update(%(class_name)s.superclass.get_all_members())
         return member_items
 ''',
-                                    class_names=r'^.*$')  # Attach to all classes
+                                    class_names=r'^.*$')
 
 # Method specification for adding reconstructor method
 
@@ -158,7 +161,8 @@ recon_method_spec = MethodSpec(name='init_loader',
 
 #
 # Provide a list of method specifications.
-# As per generateDs framework this list of specifications must be named METHOD_SPECS.
+# As per generateDs framework this list of specifications
+# must be named METHOD_SPECS.
 #
 
 METHOD_SPECS = (getallmems_method_spec, recon_method_spec)

@@ -137,7 +137,7 @@ function run_pep8 {
   #     other than what the PEP8 tool claims. It is deprecated in Python 3, so,
   #     perhaps the mistake was thinking that the deprecation applied to Python 2
   #     as well.
-  pep8_opts="--ignore=W602,E501,E712 --exclude=healthnmonResourceModel.py,libvirt_inventorymonitor.py --repeat"
+  pep8_opts="--ignore=W602,E712 --exclude=healthnmonResourceModel.py,.venv,.tox,dist,doc,openstack --repeat"
   ${wrapper} pep8 ${pep8_opts} ${srcfiles} | tee pep8.txt > /dev/null
 }
 

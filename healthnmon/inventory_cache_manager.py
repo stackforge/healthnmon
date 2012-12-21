@@ -60,17 +60,17 @@ class InventoryCacheManager(object):
         LOG.debug(_(' Entering into update_object_in_cache for uuid %s')
                   % uuid)
         if isinstance(obj, VmHost):
-            InventoryCacheManager.get_inventory_cache()[Constants.VmHost][uuid] = \
-                obj
+            InventoryCacheManager.get_inventory_cache()[
+                Constants.VmHost][uuid] = obj
         elif isinstance(obj, Vm):
-            InventoryCacheManager.get_inventory_cache(
-            )[Constants.Vm][uuid] = obj
+            InventoryCacheManager.get_inventory_cache()[
+                Constants.Vm][uuid] = obj
         elif isinstance(obj, StorageVolume):
-            InventoryCacheManager.get_inventory_cache()[Constants.StorageVolume][uuid] = \
-                obj
+            InventoryCacheManager.get_inventory_cache()[
+                Constants.StorageVolume][uuid] = obj
         elif isinstance(obj, Subnet):
-            InventoryCacheManager.get_inventory_cache()[Constants.Network][uuid] = \
-                obj
+            InventoryCacheManager.get_inventory_cache()[
+                Constants.Network][uuid] = obj
         LOG.debug(_(' Exiting from update_object_in_cache for uuid %s')
                   % uuid)
 
@@ -86,7 +86,8 @@ class InventoryCacheManager(object):
     @staticmethod
     def get_compute_inventory(compute_id):
         if compute_id in InventoryCacheManager.get_all_compute_inventory():
-            return InventoryCacheManager.get_all_compute_inventory().get(compute_id)
+            return InventoryCacheManager.\
+                get_all_compute_inventory().get(compute_id)
 
     @staticmethod
     def get_compute_conn_driver(uuid, obj_type):
@@ -97,9 +98,11 @@ class InventoryCacheManager(object):
             compute_id = inv_obj.get_id()
         elif obj_type == Constants.Vm:
             host_id = inv_obj.get_vmHostId()
-            compute_id = InventoryCacheManager.get_object_from_cache(host_id,
-                                                                     Constants.VmHost).get_id()
+            compute_id = InventoryCacheManager.get_object_from_cache(
+                host_id,
+                Constants.VmHost).get_id()
 
         compute_inv = InventoryCacheManager.get_compute_inventory(compute_id)
         if compute_inv is not None:
-            return InventoryCacheManager.get_compute_inventory(compute_id).get_compute_conn_driver()
+            return InventoryCacheManager.get_compute_inventory(
+                compute_id).get_compute_conn_driver()

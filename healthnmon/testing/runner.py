@@ -175,9 +175,10 @@ class _Win32Colorizer(object):
             return False
         import pywintypes
         try:
-            screenBuffer.SetConsoleTextAttribute(win32console.FOREGROUND_RED
-                                                 | win32console.FOREGROUND_GREEN
-                                                 | win32console.FOREGROUND_BLUE)
+            screenBuffer.SetConsoleTextAttribute(
+                win32console.FOREGROUND_RED
+                | win32console.FOREGROUND_GREEN
+                | win32console.FOREGROUND_BLUE)
         except pywintypes.error:
             return False
         else:

@@ -24,7 +24,6 @@ import logging.handlers
 import cStringIO
 import traceback
 from nova.openstack.common import cfg
-from nova.openstack.common import cfg
 from eventlet import greenthread
 
 
@@ -39,16 +38,22 @@ log_opts = [
                default='/etc/healthnmon/logging-healthnmon-manage.conf',
                help='Log configuration file for healthnmon'),
     cfg.StrOpt('healthnmon_logging_audit_format_string',
-               default='%(asctime)s,%(componentId)s,%(orgId)s,%(orgId)s,%(domain)s,%(userId)s,%(loggingId)s,%(taskId)s,%(sourceIp)s,%(result)s,%(action)s,%(severity)s,%(name)s,%(objectDescription)s,%(message)s',
+               default='%(asctime)s,%(componentId)s,%(orgId)s,%(orgId)s,\
+               %(domain)s,%(userId)s,%(loggingId)s,%(taskId)s,%(sourceIp)s,\
+               %(result)s,%(action)s,%(severity)s,%(name)s,\
+               %(objectDescription)s,%(message)s',
                help='format string to use for logging audit log messages'),
     cfg.StrOpt('logging_greenthread_format_string',
-               default='%(asctime)s | %(levelname)s | %(name)s | %(gthread_id)d | '
+               default='%(asctime)s | %(levelname)s | \
+               %(name)s | %(gthread_id)d | '
                        '%(message)s',
-               help='format string to use for log messages with green thread id'),
+               help='format string to use for log messages \
+               with green thread id'),
     cfg.StrOpt('logging_thread_format_string',
                default='%(asctime)s | %(levelname)s | %(name)s | %(thread)d | '
                        '%(message)s',
-               help='format string to use for log messages with green thread id'),
+               help='format string to use for log messages \
+               with green thread id'),
     cfg.StrOpt('logging_greenthread_exception_prefix',
                default='%(asctime)s | TRACE | %(name)s | %(gthread_id)d | ',
                help='prefix each line of exception output with this format'),
@@ -112,7 +117,8 @@ class HealthnmonFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
     def formatException(self, exc_info, record=None):
-        """Format exception output with CONF.healthnmon_logging_exception_prefix."""
+        """Format exception output with
+        CONF.healthnmon_logging_exception_prefix."""
         if not record:
             return logging.Formatter.formatException(self, exc_info)
         stringbuffer = cStringIO.StringIO()

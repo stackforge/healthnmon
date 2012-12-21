@@ -22,7 +22,8 @@ from nova.openstack.common import cfg
 from nova.openstack.common import timeutils
 from healthnmon import log
 
-# including instances_path defined in nova.compute.manager in order to create nova-storage-pool
+# including instances_path defined in nova.compute.manager
+#in order to create nova-storage-pool
 CONF = cfg.CONF
 CONF.import_opt('instances_path', 'nova.compute.manager')
 LOG = log.getLogger(__name__)
@@ -45,7 +46,8 @@ def is_service_alive(updated_at, created_at):
 
 class XMLUtils:
 
-    ''' Utils class to do extract the attributes and values out of the libvirt XML '''
+    ''' Utils class to do extract the attributes and
+    values out of the libvirt XML '''
 
     def __init__(self):
         pass
@@ -62,7 +64,8 @@ class XMLUtils:
         node_list = []
         try:
             root = etree.fromstring(xml,
-                                    parser=etree.XMLParser(remove_blank_text=True))
+                                    parser=etree.XMLParser(
+                                        remove_blank_text=True))
             nodes = root.xpath(
                 path, smart_strings=False, namespaces=namespaces)
             if nodes is None or len(nodes) == 0:
@@ -83,8 +86,9 @@ class XMLUtils:
         all_matches=False,
         namespaces=None
     ):
-        """ Fetches the attribute from the first element matched. If all_matches
-        is enabled, gets a list of attribute values for all elements matched.
+        """ Fetches the attribute from the first element matched.
+        If all_matches is enabled, gets a list of attribute values
+        for all elements matched.
         When all_matches is False, if first element matched doesn't
         contain the attribute, returns None.
             if xml uses namespaces, corresponding prefix mapping needs to
@@ -95,7 +99,8 @@ class XMLUtils:
         """
         try:
             root = etree.fromstring(xml,
-                                    parser=etree.XMLParser(remove_blank_text=True))
+                                    parser=etree.XMLParser(
+                                        remove_blank_text=True))
             nodes = root.xpath(
                 path, smart_strings=False, namespaces=namespaces)
             if (nodes is not None) and (len(nodes) > 0):
@@ -121,7 +126,8 @@ class XMLUtils:
         node_list = []
         try:
             root = etree.fromstring(xml,
-                                    parser=etree.XMLParser(remove_blank_text=True))
+                                    parser=etree.XMLParser(
+                                        remove_blank_text=True))
             nodes = root.xpath(
                 path, smart_strings=False, namespaces=namespaces)
             if len(nodes) == 0:
@@ -137,7 +143,8 @@ class XMLUtils:
 
             Returns: A two element tuple.
                 First element : True if there is a change else False
-                Second element : None if the objects are same. Else a dictionary of differences
+                Second element : None if the objects are same.
+                Else a dictionary of differences
         """
 
         if oldObject is None:

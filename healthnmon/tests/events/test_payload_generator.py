@@ -34,8 +34,10 @@ class EventMetadataTest(test.TestCase):
 
     def testPayloadGenerator(self):
         metadata = event_metadata.EventMetaData('TestEvent',
-                                                'TestCategory', 'Short Description %(name)s',
-                                                'Long Description %(name)s', notifier.api.INFO)
+                                                'TestCategory',
+                                                'Short Description %(name)s',
+                                                'Long Description %(name)s',
+                                                notifier.api.INFO)
         obj = Entity()
         obj.name = 'TestName'
         payload = payload_generator.generate_payload(metadata, obj)
@@ -102,8 +104,9 @@ class EventMetadataTest(test.TestCase):
         obj.add_storageVolumeIds("storage_id")
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
-        InventoryCacheManager.get_object_from_cache(storage_obj.id,
-                                                    Constants.StorageVolume).AndReturn(storage_obj)
+        InventoryCacheManager.get_object_from_cache(
+            storage_obj.id,
+            Constants.StorageVolume).AndReturn(storage_obj)
         self.mox.ReplayAll()
         payload = payload_generator.generate_payload(metadata, obj)
         self.assertEquals(payload['entity_type'],

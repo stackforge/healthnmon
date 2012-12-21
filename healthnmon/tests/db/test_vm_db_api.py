@@ -71,7 +71,9 @@ class VmDbApiTestCase(test.TestCase):
         )) == 1, "vmScsiController len mismatch")
         self.assert_(vms[0].get_vmScsiControllers()[0].get_id(
         ) == vmScsiController.get_id(), "vmScsiController id mismatch")
-        self.assert_(vms[0].get_vmScsiControllers()[0].get_type() == vmScsiController.get_type(), "vmScsiController type mismatch")
+        self.assert_(vms[0].get_vmScsiControllers()[0].get_type() ==
+                     vmScsiController.get_type(),
+                     "vmScsiController type mismatch")
 
     def test_vm_save_update(self):
         '''
@@ -374,7 +376,8 @@ class VmDbApiTestCase(test.TestCase):
 
     def test_timestamp_columns(self):
         """
-            Test the time stamp columns createEpoch, modifiedEpoch and deletedEpoch
+            Test the time stamp columns createEpoch,
+            modifiedEpoch and deletedEpoch
         """
         vm = Vm()
         vm.set_id('VM1')
@@ -386,7 +389,9 @@ class VmDbApiTestCase(test.TestCase):
             self.admin_context, [vm.get_id()])[0]
         self.assert_(test_utils.is_timestamp_between(
             epoch_before, epoch_after, vm_queried.get_createEpoch()))
-        # Check for lastModifiedEpoch and createEpoch after adding VmGlobalSettings
+
+        # Check for lastModifiedEpoch and createEpoch
+        # after adding VmGlobalSettings
         vm_modified = vm_queried
         test_utils.unset_timestamp_fields(vm_modified)
         vmGlobalSettings = VmGlobalSettings()
@@ -403,7 +408,8 @@ class VmDbApiTestCase(test.TestCase):
         self.assert_(test_utils.is_timestamp_between(
             epoch_before, epoch_after, vm_queried.get_lastModifiedEpoch()))
         self.assert_(test_utils.is_timestamp_between(
-            epoch_before, epoch_after, vm_queried.get_vmGlobalSettings().get_createEpoch()))
+            epoch_before, epoch_after,
+            vm_queried.get_vmGlobalSettings().get_createEpoch()))
         # Check for lastModifiedEpoch after modifying vm
         vm_modified = vm_queried
         test_utils.unset_timestamp_fields(vm_modified)
@@ -416,7 +422,8 @@ class VmDbApiTestCase(test.TestCase):
         self.assert_(test_utils.is_timestamp_between(
             epoch_before, epoch_after, vm_queried.get_lastModifiedEpoch()))
         self.assert_(test_utils.is_timestamp_between(
-            epoch_before, epoch_after, vm_queried.get_vmGlobalSettings().get_lastModifiedEpoch()))
+            epoch_before, epoch_after,
+            vm_queried.get_vmGlobalSettings().get_lastModifiedEpoch()))
         self.assert_(
             vm_modified.get_createEpoch() == vm_queried.get_createEpoch())
         self.assert_(vm_modified.get_vmGlobalSettings().get_createEpoch() ==

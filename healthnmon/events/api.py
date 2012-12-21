@@ -31,11 +31,14 @@ LOG = log.getLogger('healthnmon.events.api')
 
 def notify(event_type, obj, **kwargs):
     """Generate event for a event type id
-    This API is used by the different healthnmon modules which need to generate event.
+    This API is used by the different healthnmon modules
+    which need to generate event.
 
             Parameters:
-                event_type - One of the event types declared in healthnmon.events.event_meta_data
-                obj - Vm, VmHost or StorageVolume object for which this event is to be generated
+                event_type - One of the event types declared
+                in healthnmon.events.event_meta_data
+                obj - Vm, VmHost or StorageVolume object
+                for which this event is to be generated
     """
 
     eventmetadata_obj = event_metadata.get_EventMetaData(event_type)
@@ -68,7 +71,8 @@ def notify(event_type, obj, **kwargs):
             publisher_id = scheduler_service_host + '.' + 'healthnmon'
     if publisher_id is None:
         publisher_id = 'healthnmon'
-        LOG.warn(_('Could not determine host name of nova scheduler service. Using default publisher id %s'
+        LOG.warn(_('Could not determine host name of nova scheduler service. \
+        Using default publisher id %s'
                    % publisher_id))
 
     # Send message to notifier api

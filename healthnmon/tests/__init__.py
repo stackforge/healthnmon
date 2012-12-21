@@ -20,7 +20,6 @@ setattr(__builtin__, '_', lambda x: x)
 
 from nova import test
 from nova.openstack.common import cfg
-from nova.openstack.common import cfg
 from healthnmon.db import migration as healthnmon_migration
 from nova.db import migration as nova_migration
 import os

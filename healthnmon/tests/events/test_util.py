@@ -30,24 +30,27 @@ class EventsUtilTest(test.TestCase):
     def testGetChangedAttributesForUpdateEventObjNone(self):
         obj = None
         resourcemodel_diff_res = None
-        res = events_util.getChangedAttributesForUpdateEvent(obj,
-                                                             resourcemodel_diff_res)
+        res = events_util.getChangedAttributesForUpdateEvent(
+            obj,
+            resourcemodel_diff_res)
         self.assertTrue(res is not None)
         self.assertTrue(len(res) == 0)
 
     def testGetChangedAttributesForUpdateEventDiffNone(self):
         obj = Vm()
         resourcemodel_diff_res = None
-        res = events_util.getChangedAttributesForUpdateEvent(obj,
-                                                             resourcemodel_diff_res)
+        res = events_util.getChangedAttributesForUpdateEvent(
+            obj,
+            resourcemodel_diff_res)
         self.assertTrue(res is not None)
         self.assertTrue(len(res) == 0)
 
     def testGetChangedAttributesForUpdateEventInvalidObj(self):
         obj = object()
         resourcemodel_diff_res = {}
-        res = events_util.getChangedAttributesForUpdateEvent(obj,
-                                                             resourcemodel_diff_res)
+        res = events_util.getChangedAttributesForUpdateEvent(
+            obj,
+            resourcemodel_diff_res)
         self.assertTrue(res is not None)
         self.assertTrue(len(res) == 0)
 
@@ -56,8 +59,9 @@ class EventsUtilTest(test.TestCase):
         resourcemodel_diff_res = {}
         resourcemodel_diff_res['_update'] = {'connectionState': None,
                                              'bootOrder': None}
-        res = events_util.getChangedAttributesForUpdateEvent(obj,
-                                                             resourcemodel_diff_res)
+        res = events_util.getChangedAttributesForUpdateEvent(
+            obj,
+            resourcemodel_diff_res)
         self.assertTrue(res is not None)
         self.assertTrue('connectionState' not in res)
         self.assertTrue('bootOrder' in res)

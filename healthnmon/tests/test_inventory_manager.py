@@ -135,14 +135,15 @@ class InventoryManagerTestCase(test.TestCase):
         compute = _create_Compute(compute_id='vmhost1')
         service = compute['service']
         rm_context = \
-            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'],
+                                       rmIpAddress=service['host'],
+                                       rmUserName='ubuntu164',
                                        rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'] = \
             ComputeInventory(rm_context)
 
-        InventoryCacheManager.get_all_compute_inventory()['vmhost1'
-                                                          ].get_compute_conn_driver()
+        InventoryCacheManager.get_all_compute_inventory()[
+            'vmhost1'].get_compute_conn_driver()
 
         im = self.inv_manager
 
@@ -161,14 +162,15 @@ class InventoryManagerTestCase(test.TestCase):
         compute = _create_Compute(compute_id='vmhost1')
         service = compute['service']
         rm_context = \
-            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'],
+                                       rmIpAddress=service['host'],
+                                       rmUserName='ubuntu164',
                                        rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'] = \
             ComputeInventory(rm_context)
 
-        InventoryCacheManager.get_all_compute_inventory()['vmhost1'
-                                                          ].get_compute_conn_driver()
+        InventoryCacheManager.get_all_compute_inventory()[
+            'vmhost1'].get_compute_conn_driver()
 
         im = self.inv_manager
 
@@ -192,7 +194,8 @@ class InventoryManagerTestCase(test.TestCase):
 
         self.mox.StubOutWithMock(ComputeInventory, 'update_inventory')
 
-        InventoryCacheManager.get_all_compute_inventory()['compute1'].update_inventory().AndRaise(Exception)
+        InventoryCacheManager.get_all_compute_inventory()[
+            'compute1'].update_inventory().AndRaise(Exception)
 
         self.mox.ReplayAll()
         im.update(None)
@@ -323,7 +326,6 @@ class InventoryManagerTestCase(test.TestCase):
         vmhost = InventoryCacheManager.get_object_from_cache('vmhost1',
                                                              Constants.VmHost)
         self.assertEquals(vmhost, None)
-        # self.assertEquals(len(self.inv_manager_cls._inventoryCache[Constants.VmHost]), 2)
         self.mox.UnsetStubs()
 
     def test_get_compute_list(self):
@@ -331,15 +333,16 @@ class InventoryManagerTestCase(test.TestCase):
         compute = _create_Compute(compute_id='compute1')
         service = compute['service']
         rm_context = \
-            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'],
+                                       rmIpAddress=service['host'],
+                                       rmUserName='ubuntu164',
                                        rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory().clear()
         InventoryCacheManager.get_all_compute_inventory()['compute1'] = \
             ComputeInventory(rm_context)
 
-        InventoryCacheManager.get_all_compute_inventory()['compute1'
-                                                          ].update_compute_info(rm_context, compute)
+        InventoryCacheManager.get_all_compute_inventory()[
+            'compute1'].update_compute_info(rm_context, compute)
         compute_info = self.inv_manager.get_compute_list()
         self.assertEquals(compute_info[0]['hypervisor_type'], 'fake')
         self.mox.UnsetStubs()
@@ -358,8 +361,9 @@ class InventoryManagerTestCase(test.TestCase):
         compute = _create_Compute(compute_id='vmhost1')
         service = compute['service']
         rm_context = \
-            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'
-                                                      ], rmIpAddress=service['host'], rmUserName='ubuntu164',
+            rmcontext.ComputeRMContext(rmType=compute['hypervisor_type'],
+                                       rmIpAddress=service['host'],
+                                       rmUserName='ubuntu164',
                                        rmPassword='password')
         InventoryCacheManager.get_all_compute_inventory()['vmhost1'] = \
             ComputeInventory(rm_context)
@@ -372,8 +376,9 @@ class InventoryManagerTestCase(test.TestCase):
 
         self.mox.StubOutWithMock(api, 'vm_host_delete_by_ids')
 
-        api.vm_host_delete_by_ids(mox.IgnoreArg(),
-                                  mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        api.vm_host_delete_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
         self.mox.StubOutWithMock(event_api, 'notify_host_update')
         event_api.notify_host_update(mox.IgnoreArg(), mox.IgnoreArg())

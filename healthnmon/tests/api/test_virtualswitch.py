@@ -34,8 +34,32 @@ from StringIO import StringIO
 class VirtualSwitchTest(unittest.TestCase):
 
     """ Tests for virtual switch extension """
-    expected_limited_detail_xml = '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><VirtualSwitch><id>virtual-switch-02</id><name>virtual-switch-02</name><switchType>type-02</switchType><subnet id="subnet-392"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-392" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-392" rel="bookmark"/></subnet></VirtualSwitch><atom:link href="http://localhost:8774/v2.0/virtualswitches?limit=1" rel="previous"/></virtualswitches>'
-    expected_detail_xml = '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><VirtualSwitch><id>virtual-switch-01</id><name>virtual-switch-01</name><switchType>type-01</switchType><subnet id="subnet-233"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-233" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-233" rel="bookmark"/></subnet><subnet id="subnet-03"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-03" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-03" rel="bookmark"/></subnet></VirtualSwitch><VirtualSwitch><id>virtual-switch-02</id><name>virtual-switch-02</name><switchType>type-02</switchType><subnet id="subnet-392"><atom:link href="http://localhost:8774/v2.0/subnets/subnet-392" rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-392" rel="bookmark"/></subnet></VirtualSwitch></virtualswitches>'
+    expected_limited_detail_xml = '<virtualswitches \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<VirtualSwitch><id>virtual-switch-02</id><name>virtual-switch-02</name>\
+<switchType>type-02</switchType><subnet id="subnet-392">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-392" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-392" rel="bookmark"/>\
+</subnet></VirtualSwitch>\
+<atom:link href="http://localhost:8774/v2.0/virtualswitches?limit=1" \
+rel="previous"/></virtualswitches>'
+    expected_detail_xml = '<virtualswitches \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<VirtualSwitch><id>virtual-switch-01</id><name>virtual-switch-01</name>\
+<switchType>type-01</switchType><subnet id="subnet-233">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-233" \
+rel="self"/><atom:link href="http://localhost:8774/subnets/subnet-233" \
+rel="bookmark"/></subnet><subnet id="subnet-03">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-03" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-03" rel="bookmark"/>\
+</subnet></VirtualSwitch><VirtualSwitch><id>virtual-switch-02</id>\
+<name>virtual-switch-02</name><switchType>type-02</switchType>\
+<subnet id="subnet-392"><atom:link \
+href="http://localhost:8774/v2.0/subnets/subnet-392" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-392" rel="bookmark"/>\
+</subnet></VirtualSwitch></virtualswitches>'
 
     def setUp(self):
         """ Setup initial mocks and logging configuration """
@@ -50,18 +74,25 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_virtual_switch_json(self):
-        expected_out_json = \
-            '{"virtualswitches": [{"id": "virtual-switch-01", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualswitches/virtual-switch-01", "rel": "bookmark"}], "name": "virtual-switch-01"}, \
-        {"id": "virtual-switch-02", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-02", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualswitches/virtual-switch-02", "rel": "bookmark"}], "name": "virtual-switch-02"}]}'
+        expected_out_json = '{"virtualswitches": [{"id": "virtual-switch-01", \
+"links": [{"href": \
+"http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", \
+"rel": "self"}, {"href": \
+"http://localhost:8774/virtualswitches/virtual-switch-01", \
+"rel": "bookmark"}], "name": "virtual-switch-01"}, \
+{"id": "virtual-switch-02", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-02", \
+"rel": "self"}, {"href": \
+"http://localhost:8774/virtualswitches/virtual-switch-02", \
+"rel": "bookmark"}], "name": "virtual-switch-02"}]}'
 
         virtual_switch_list = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches.json',
                                       base_url='http://localhost:8774/v2.0/')
@@ -75,22 +106,31 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_virtual_switch_xml(self):
-        expected_out_xml = \
-            '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
-        <virtualswitch id="virtual-switch-01" name="virtual-switch-01">\
-        <atom:link href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-01" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualswitches/virtual-switch-01" rel="bookmark"/>\
-        </virtualswitch><virtualswitch id="virtual-switch-02" name="virtual-switch-02">\
-        <atom:link href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-02" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualswitches/virtual-switch-02" rel="bookmark"/>\
-        </virtualswitch></virtualswitches>'
+        expected_out_xml = '<virtualswitches \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<virtualswitch id="virtual-switch-01" name="virtual-switch-01">\
+<atom:link \
+href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-01" \
+rel="self"/>\
+<atom:link href="http://localhost:8774/virtualswitches/virtual-switch-01" \
+rel="bookmark"/>\
+</virtualswitch><virtualswitch id="virtual-switch-02" \
+name="virtual-switch-02">\
+<atom:link \
+href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-02" \
+rel="self"/>\
+<atom:link href="http://localhost:8774/virtualswitches/virtual-switch-02" \
+rel="bookmark"/>\
+</virtualswitch></virtualswitches>'
 
         virtual_switch_list = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches.xml',
                                       base_url='http://localhost:8774/v2.0/')
@@ -104,22 +144,31 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_virtual_switch_xml_header(self):
-        expected_out_xml = \
-            '<virtualswitches xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
-        <virtualswitch id="virtual-switch-01" name="virtual-switch-01">\
-        <atom:link href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-01" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualswitches/virtual-switch-01" rel="bookmark"/>\
-        </virtualswitch><virtualswitch id="virtual-switch-02" name="virtual-switch-02">\
-        <atom:link href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-02" rel="self"/>\
-        <atom:link href="http://localhost:8774/virtualswitches/virtual-switch-02" rel="bookmark"/>\
-        </virtualswitch></virtualswitches>'
+        expected_out_xml = '<virtualswitches \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<virtualswitch id="virtual-switch-01" name="virtual-switch-01">\
+<atom:link \
+href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-01" \
+rel="self"/>\
+<atom:link href="http://localhost:8774/virtualswitches/virtual-switch-01" \
+rel="bookmark"/>\
+</virtualswitch><virtualswitch id="virtual-switch-02" \
+name="virtual-switch-02">\
+<atom:link \
+href="http://localhost:8774/v2.0/virtualswitches/virtual-switch-02" \
+rel="self"/>\
+<atom:link href="http://localhost:8774/virtualswitches/virtual-switch-02" \
+rel="bookmark"/>\
+</virtualswitch></virtualswitches>'
 
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switches)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virutalswitches',
                                       base_url='http://localhost:8774/v2.0/')
@@ -134,18 +183,25 @@ class VirtualSwitchTest(unittest.TestCase):
         self.mock.stubs.UnsetAll()
 
     def test_list_virtual_switch_json_header(self):
-        expected_out_json = \
-            '{"virtualswitches": [{"id": "virtual-switch-01", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", "rel": "self"}, \
-        {"href": "http://localhost:8774/virtualswitches/virtual-switch-01", "rel": "bookmark"}], "name": "virtual-switch-01"}, \
-        {"id": "virtual-switch-02", "links": [{"href": "http://localhost:8774/v2.0/virtualswitches/virtual-switch-02", "rel": "self"},\
-         {"href": "http://localhost:8774/virtualswitches/virtual-switch-02", "rel": "bookmark"}], "name": "virtual-switch-02"}]}'
+        expected_out_json = '{"virtualswitches": [{"id": "virtual-switch-01", \
+"links": [{"href": \
+"http://localhost:8774/v2.0/virtualswitches/virtual-switch-01", \
+"rel": "self"}, {"href": \
+"http://localhost:8774/virtualswitches/virtual-switch-01", \
+"rel": "bookmark"}], "name": "virtual-switch-01"}, \
+{"id": "virtual-switch-02", "links": [{"href": \
+"http://localhost:8774/v2.0/virtualswitches/virtual-switch-02", \
+"rel": "self"},{"href": \
+"http://localhost:8774/virtualswitches/virtual-switch-02", \
+"rel": "bookmark"}], "name": "virtual-switch-02"}]}'
 
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switches)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches',
                                       base_url='http://localhost:8774/v2.0/')
@@ -162,10 +218,11 @@ class VirtualSwitchTest(unittest.TestCase):
     def test_list_limited_virtual_switch_detail_xml(self):
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switches)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches/detail.xml?'
                                       'limit=1&marker=virtual-switch-01',
@@ -177,10 +234,11 @@ class VirtualSwitchTest(unittest.TestCase):
     def test_list_virtual_switch_detail_xml(self):
         virtual_switches = self.get_virtual_switch_list()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switches)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches/detail.xml',
                                       base_url='http://localhost:8774/v2.0/')
@@ -191,10 +249,11 @@ class VirtualSwitchTest(unittest.TestCase):
     def test_list_virtual_switch_detail_none_xml(self):
         virtual_switches = None
         self.mock.StubOutWithMock(api, 'virtual_switch_get_all_by_filters')
-        api.virtual_switch_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(virtual_switches)
+        api.virtual_switch_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switches)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/virtualswitches/detail.xml',
                                       base_url='http://localhost:8774/v2.0/')
@@ -217,17 +276,22 @@ class VirtualSwitchTest(unittest.TestCase):
                          'Return json string')
 
     def test_virtual_switch_details_json(self):
-        expected_out_json = \
-            '{"VirtualSwitch": {"subnets": [{"id": "subnet-3883", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-3883", "rel": "self"}, \
-        {"href": "http://localhost:8774/subnets/subnet-3883", "rel": "bookmark"}]}, \
-        {"id": "subnet-323", "links": [{"href": "http://localhost:8774/v2.0/subnets/subnet-323", "rel": "self"}, \
-        {"href": "http://localhost:8774/subnets/subnet-323", "rel": "bookmark"}]}], "id": "virtual-switch-01", "switchType": "dvSwitch", "name": "virtual-switch-01"}}'
+        expected_out_json = '{"VirtualSwitch": {"subnets": [{"id": \
+"subnet-3883", "links": [{"href": \
+"http://localhost:8774/v2.0/subnets/subnet-3883", "rel": "self"}, \
+{"href": "http://localhost:8774/subnets/subnet-3883", "rel": "bookmark"}]}, \
+{"id": "subnet-323", "links": [{"href": \
+"http://localhost:8774/v2.0/subnets/subnet-323", "rel": "self"}, \
+{"href": "http://localhost:8774/subnets/subnet-323", \
+"rel": "bookmark"}]}], "id": "virtual-switch-01", \
+"switchType": "dvSwitch", "name": "virtual-switch-01"}}'
 
         virtual_switch_list = self.get_single_virtual_switch()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
-        api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(
@@ -244,20 +308,23 @@ class VirtualSwitchTest(unittest.TestCase):
         self.compare_json(expected_out_json, resp.body)
 
     def test_virtual_switch_details_xml(self):
-        expected_out_xml = \
-            '<VirtualSwitch><id>virtual-switch-01</id><name>virtual-switch-01</name><switchType>dvSwitch</switchType>\
-        <subnet xmlns:atom="http://www.w3.org/2005/Atom" id="subnet-3883">\
-        <atom:link href="http://localhost:8774/v2.0/subnets/subnet-3883" rel="self"/>\
-        <atom:link href="http://localhost:8774/subnets/subnet-3883" rel="bookmark"/></subnet>\
-        <subnet xmlns:atom="http://www.w3.org/2005/Atom" id="subnet-323">\
-        <atom:link href="http://localhost:8774/v2.0/subnets/subnet-323" rel="self"/>\
-        <atom:link href="http://localhost:8774/subnets/subnet-323" rel="bookmark"/></subnet></VirtualSwitch>'
+        expected_out_xml = '<VirtualSwitch><id>virtual-switch-01</id>\
+<name>virtual-switch-01</name><switchType>dvSwitch</switchType>\
+<subnet xmlns:atom="http://www.w3.org/2005/Atom" id="subnet-3883">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-3883" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-3883" rel="bookmark"/>\
+</subnet>\
+<subnet xmlns:atom="http://www.w3.org/2005/Atom" id="subnet-323">\
+<atom:link href="http://localhost:8774/v2.0/subnets/subnet-323" rel="self"/>\
+<atom:link href="http://localhost:8774/subnets/subnet-323" rel="bookmark"/>\
+</subnet></VirtualSwitch>'
 
         virtual_switch_list = self.get_single_virtual_switch()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
-        api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(
@@ -276,8 +343,9 @@ class VirtualSwitchTest(unittest.TestCase):
         virtual_switch_list = None
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
-        api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(
@@ -299,8 +367,9 @@ class VirtualSwitchTest(unittest.TestCase):
                                                                    ))
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')
 
-        api.virtual_switch_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(virtual_switch_list)
+        api.virtual_switch_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(virtual_switch_list)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(
@@ -311,7 +380,8 @@ class VirtualSwitchTest(unittest.TestCase):
         self.assertTrue(isinstance(resp, HTTPNotFound))
 
     def test_query_field_key(self):
-        expected_out_json = '{"VirtualSwitch": {"id": "virtual-switch-01", "name": "virtual-switch-01"}}'
+        expected_out_json = '{"VirtualSwitch": {"id": "virtual-switch-01", \
+"name": "virtual-switch-01"}}'
 
         virtual_switch_list = self.get_single_virtual_switch()
         self.mock.StubOutWithMock(api, 'virtual_switch_get_by_ids')

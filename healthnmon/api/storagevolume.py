@@ -45,8 +45,9 @@ class StorageVolumeController(base.Controller):
             :returns: simple list of StorageVolumes with appropriate
             resource links.
         """
-        storagevolumes = self.get_all_by_filters(req,
-                                                 api.storage_volume_get_all_by_filters)
+        storagevolumes = self.get_all_by_filters(
+            req,
+            api.storage_volume_get_all_by_filters)
         if not storagevolumes:
             storagevolumes = []
         limited_list, collection_links = self.limited_by_marker(storagevolumes,
@@ -60,8 +61,9 @@ class StorageVolumeController(base.Controller):
             :param req: webob request
             :returns: webob response for detail list operation.
         """
-        storagevolumes = self.get_all_by_filters(req,
-                                                 api.storage_volume_get_all_by_filters)
+        storagevolumes = self.get_all_by_filters(
+            req,
+            api.storage_volume_get_all_by_filters)
         if not storagevolumes:
             storagevolumes = []
         limited_list, collection_links = self.limited_by_marker(
@@ -79,8 +81,9 @@ class StorageVolumeController(base.Controller):
                 'tag': 'vmHostId',
                 'tag_replacement': 'vmhost',
                 'tag_key': 'id',
-                'tag_collection_url': os.path.join(application_url,
-                                                   proj_id, constants.VMHOSTS_COLLECTION_NAME),
+                'tag_collection_url': os.path.join(
+                    application_url,
+                    proj_id, constants.VMHOSTS_COLLECTION_NAME),
                 'tag_attrib': None,
                 }]
 

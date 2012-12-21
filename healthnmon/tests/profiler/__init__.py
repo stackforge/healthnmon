@@ -20,7 +20,8 @@ MEMORY_PROFILE_CALLED_FUNCTION = []
 
 
 def example_cpu_profile_decorator(name, function):
-    """ decorator for cpu profile which is used for testing helper.profile_cputime
+    """ decorator for cpu profile which is used for
+    testing helper.profile_cputime
 
         :param name: name of the function
         :param function: - object of the function
@@ -33,7 +34,8 @@ def example_cpu_profile_decorator(name, function):
 
 
 def example_memory_profile_decorator(name, function):
-    """ decorator for cpu profile which is used for testing helper.profile_memory
+    """ decorator for cpu profile which is used for
+    testing helper.profile_memory
 
         :param name: name of the function
         :param function: - object of the function

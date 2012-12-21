@@ -22,7 +22,6 @@ from nova.openstack.common import cfg
 from nova.db.sqlalchemy import api as context_api
 from healthnmon.db import api
 from nova.openstack.common import rpc
-from nova.openstack.common import cfg
 
 LOG = logging.getLogger('healthnmon.healthnmon_api')
 
@@ -60,10 +59,12 @@ def vm_host_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of VmHost model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'connectionState':'Connected', 'name':['n1', 'n2']} will filter as
+                      eg : {'connectionState':'Connected',
+                      'name':['n1', 'n2']} will filter as
                       connectionState = 'Connected' AND name in ('n1', 'n2')
             sort_key - Field on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
             list of vm_hosts that match all filters and sorted with sort_key
     """
@@ -114,14 +115,18 @@ def storage_volume_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of StorageVolume model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'size':1024, 'name':['vol1', 'vol2']} will filter as
+                      eg : {'size':1024, 'name':['vol1', 'vol2']}
+                      will filter as
                       size = 1024 AND name in ('vol1', 'vol2')
             sort_key - Field on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
-            list of storage volumes that match all filters and sorted with sort_key
+            list of storage volumes that match all filters
+            and sorted with sort_key
     """
-    return api.storage_volume_get_all_by_filters(context, filters, sort_key, sort_dir)
+    return api.storage_volume_get_all_by_filters(context,
+                                                 filters, sort_key, sort_dir)
 
 
 def vm_get_by_ids(context, vm_ids):
@@ -155,10 +160,12 @@ def vm_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of Vm model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'powerState':'ACTIVE', 'name':['n1', 'n2']} will filter as
+                      eg : {'powerState':'ACTIVE', 'name':['n1', 'n2']}
+                      will filter as
                       powerState = 'ACTIVE' AND name in ('n1', 'n2')
             sort_key - Field on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
             list of vms that match all filters and sorted with sort_key
     """
@@ -182,10 +189,12 @@ def subnet_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of Subnet model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'isPublic':True, 'name':['n1', 'n2']} will filter as
+                      eg : {'isPublic':True, 'name':['n1', 'n2']}
+                      will filter as
                       isPublic = True AND name in ('n1', 'n2')
             sort_key - Field on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
             list of subnet that match all filters and sorted with sort_key
     """
@@ -220,14 +229,18 @@ def virtual_switch_get_all_by_filters(context, filters, sort_key, sort_dir):
                       keys should be fields of VirtualSwitch model
                       if value is simple value = filter is applied and
                       if value is list or tuple 'IN' filter is applied
-                      eg : {'switchType':'abc', 'name':['n1', 'n2']} will filter as
+                      eg : {'switchType':'abc', 'name':['n1', 'n2']}
+                      will filter as
                       switchType = 'abc' AND name in ('n1', 'n2')
             sort_key - Field on which sorting is to be applied
-            sort_dir - asc for Ascending sort direction, desc for descending sort direction
+            sort_dir - asc for Ascending sort direction,
+            desc for descending sort direction
         Returns:
-            list of virtual_switch that match all filters and sorted with sort_key
+            list of virtual_switch that match all filters and
+            sorted with sort_key
     """
-    return api.virtual_switch_get_all_by_filters(context, filters, sort_key, sort_dir)
+    return api.virtual_switch_get_all_by_filters(context,
+                                                 filters, sort_key, sort_dir)
 
 
 def virtual_switch_get_by_ids(context, virtual_switch_ids):

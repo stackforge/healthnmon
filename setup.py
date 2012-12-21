@@ -67,8 +67,9 @@ def find_data_files(destdir, srcdir):
     files = []
     for d in glob.glob('%s/*' % (srcdir,)):
         if os.path.isdir(d):
-            package_data += find_data_files(os.path.join(destdir,
-                                                         os.path.basename(d)), d)
+            package_data += find_data_files(
+                os.path.join(destdir,
+                             os.path.basename(d)), d)
         else:
             files += [d]
     package_data += [(destdir, files)]
@@ -78,7 +79,8 @@ def find_data_files(destdir, srcdir):
 setup(
     name='healthnmon',
     version=version.canonical_version_string(),
-    description='Healthnmon project provides health and monitoring service for cloud',
+    description='Healthnmon project provides health and \
+    monitoring service for cloud',
     author='healthnmon',
     author_email='healthnmon@lists.launchpad.net',
     url='https://launchpad.net/healthnmon/',

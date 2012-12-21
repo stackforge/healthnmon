@@ -135,10 +135,11 @@ class HealthnMonManagerTestCase(test.TestCase):
         self.mox.StubOutWithMock(self.manager.driver,
                                  'get_resource_utilization')
 
-        self.manager.driver.get_resource_utilization(mox.IgnoreArg(),
-                                                     mox.IgnoreArg(
-                                                     ), Constants.VmHost,
-                                                     mox.IgnoreArg()).AndReturn(expected)
+        self.manager.driver.get_resource_utilization(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            Constants.VmHost,
+            mox.IgnoreArg()).AndReturn(expected)
 
         self.mox.ReplayAll()
         result = self.manager.get_vmhost_utilization(self.context,
@@ -154,10 +155,11 @@ class HealthnMonManagerTestCase(test.TestCase):
         self.mox.StubOutWithMock(self.manager.driver,
                                  'get_resource_utilization')
 
-        self.manager.driver.get_resource_utilization(mox.IgnoreArg(),
-                                                     mox.IgnoreArg(
-                                                     ), Constants.Vm,
-                                                     mox.IgnoreArg()).AndReturn(expected)
+        self.manager.driver.get_resource_utilization(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            Constants.Vm,
+            mox.IgnoreArg()).AndReturn(expected)
 
         self.mox.ReplayAll()
         result = self.manager.get_vm_utilization(self.context, 'uuid')

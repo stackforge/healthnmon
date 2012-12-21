@@ -230,14 +230,16 @@ def replace_with_links(xml_str, tag_dict_list, replace_dict_out):
                     resource_key = None
                     if not tag_key or len(element) == 0:
                         resource_key = element.text
-                    elif tag_key is not None and element.find(ROOTNS
-                                                              + tag_key) is not None and element.find(ROOTNS
-                                                                                                      + tag_key).text is not None:
+                    elif tag_key is not None and element.find(
+                            ROOTNS + tag_key) is not None and \
+                            element.find(ROOTNS + tag_key).text is not None:
 
                         resource_key = element.find(ROOTNS
                                                     + tag_key).text
                     if not resource_key:
-                        raise TagDictionaryError('No resource key found from tag dictionary:', tag_dict)
+                        raise TagDictionaryError(
+                            'No resource key found from tag dictionary:',
+                            tag_dict)
                     if tag_key is not None:
                         replace_element.attrib[ROOTNS + tag_key] = \
                             resource_key
@@ -271,12 +273,13 @@ def replace_with_links(xml_str, tag_dict_list, replace_dict_out):
                 for (element, replace_element, out_dict) in \
                         elements_to_be_replaced:
                     LOG.debug(_('Replaced element path: %s'
-                              % replace_element.getroottree().getpath(replace_element)))
+                                % replace_element.getroottree().getpath(
+                                    replace_element)))
                     replace_dict_out.update(
                         {tree.getpath(replace_element): out_dict})
             except (KeyError, IndexError, ValueError), err:
-                LOG.error(_('Lookup Error while finding tag healthnmon api... %s '
-                            % str(err)), exc_info=1)
+                LOG.error(_('Lookup Error while finding tag \
+                healthnmon api... %s ' % str(err)), exc_info=1)
     return etree.tostringlist(tree.getroot())[0]
 
 
@@ -389,8 +392,8 @@ def update_dict_using_xpath(input_dict, xpath_dict):
             loc[path_elements[-1]]
             loc[path_elements[-1]] = d
         except (LookupError, ValueError), err:
-            LOG.debug(_('XPath traversion error in input dictionary current key:%s '
-                        % str(err)))
+            LOG.debug(_('XPath traversion error in input \
+            dictionary current key:%s ' % str(err)))
     return input_dict
 
 

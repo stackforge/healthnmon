@@ -25,7 +25,8 @@ LOG = logging.getLogger('healthnmon.driver')
 
 class ComputeRMContext(object):
 
-    """Holds the compute node context for a particular compute node that is being managed in the zone."""
+    """Holds the compute node context for a particular compute
+    node that is being managed in the zone."""
 
     def __init__(
         self,

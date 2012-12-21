@@ -15,7 +15,8 @@
 #    under the License.
 
 """
-heathnmon Service - Manage communication with compute nodes and collects inventory and monitoring info
+heathnmon Service - Manage communication with compute nodes and
+collects inventory and monitoring info
 """
 
 from nova import manager, utils
@@ -70,7 +71,8 @@ register_flags()
 
 class HealthnMonManager(manager.Manager):
 
-    """Manage communication with compute nodes, collects inventory and monitoring info."""
+    """Manage communication with compute nodes, collects inventory
+    and monitoring info."""
 
     def __init__(
         self,
@@ -110,7 +112,8 @@ class HealthnMonManager(manager.Manager):
     @manager.periodic_task(ticks_between_runs=CONF.perfmon_refresh_interval
                            / 60 - 1)
     def _poll_compute_perfmon(self, context):
-        """Poll compute nodes periodically to refresh performance data details."""
+        """Poll compute nodes periodically to refresh
+        performance data details."""
 
         self.driver.poll_compute_perfmon(context)
 
@@ -125,8 +128,10 @@ class HealthnMonManager(manager.Manager):
         LOG.info(_('Received the message for VM Host Utilization for uuid : %s'
                    ) % uuid)
         resource_utilization = \
-            self.driver.get_resource_utilization(context, uuid,
-                                                 Constants.VmHost, windowMinutes)
+            self.driver.get_resource_utilization(context,
+                                                 uuid,
+                                                 Constants.VmHost,
+                                                 windowMinutes)
         LOG.info(_('VM Host Resource Utilization: %s')
                  % resource_utilization.__dict__)
         return dict(ResourceUtilization=resource_utilization.__dict__)
@@ -149,12 +154,14 @@ class HealthnMonManager(manager.Manager):
         return dict(ResourceUtilization=resource_utilization.__dict__)
 
     def profile_cputime(self, context, module, decorator, status):
-        LOG.info(_('Received the message for enabling/disabling cputime profiling for module %s'), module)
+        LOG.info(_('Received the message for enabling/disabling\
+        cputime profiling for module %s'), module)
 
         helper.profile_cputime(module, decorator, status)
 
     def profile_memory(self, context, method, decorator, status, setref):
-        LOG.info(_('Received the message for enabling/disabling memory profiling for method %s '), method)
+        LOG.info(_('Received the message for enabling/disabling \
+        memory profiling for method %s '), method)
 
         helper.profile_memory(method, decorator, status, setref)
 

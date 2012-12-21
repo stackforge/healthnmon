@@ -412,7 +412,8 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         self.assert_(switches[1].id == switch_ids[1])
 
     def test_virtual_switch_multiple_save(self):
-        """Test case to test the modification of VirtualSwitch along with Subnet"""
+        """Test case to test the modification of
+        VirtualSwitch along with Subnet"""
         virtualswitch = VirtualSwitch()
         virtualswitch.id = 'VS1'
         virtualswitch.switchType = 'switch'
@@ -445,7 +446,8 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
 
     def test_timestamp_columns(self):
         """
-            Test the time stamp columns createEpoch, modifiedEpoch and deletedEpoch
+            Test the time stamp columns createEpoch,
+            modifiedEpoch and deletedEpoch
         """
         virSw1 = VirtualSwitch()
         virSw1.set_id('VS1_VH1')

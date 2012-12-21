@@ -195,7 +195,8 @@ def print_help():
     help = """
     Healthnmon development environment setup is complete.
 
-    Healthnmon development uses virtualenv to track and manage Python dependencies
+    Healthnmon development uses virtualenv to track
+    and manage Python dependencies
     while in development and testing.
 
     To activate the Healthnmon virtualenv for the extent of your current shell
@@ -216,9 +217,10 @@ def print_help():
 def parse_args():
     """Parse command-line arguments"""
     parser = optparse.OptionParser()
-    parser.add_option("-n", "--no-site-packages", dest="no_site_packages",
-                      default=False, action="store_true",
-                      help="Do not inherit packages from global Python install")
+    parser.add_option(
+        "-n", "--no-site-packages", dest="no_site_packages",
+        default=False, action="store_true",
+        help="Do not inherit packages from global Python install")
     return parser.parse_args()
 
 

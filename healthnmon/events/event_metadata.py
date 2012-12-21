@@ -31,11 +31,14 @@ class EventMetaData(object):
     """Attributes specific to type of event
 
         Attributes:
-            event_type_name - Name of this event type meta data like VmHost.Connected, VmHost.Disconnected etc
-            event_category - Category of the event like "LifeCycle", "Threshold" etc
+            event_type_name - Name of this event type meta data like
+            VmHost.Connected, VmHost.Disconnected etc
+            event_category - Category of the event like
+            "LifeCycle", "Threshold" etc
             short_desc_template - A template for short description of the event
             long_desc_template - A template for long description of the event
-            priority - Priority of the event (DEBUG, INFO, WARN, ERROR, CRITICAL)
+            priority - Priority of the event
+            (DEBUG, INFO, WARN, ERROR, CRITICAL)
     """
 
     def __init__(
@@ -74,12 +77,14 @@ class EventMetaData(object):
 
     def get_short_desc(self, obj, **kwargs):
         """Get Short description text replaced with place holder values
-        If template has placeholder keys which are not in the obj's attribute list
+        If template has placeholder keys which are not in
+        the obj's attribute list
         then those should be passed as keyword arguments
 
         Parameters:
             obj - Resource model object to which this event is associated.
-                  The template placeholders will be replaced with object's attribute values.
+                  The template placeholders will be replaced
+                  with object's attribute values.
         """
 
         return self.__get_formatted_string(self.short_desc_template,
@@ -87,12 +92,14 @@ class EventMetaData(object):
 
     def get_long_desc(self, obj, **kwargs):
         """Get long description text replaced with place holder values
-        If template has placeholder keys which are not in the obj's attribute list
+        If template has placeholder keys which are not in
+        the obj's attribute list
         then those should be passed as keyword arguments
 
         Parameters:
             obj - Resource model object to which this event is associated.
-                  The template placeholders will be replaced with object's attribute values.
+                  The template placeholders will be replaced
+                  with object's attribute values.
         """
 
         return self.__get_formatted_string(self.long_desc_template,
@@ -100,10 +107,12 @@ class EventMetaData(object):
 
     def get_topic_name(self, objuuid):
         """Get the topic name to be used for a event related to this metadata
-        Topic name is of format healthnmon_notification.<PRIORITY>.<Category>.<<ObjectType>.<EventName>>.<UUID>
+        Topic name is of format healthnmon_notification.<PRIORITY>.
+        <Category>.<<ObjectType>.<EventName>>.<UUID>
 
         Parameters:
-            objuuid - UUID of the Resource model object to which this event is associated.
+            objuuid - UUID of the Resource model object to
+            which this event is associated.
         """
 
         return '.'.join(['healthnmon_notification', self.priority,
@@ -190,7 +199,8 @@ eventMetadataDict = {}
 eventMetadataDict[EVENT_TYPE_HOST_CONNECTED] = \
     EventMetaData(EVENT_TYPE_HOST_CONNECTED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s connected'),
-                  _('Healthnmon service can successfully connect to VM Host %(name)s'
+                  _('Healthnmon service can successfully \
+                  connect to VM Host %(name)s'
                     ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_HOST_DISCONNECTED] = \
     EventMetaData(EVENT_TYPE_HOST_DISCONNECTED,
@@ -201,7 +211,8 @@ eventMetadataDict[EVENT_TYPE_HOST_DISCONNECTED] = \
 eventMetadataDict[EVENT_TYPE_HOST_ADDED] = \
     EventMetaData(EVENT_TYPE_HOST_ADDED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM Host %(name)s added'),
-                  _('A new VM Host %(name)s is added for healthnmon service monitoring'
+                  _('A new VM Host %(name)s is added for \
+                  healthnmon service monitoring'
                     ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_HOST_UPDATED] = \
     EventMetaData(EVENT_TYPE_HOST_UPDATED, EVENT_CATEGORY_LIFECYCLE,
@@ -248,7 +259,8 @@ eventMetadataDict[EVENT_TYPE_VM_DELETED] = \
 eventMetadataDict[EVENT_TYPE_VM_RECONFIGURED] = \
     EventMetaData(EVENT_TYPE_VM_RECONFIGURED, EVENT_CATEGORY_LIFECYCLE,
                   _('VM %(name)s reconfigured'),
-                  _('VM %(name)s reconfigured. Changed attributes are %(changed_attributes)s'
+                  _('VM %(name)s reconfigured. Changed \
+                  attributes are %(changed_attributes)s'
                     ), notifier_api.INFO)
 
 eventMetadataDict[EVENT_TYPE_STORAGE_ADDED] = \
@@ -297,32 +309,39 @@ eventMetadataDict[EVENT_TYPE_NETWORK_DISABLED] = \
 eventMetadataDict[EVENT_TYPE_PORTGROUP_ADDED] = \
     EventMetaData(EVENT_TYPE_PORTGROUP_ADDED, EVENT_CATEGORY_LIFECYCLE,
                   _('Port group %(name)s added'),
-                  _('Port group %(name)s added to virtual switch %(virtualSwitchId)s'
+                  _('Port group %(name)s added to \
+                  virtual switch %(virtualSwitchId)s'
                     ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_PORTGROUP_DELETED] = \
     EventMetaData(EVENT_TYPE_PORTGROUP_DELETED,
                   EVENT_CATEGORY_LIFECYCLE,
                   _('Port group %(name)s deleted'),
-                  _('Port group %(name)s removed from virtual switch %(virtualSwitchId)s'
+                  _('Port group %(name)s removed from \
+                  virtual switch %(virtualSwitchId)s'
                     ), notifier_api.INFO)
 eventMetadataDict[EVENT_TYPE_PORTGROUP_RECONFIGURED] = \
     EventMetaData(EVENT_TYPE_PORTGROUP_RECONFIGURED,
                   EVENT_CATEGORY_LIFECYCLE,
                   _('Port group %(name)s reconfigured'),
-                  _(' Port group %(name)s attached to virtual switch %(virtualSwitchId)s reconfigured. Changed attributes are %(changed_attributes)s'
+                  _(' Port group %(name)s attached to \
+                  virtual switch %(virtualSwitchId)s reconfigured. \
+                  Changed attributes are %(changed_attributes)s'
                     ), notifier_api.INFO)
 
 
 def get_EventMetaData(event_type):
     """Get the EventMetaData object for a EVENT_TYPE string
-    This API is used by the different healthnmon modules which need to generate event.
+    This API is used by the different healthnmon modules
+    which need to generate event.
 
             Parameters:
-                event_type - One of the event types like EVENT_TYPE_HOST_CONNECTED, EVENT_TYPE_HOST_DISCONNECTED etc
+                event_type - One of the event types like
+                EVENT_TYPE_HOST_CONNECTED, EVENT_TYPE_HOST_DISCONNECTED etc
             Returns:
                 EventMetaData for event_type string
             Raises:
-                BadEventTypeException if event_type string is not a supported one
+                BadEventTypeException if event_type string
+                is not a supported one
     """
 
     if not event_type in eventMetadataDict:

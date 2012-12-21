@@ -75,13 +75,14 @@ class VmEventsTest(test.TestCase):
             ComputeRMContext(rmType='KVM', rmIpAddress='10.10.155.165',
                              rmUserName='openstack',
                              rmPassword='password')
-        self.flags(healthnmon_notification_drivers=['nova.notifier.test_notifier']
-                   )
+        self.flags(healthnmon_notification_drivers=[
+            'nova.notifier.test_notifier'])
         test_notifier.NOTIFICATIONS = []
         self.mox.StubOutWithMock(nova_db, 'service_get_all_by_topic')
 
-        nova_db.service_get_all_by_topic(mox.IgnoreArg(),
-                                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+        nova_db.service_get_all_by_topic(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
 
     def test_vm_created_event(self):
         domainObj = libvirt.virDomain()
@@ -92,8 +93,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(None)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(None)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
@@ -119,8 +121,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(deleted_vm_id,
-                                                    Constants.Vm).AndReturn(deleted_vm)
+        InventoryCacheManager.get_object_from_cache(
+            deleted_vm_id,
+            Constants.Vm).AndReturn(deleted_vm)
         self.mox.ReplayAll()
         cachedList = ['25f04dd3-e924-02b2-9eac-876e3c943262',
                       deleted_vm_id]
@@ -151,8 +154,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(cachedVm)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(cachedVm)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertEquals(len(test_notifier.NOTIFICATIONS), 1)
@@ -179,8 +183,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(cachedVm)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(cachedVm)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
@@ -212,8 +217,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(cachedVm)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(cachedVm)
         self.mox.ReplayAll()
         self.libvirtVM._processVm(domainObj)
         self.assertTrue(len(test_notifier.NOTIFICATIONS) > 0)
@@ -245,8 +251,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(cachedVm)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(cachedVm)
         self.mox.StubOutWithMock(domainObj, 'state')
         domainObj.state(0).AndReturn([4])
         self.mox.ReplayAll()
@@ -281,8 +288,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(cachedVm)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(cachedVm)
         self.mox.StubOutWithMock(domainObj, 'state')
         domainObj.state(0).AndReturn([5])
         self.mox.ReplayAll()
@@ -316,8 +324,9 @@ class VmEventsTest(test.TestCase):
         self.mox.StubOutWithMock(
             InventoryCacheManager, 'get_object_from_cache')
 
-        InventoryCacheManager.get_object_from_cache(domainObj.UUIDString(),
-                                                    Constants.Vm).AndReturn(cachedVm)
+        InventoryCacheManager.get_object_from_cache(
+            domainObj.UUIDString(),
+            Constants.Vm).AndReturn(cachedVm)
         self.mox.StubOutWithMock(domainObj, 'state')
         domainObj.state(0).AndReturn([3])
         self.mox.ReplayAll()

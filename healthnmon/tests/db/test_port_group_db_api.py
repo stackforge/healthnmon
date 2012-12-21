@@ -74,10 +74,14 @@ class PortGroupDbApiTestCase(test.TestCase):
                         .cost.value, 'PortGroup Value is invalid')
         self.assertTrue(portgroup.cost.units == pgs[indexOfThePG]
                         .cost.units, 'PortGroup Units is invalid')
-        self.assertTrue(portgroup.resourceManagerId == pgs[indexOfThePG].resourceManagerId, 'PortGroup resourceManagerId is invalid')
+        self.assertTrue(
+            portgroup.resourceManagerId == pgs[indexOfThePG].resourceManagerId,
+            'PortGroup resourceManagerId is invalid')
         self.assertTrue(portgroup.get_type(
         ) == pgs[indexOfThePG].get_type(), 'PortGroup type is invalid')
-        self.assertTrue(portgroup.virtualSwitchId == pgs[indexOfThePG].virtualSwitchId, 'PortGroup virtualSwitchId is invalid')
+        self.assertTrue(
+            portgroup.virtualSwitchId == pgs[indexOfThePG].virtualSwitchId,
+            'PortGroup virtualSwitchId is invalid')
         self.assertTrue(portgroup.vmHostId == pgs[indexOfThePG]
                         .vmHostId, 'PortGroup vmHostId is invalid')
 
@@ -121,10 +125,14 @@ class PortGroupDbApiTestCase(test.TestCase):
                         .cost.value, 'PortGroup Value is invalid')
         self.assertTrue(portgroup.cost.units == pgs[indexOfThePG]
                         .cost.units, 'PortGroup Units is invalid')
-        self.assertTrue(portgroup.resourceManagerId == pgs[indexOfThePG].resourceManagerId, 'PortGroup resourceManagerId is invalid')
+        self.assertTrue(
+            portgroup.resourceManagerId == pgs[indexOfThePG].resourceManagerId,
+            'PortGroup resourceManagerId is invalid')
         self.assertTrue(portgroup.get_type(
         ) == pgs[indexOfThePG].get_type(), 'PortGroup type is invalid')
-        self.assertTrue(portgroup.virtualSwitchId == pgs[indexOfThePG].virtualSwitchId, 'PortGroup virtualSwitchId is invalid')
+        self.assertTrue(
+            portgroup.virtualSwitchId == pgs[indexOfThePG].virtualSwitchId,
+            'PortGroup virtualSwitchId is invalid')
         self.assertTrue(portgroup.vmHostId == pgs[indexOfThePG]
                         .vmHostId, 'PortGroup vmHostId is invalid')
 
@@ -167,10 +175,14 @@ class PortGroupDbApiTestCase(test.TestCase):
                         .cost.value, 'PortGroup Value is invalid')
         self.assertTrue(portgroup.cost.units == pgs[indexOfThePG]
                         .cost.units, 'PortGroup Units is invalid')
-        self.assertTrue(portgroup.resourceManagerId == pgs[indexOfThePG].resourceManagerId, 'PortGroup resourceManagerId is invalid')
+        self.assertTrue(
+            portgroup.resourceManagerId == pgs[indexOfThePG].resourceManagerId,
+            'PortGroup resourceManagerId is invalid')
         self.assertTrue(portgroup.get_type(
         ) == pgs[indexOfThePG].get_type(), 'PortGroup type is invalid')
-        self.assertTrue(portgroup.virtualSwitchId == pgs[indexOfThePG].virtualSwitchId, 'PortGroup virtualSwitchId is invalid')
+        self.assertTrue(
+            portgroup.virtualSwitchId == pgs[indexOfThePG].virtualSwitchId,
+            'PortGroup virtualSwitchId is invalid')
         self.assertTrue(portgroup.vmHostId == pgs[indexOfThePG]
                         .vmHostId, 'PortGroup vmHostId is invalid')
 
@@ -239,7 +251,8 @@ class PortGroupDbApiTestCase(test.TestCase):
 
     def test_timestamp_columns(self):
         """
-            Test the time stamp columns createEpoch, modifiedEpoch and deletedEpoch
+            Test the time stamp columns createEpoch,
+            modifiedEpoch and deletedEpoch
         """
         portGrp = PortGroup()
         portGrp.set_id('portGrp-01')
@@ -263,4 +276,6 @@ class PortGroupDbApiTestCase(test.TestCase):
         self.assert_(portGrp_modified.get_createEpoch(
         ) == portGrp_queried.get_createEpoch())
         self.assert_(test_utils.is_timestamp_between(
-            epoch_before, epoch_after, portGrp_queried.get_lastModifiedEpoch()))
+            epoch_before,
+            epoch_after,
+            portGrp_queried.get_lastModifiedEpoch()))

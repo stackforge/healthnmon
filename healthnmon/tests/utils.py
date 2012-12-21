@@ -22,7 +22,8 @@ Common methods for unit tests
 
 def is_timestamp_between(before, after, actual):
     """
-        Check if the actual time stamp is in between before and after time stamps
+        Check if the actual time stamp is in between
+        before and after time stamps
     """
     return ((actual is not None) and (actual >= before) and (actual <= after))
 

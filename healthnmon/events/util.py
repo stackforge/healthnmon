@@ -23,7 +23,8 @@ from healthnmon import log
 
 LOG = log.getLogger('healthnmon.events.util')
 
-# Properties of different resource model types for which updated event is ignored
+# Properties of different resource model types
+# for which updated event is ignored
 
 ignoredProperties = {Vm: [
     'connectionState',

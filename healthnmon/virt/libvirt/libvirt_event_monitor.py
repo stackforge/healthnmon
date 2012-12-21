@@ -23,7 +23,8 @@ import traceback
 from healthnmon.inventory_cache_manager import InventoryCacheManager
 
 
-'''Create a green pool of 200 green threads For Processing VM which got an update'''
+'''Create a green pool of 200 green threads
+For Processing VM which got an update'''
 pool_for_processing_updated_vm = eventlet.greenpool.GreenPool(200)
 LOG = log.getLogger(__name__)
 
@@ -47,7 +48,8 @@ def start_events_thread():
 
 
 class DomainEventThread(threading.Thread):
-    ''' Class to initialize the thread for event listening for the hosts registered'''
+    ''' Class to initialize the thread for event
+    listening for the hosts registered'''
     def __init__(self):
         threading.Thread.__init__(self)
 
@@ -68,10 +70,13 @@ class LibvirtEvents(object):
     def register_libvirt_events(self):
         '''Initializes the libvirt connection for each host and
         calls the method to register the hosts for events.
-        Currently only domain events are supported but the method can be extended
+        Currently only domain events are supported
+        but the method can be extended
         for registration of events for different other resources.
-        @param conn: The instance of the virt.libvirt.connection.LibvirtConnection class
-        @param compute_id: An integer representing the compute id of the host'''
+        @param conn: The instance of the
+            virt.libvirt.connection.LibvirtConnection class
+        @param compute_id: An integer representing the
+            compute id of the host'''
         try:
             self.call_back_ids['domain_events'][:] = []
             conn_driver = InventoryCacheManager.get_compute_inventory(
@@ -86,17 +91,27 @@ class LibvirtEvents(object):
         except Exception:
             self.first_poll = True
             self.deregister_libvirt_events()
-            LOG.error(_('An exception occurred while registering the host for events'))
+            LOG.error(_('An exception occurred while \
+            registering the host for events'))
             LOG.error(_(traceback.format_exc()))
 
     def _register_libvirt_domain_events(self):
         '''Register the hosts for domain events
         Stores the callback ids for the each event for hosts in the list
-        The call back ids are mainly used for deregistering the hosts for the events'''
+        The call back ids are mainly used for deregistering
+        the hosts for the events'''
         LOG.debug(_('Registering host with compute id %s for events' %
                   str(self.compute_id)))
-        self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self._domain_event_callback, None))
-        self.call_back_ids['domain_events'].append(self.libvirt_con.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_REBOOT, self._domain_event_callback, None))
+        self.call_back_ids['domain_events'].append(
+            self.libvirt_con.domainEventRegisterAny(
+                None,
+                libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE,
+                self._domain_event_callback, None))
+        self.call_back_ids['domain_events'].append(
+            self.libvirt_con.domainEventRegisterAny(
+                None,
+                libvirt.VIR_DOMAIN_EVENT_ID_REBOOT,
+                self._domain_event_callback, None))
 
     def deregister_libvirt_events(self):
         '''De-registers the hosts for libvirt events '''
@@ -105,7 +120,8 @@ class LibvirtEvents(object):
                 self.registered = False
                 self._deregister_libvirt_domain_events()
         except Exception:
-            LOG.error(_('An exception occurred while deregistering the host for events'))
+            LOG.error(_('An exception occurred while \
+            deregistering the host for events'))
             LOG.error(_(traceback.format_exc()))
         finally:
             self.call_back_ids['domain_events'][:] = []
@@ -114,8 +130,10 @@ class LibvirtEvents(object):
                 self.libvirt_con = None
 
     def _deregister_libvirt_domain_events(self):
-        '''Deregisters the hosts for domain events by calling the domainEventDeregisterAny method
-        of the libvirt. It uses the domain events' callback ids for the deregistration of the hosts'''
+        '''Deregisters the hosts for domain events by calling
+        the domainEventDeregisterAny method
+        of the libvirt. It uses the domain events' callback ids
+        for the deregistration of the hosts'''
         LOG.debug(_('Deregistering the host with compute id %s for events' %
                   str(self.compute_id)))
         for callBackId in self.call_back_ids['domain_events']:
@@ -133,9 +151,12 @@ class LibvirtEvents(object):
 
     def _domain_event_callback(self, *args):
         '''The method is callback registered fot the domain events
-        @param args: A tuple passed implicitly by the method domainEventRegisterAny by libvirt.
-        The length and the content varies depending upon the event calling this callback
-        The first two values are the libvirt connection and the virDomain's domainobj necessarily.'''
+        @param args: A tuple passed implicitly by the method
+        domainEventRegisterAny by libvirt.
+        The length and the content varies depending upon
+        the event calling this callback
+        The first two values are the libvirt connection and
+        the virDomain's domainobj necessarily.'''
         try:
             pool_for_processing_updated_vm.spawn_n(
                 self._process_updates_for_updated_domain, args[1])

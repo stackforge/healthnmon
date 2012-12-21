@@ -50,9 +50,29 @@ href="http://localhost:8774/v2.0/vmhosts/host-01" rel="self"/>\
 [{"href": "http://localhost:8774/v2.0/vmhosts/host-02", "rel": "self"}, \
 {"href": "http://localhost:8774/vmhosts/host-02", "rel": "bookmark"}], \
 "name": "host-02"}]}'
-    expected_index_limited_json = '{"vmhosts": [{"id": "host-2", "links": [{"href": "http://localhost:8774/v2.0/vmhosts/host-2", "rel": "self"}, {"href": "http://localhost:8774/vmhosts/host-2", "rel": "bookmark"}], "name": "host-2"}], "vmhosts_links": [{"href": "http://localhost:8774/v2.0/vmhosts?limit=1&marker=host-2", "rel": "next"}, {"href": "http://localhost:8774/v2.0/vmhosts?limit=1", "rel": "previous"}]}'
-    expected_index_limited_previous_json = '{"vmhosts": [{"id": "host-3", "links": [{"href": "http://localhost:8774/v2.0/vmhosts/host-3", "rel": "self"}, {"href": "http://localhost:8774/vmhosts/host-3", "rel": "bookmark"}], "name": "host-3"}], "vmhosts_links": [{"href": "http://localhost:8774/v2.0/vmhosts?limit=1&marker=host-1", "rel": "previous"}]}'
-    expected_index_limited_xml = '<vmhosts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><vmhost id="host-2" name="host-2"><atom:link href="http://localhost:8774/v2.0/vmhosts/host-2" rel="self"/><atom:link href="http://localhost:8774/vmhosts/host-2" rel="bookmark"/></vmhost><atom:link href="http://localhost:8774/v2.0/vmhosts?limit=1&amp;marker=host-2" rel="next"/><atom:link href="http://localhost:8774/v2.0/vmhosts?limit=1" rel="previous"/></vmhosts>'
+    expected_index_limited_json = '{"vmhosts": [{"id": "host-2", \
+"links": [{"href": "http://localhost:8774/v2.0/vmhosts/host-2", \
+"rel": "self"}, {"href": "http://localhost:8774/vmhosts/host-2", \
+"rel": "bookmark"}], "name": "host-2"}], "vmhosts_links": \
+[{"href": "http://localhost:8774/v2.0/vmhosts?limit=1&marker=host-2", \
+"rel": "next"}, {"href": "http://localhost:8774/v2.0/vmhosts?limit=1", \
+"rel": "previous"}]}'
+    expected_index_limited_previous_json = '{"vmhosts": [{"id": "host-3", \
+"links": [{"href": "http://localhost:8774/v2.0/vmhosts/host-3", \
+"rel": "self"}, {"href": "http://localhost:8774/vmhosts/host-3", \
+"rel": "bookmark"}], "name": "host-3"}], "vmhosts_links": \
+[{"href": "http://localhost:8774/v2.0/vmhosts?limit=1&marker=host-1", \
+"rel": "previous"}]}'
+    expected_index_limited_xml = '<vmhosts \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<vmhost id="host-2" name="host-2">\
+<atom:link href="http://localhost:8774/v2.0/vmhosts/host-2" rel="self"/>\
+<atom:link href="http://localhost:8774/vmhosts/host-2" rel="bookmark"/>\
+</vmhost><atom:link \
+href="http://localhost:8774/v2.0/vmhosts?limit=1&amp;marker=host-2" \
+rel="next"/><atom:link href="http://localhost:8774/v2.0/vmhosts?limit=1" \
+rel="previous"/></vmhosts>'
     expected_detail_xml = \
         '<vmhosts xmlns:atom="http://www.w3.org/2005/Atom" \
 xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
@@ -87,8 +107,52 @@ rel="bookmark"/></virtualmachine><virtualmachine id="vm-04">\
 <atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-04" \
 rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-04" \
 rel="bookmark"/></virtualmachine></VmHost></vmhosts>'
-    expected_detail_json = '{"vmhosts": [{"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}]}, {"id": "vm-02", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}]}], "id": "host-01", "storagevolumes": [{"id": "storage-01", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", "rel": "bookmark"}]}, {"id": "storage-02", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", "rel": "bookmark"}]}], "name": "host-01"}, {"virtualmachines": [{"id": "vm-03", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-03", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-03", "rel": "bookmark"}]}, {"id": "vm-04", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-04", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-04", "rel": "bookmark"}]}], "id": "host-02", "storagevolumes": [{"id": "storage-03", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-03", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-03", "rel": "bookmark"}]}, {"id": "storage-04", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-04", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-04", "rel": "bookmark"}]}], "name": "host-02"}]}'
-    expected_detall_limited_previous_xml = '<vmhosts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><VmHost><id>host-02</id><name>host-02</name><storagevolume id="storage-03"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-03" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-03" rel="bookmark"/></storagevolume><storagevolume id="storage-04"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-04" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-04" rel="bookmark"/></storagevolume><virtualmachine id="vm-03"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-03" rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-03" rel="bookmark"/></virtualmachine><virtualmachine id="vm-04"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-04" rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-04" rel="bookmark"/></virtualmachine></VmHost><atom:link href="http://localhost:8774/v2.0/vmhosts?limit=1" rel="previous"/></vmhosts>'
+    expected_detail_json = '{"vmhosts": [{"virtualmachines": [{"id": "vm-01", \
+"links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", \
+"rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-01", \
+"rel": "bookmark"}]}, {"id": "vm-02", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", \
+"rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-02", \
+"rel": "bookmark"}]}], "id": "host-01", \
+"storagevolumes": [{"id": "storage-01", \
+"links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", \
+"rel": "bookmark"}]}, {"id": "storage-02", \
+"links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", \
+"rel": "bookmark"}]}], "name": "host-01"}, \
+{"virtualmachines": [{"id": "vm-03", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualmachines/vm-03", \
+"rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-03", \
+"rel": "bookmark"}]}, {"id": "vm-04", \
+"links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-04", \
+"rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-04", \
+"rel": "bookmark"}]}], "id": "host-02", "storagevolumes": \
+[{"id": "storage-03", "links": [{"href": \
+"http://localhost:8774/v2.0/storagevolumes/storage-03", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-03", \
+"rel": "bookmark"}]}, {"id": "storage-04", "links": \
+[{"href": "http://localhost:8774/v2.0/storagevolumes/storage-04", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-04", \
+"rel": "bookmark"}]}], "name": "host-02"}]}'
+    expected_detall_limited_previous_xml = '<vmhosts \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><VmHost>\
+<id>host-02</id><name>host-02</name><storagevolume id="storage-03">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-03" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-03" \
+rel="bookmark"/></storagevolume><storagevolume id="storage-04">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-04" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-04" \
+rel="bookmark"/></storagevolume><virtualmachine id="vm-03"><atom:link \
+href="http://localhost:8774/v2.0/virtualmachines/vm-03" rel="self"/>\
+<atom:link href="http://localhost:8774/virtualmachines/vm-03" rel="bookmark"/>\
+</virtualmachine><virtualmachine id="vm-04"><atom:link \
+href="http://localhost:8774/v2.0/virtualmachines/vm-04" rel="self"/>\
+<atom:link href="http://localhost:8774/virtualmachines/vm-04" rel="bookmark"/>\
+</virtualmachine></VmHost>\
+<atom:link href="http://localhost:8774/v2.0/vmhosts?limit=1" \
+rel="previous"/></vmhosts>'
     expected_detall_limited_xml = \
         '<vmhosts xmlns:atom="http://www.w3.org/2005/Atom" \
 xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
@@ -108,16 +172,152 @@ rel="bookmark"/></virtualmachine></VmHost>\
 <atom:link \
 href="http://localhost:8774/v2.0/vmhosts?limit=1&amp;marker=host-02" \
 rel="next"/></vmhosts>'
-    expected_limited_detail_json = '{"VmHost": {"virtualmachines": [{"id": "vm-01", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}]}, {"id": "vm-02", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-02", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-02", "rel": "bookmark"}]}], "id": "host-01", "storagevolumes": [{"id": "storage-01", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", "rel": "bookmark"}]}, {"id": "storage-02", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", "rel": "bookmark"}]}], "name": "host-01"}}'
-    expected_detail_limit_marker_json = '{"vmhosts": [{"virtualmachines": [{"id": "vm-03", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-03", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-03", "rel": "bookmark"}]}, {"id": "vm-04", "links": [{"href": "http://localhost:8774/v2.0/virtualmachines/vm-04", "rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-04", "rel": "bookmark"}]}], "id": "host-02", "storagevolumes": [{"id": "storage-03", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-03", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-03", "rel": "bookmark"}]}, {"id": "storage-04", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-04", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-04", "rel": "bookmark"}]}], "name": "host-02"}], "vmhosts_links": [{"href": "http://localhost:8774/v2.0/vmhosts?limit=1", "rel": "previous"}]}'
-    expected_detail_limit_marker_xml = '<VmHost><id>host-01</id><name>host-01</name><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-01"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" rel="bookmark"/></storagevolume><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-02"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" rel="bookmark"/></storagevolume><virtualmachine xmlns:atom="http://www.w3.org/2005/Atom" id="vm-01"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/></virtualmachine><virtualmachine xmlns:atom="http://www.w3.org/2005/Atom" id="vm-02"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-02" rel="bookmark"/></virtualmachine></VmHost>'
+    expected_limited_detail_json = '{"VmHost": {"virtualmachines": \
+[{"id": "vm-01", "links": [{"href": \
+"http://localhost:8774/v2.0/virtualmachines/vm-01", "rel": "self"}, \
+{"href": "http://localhost:8774/virtualmachines/vm-01", "rel": "bookmark"}]}, \
+{"id": "vm-02", "links": [{"href": \
+"http://localhost:8774/v2.0/virtualmachines/vm-02", \
+"rel": "self"}, {"href": "http://localhost:8774/virtualmachines/vm-02", \
+"rel": "bookmark"}]}], "id": "host-01", "storagevolumes": \
+[{"id": "storage-01", "links": \
+[{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", \
+"rel": "bookmark"}]}, {"id": "storage-02", "links": \
+[{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", \
+"rel": "bookmark"}]}], "name": "host-01"}}'
+    expected_detail_limit_marker_json = '{"vmhosts": [{"virtualmachines": \
+[{"id": "vm-03", "links": \
+[{"href": "http://localhost:8774/v2.0/virtualmachines/vm-03", "rel": "self"}, \
+{"href": "http://localhost:8774/virtualmachines/vm-03", "rel": "bookmark"}]}, \
+{"id": "vm-04", "links": [{"href": \
+"http://localhost:8774/v2.0/virtualmachines/vm-04", "rel": "self"}, \
+{"href": "http://localhost:8774/virtualmachines/vm-04", \
+"rel": "bookmark"}]}], "id": "host-02", "storagevolumes": \
+[{"id": "storage-03", "links": [{"href": \
+"http://localhost:8774/v2.0/storagevolumes/storage-03", "rel": "self"}, \
+{"href": "http://localhost:8774/storagevolumes/storage-03", \
+"rel": "bookmark"}]}, {"id": "storage-04", "links": \
+[{"href": "http://localhost:8774/v2.0/storagevolumes/storage-04", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-04", \
+"rel": "bookmark"}]}], "name": "host-02"}], "vmhosts_links": \
+[{"href": "http://localhost:8774/v2.0/vmhosts?limit=1", "rel": "previous"}]}'
+    expected_detail_limit_marker_xml = '<VmHost><id>host-01</id>\
+<name>host-01</name><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" \
+id="storage-01"><atom:link \
+href="http://localhost:8774/v2.0/storagevolumes/storage-01" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" \
+rel="bookmark"/></storagevolume><storagevolume \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+id="storage-02"><atom:link \
+href="http://localhost:8774/v2.0/storagevolumes/storage-02" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" \
+rel="bookmark"/></storagevolume><virtualmachine \
+xmlns:atom="http://www.w3.org/2005/Atom" id="vm-01">\
+<atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" \
+rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-01" \
+rel="bookmark"/></virtualmachine><virtualmachine \
+xmlns:atom="http://www.w3.org/2005/Atom" id="vm-02">\
+<atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" \
+rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-02" \
+rel="bookmark"/></virtualmachine></VmHost>'
     expected_query_id_name = '{"VmHost": {"id": "host-01", "name": "host-01"}}'
-    expected_utilization_json = '{"VmHost": {"id": "host-01", "utilization": {"cpuUserLoad": "4.200000e+00", "netRead": "8.000000e+01", "maximumSystemMemory": "2398293832", "hostMaxCpuSpeed": "92898392838", "reservedSystemMemory": "38929823983", "diskRead": "8.920000e+01", "resourceId": "23224u230", "ncpus": "8", "granularity": "2", "totalMemory": "24576", "netWrite": "2.000000e+01", "freeMemory": "8192", "memoryRelativeWeight": "89239823", "diskWrite": "2.310000e+01", "relativeWeight": "293472938", "hostCpuSpeed": "2323312", "uptimeMinute": "4820934802", "maximumSystemCapacity": "23479237492839", "cpuSystemLoad": "5.200000e+00", "reservedSystemCapacity": "7423849234"}}}'
-    expected_utilization_xml = '<VmHost><id>host-01</id><name>host-01</name><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-01"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" rel="bookmark"/></storagevolume><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-02"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" rel="bookmark"/></storagevolume><virtualmachine xmlns:atom="http://www.w3.org/2005/Atom" id="vm-01"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-01" rel="bookmark"/></virtualmachine><virtualmachine xmlns:atom="http://www.w3.org/2005/Atom" id="vm-02"><atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-02" rel="bookmark"/></virtualmachine><utilization><resourceId>23224u230</resourceId><granularity>2</granularity><cpuUserLoad>4.200000e+00</cpuUserLoad><cpuSystemLoad>5.200000e+00</cpuSystemLoad><hostCpuSpeed>2323312</hostCpuSpeed><hostMaxCpuSpeed>92898392838</hostMaxCpuSpeed><ncpus>8</ncpus><diskRead>8.920000e+01</diskRead><diskWrite>2.310000e+01</diskWrite><netRead>8.000000e+01</netRead><netWrite>2.000000e+01</netWrite><totalMemory>24576</totalMemory><freeMemory>8192</freeMemory><uptimeMinute>4820934802</uptimeMinute><reservedSystemCapacity>7423849234</reservedSystemCapacity><maximumSystemCapacity>23479237492839</maximumSystemCapacity><relativeWeight>293472938</relativeWeight><reservedSystemMemory>38929823983</reservedSystemMemory><maximumSystemMemory>2398293832</maximumSystemMemory><memoryRelativeWeight>89239823</memoryRelativeWeight></utilization></VmHost>'
-    expected_identifier_show_json = '{"VmHost": {"id": "host-01", "storagevolumes": [{"id": "storage-01", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", "rel": "bookmark"}]}, {"id": "storage-02", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", "rel": "bookmark"}]}]}}'
-    expected_identifier_detail_json = '{"vmhosts": [{"id": "host-01", "storagevolumes": [{"id": "storage-01", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", "rel": "bookmark"}]}, {"id": "storage-02", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", "rel": "bookmark"}]}]}, {"id": "host-02", "storagevolumes": [{"id": "storage-03", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-03", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-03", "rel": "bookmark"}]}, {"id": "storage-04", "links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-04", "rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-04", "rel": "bookmark"}]}]}]}'
-    expected_identifier_show_xml = '<VmHost><id>host-01</id><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-01"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" rel="bookmark"/></storagevolume><storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-02"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" rel="bookmark"/></storagevolume></VmHost>'
-    expected_identifier_detail_xml = '<vmhosts xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><VmHost><id>host-01</id><storagevolume id="storage-01"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" rel="bookmark"/></storagevolume><storagevolume id="storage-02"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" rel="bookmark"/></storagevolume></VmHost><VmHost><id>host-02</id><storagevolume id="storage-03"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-03" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-03" rel="bookmark"/></storagevolume><storagevolume id="storage-04"><atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-04" rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-04" rel="bookmark"/></storagevolume></VmHost></vmhosts>'
+    expected_utilization_json = '{"VmHost": {"id": "host-01", "utilization": \
+{"cpuUserLoad": "4.200000e+00", "netRead": "8.000000e+01", \
+"maximumSystemMemory": "2398293832", "hostMaxCpuSpeed": "92898392838", \
+"reservedSystemMemory": "38929823983", "diskRead": "8.920000e+01", \
+"resourceId": "23224u230", "ncpus": "8", "granularity": "2", \
+"totalMemory": "24576", "netWrite": "2.000000e+01", \
+"freeMemory": "8192", "memoryRelativeWeight": "89239823", \
+"diskWrite": "2.310000e+01", "relativeWeight": "293472938", \
+"hostCpuSpeed": "2323312", "uptimeMinute": "4820934802", \
+"maximumSystemCapacity": "23479237492839", "cpuSystemLoad": "5.200000e+00", \
+"reservedSystemCapacity": "7423849234"}}}'
+    expected_utilization_xml = '<VmHost><id>host-01</id><name>host-01</name>\
+<storagevolume xmlns:atom="http://www.w3.org/2005/Atom" id="storage-01">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" \
+rel="bookmark"/></storagevolume><storagevolume \
+xmlns:atom="http://www.w3.org/2005/Atom" id="storage-02">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" \
+rel="bookmark"/></storagevolume><virtualmachine \
+xmlns:atom="http://www.w3.org/2005/Atom" id="vm-01">\
+<atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-01" \
+rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-01" \
+rel="bookmark"/></virtualmachine><virtualmachine \
+xmlns:atom="http://www.w3.org/2005/Atom" id="vm-02">\
+<atom:link href="http://localhost:8774/v2.0/virtualmachines/vm-02" \
+rel="self"/><atom:link href="http://localhost:8774/virtualmachines/vm-02" \
+rel="bookmark"/></virtualmachine><utilization>\
+<resourceId>23224u230</resourceId><granularity>2</granularity>\
+<cpuUserLoad>4.200000e+00</cpuUserLoad>\
+<cpuSystemLoad>5.200000e+00</cpuSystemLoad>\
+<hostCpuSpeed>2323312</hostCpuSpeed>\
+<hostMaxCpuSpeed>92898392838</hostMaxCpuSpeed>\
+<ncpus>8</ncpus><diskRead>8.920000e+01</diskRead>\
+<diskWrite>2.310000e+01</diskWrite>\
+<netRead>8.000000e+01</netRead>\
+<netWrite>2.000000e+01</netWrite>\
+<totalMemory>24576</totalMemory>\
+<freeMemory>8192</freeMemory>\
+<uptimeMinute>4820934802</uptimeMinute>\
+<reservedSystemCapacity>7423849234</reservedSystemCapacity>\
+<maximumSystemCapacity>23479237492839</maximumSystemCapacity>\
+<relativeWeight>293472938</relativeWeight>\
+<reservedSystemMemory>38929823983</reservedSystemMemory>\
+<maximumSystemMemory>2398293832</maximumSystemMemory>\
+<memoryRelativeWeight>89239823</memoryRelativeWeight></utilization></VmHost>'
+    expected_identifier_show_json = '{"VmHost": {"id": "host-01", \
+"storagevolumes": [{"id": "storage-01", \
+"links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-01", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-01", \
+"rel": "bookmark"}]}, {"id": "storage-02", "links": [{"href": \
+"http://localhost:8774/v2.0/storagevolumes/storage-02", "rel": "self"}, \
+{"href": "http://localhost:8774/storagevolumes/storage-02", \
+"rel": "bookmark"}]}]}}'
+    expected_identifier_detail_json = '{"vmhosts": [{"id": "host-01", \
+"storagevolumes": [{"id": "storage-01", "links": [{"href": \
+"http://localhost:8774/v2.0/storagevolumes/storage-01", "rel": "self"}, \
+{"href": "http://localhost:8774/storagevolumes/storage-01", \
+"rel": "bookmark"}]}, {"id": "storage-02", \
+"links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-02", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-02", \
+"rel": "bookmark"}]}]}, {"id": "host-02", "storagevolumes": \
+[{"id": "storage-03", "links": [{"href": \
+"http://localhost:8774/v2.0/storagevolumes/storage-03", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-03", \
+"rel": "bookmark"}]}, {"id": "storage-04", \
+"links": [{"href": "http://localhost:8774/v2.0/storagevolumes/storage-04", \
+"rel": "self"}, {"href": "http://localhost:8774/storagevolumes/storage-04", \
+"rel": "bookmark"}]}]}]}'
+    expected_identifier_show_xml = '<VmHost><id>host-01</id><storagevolume \
+xmlns:atom="http://www.w3.org/2005/Atom" id="storage-01">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" \
+rel="bookmark"/></storagevolume><storagevolume \
+xmlns:atom="http://www.w3.org/2005/Atom" id="storage-02">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" \
+rel="bookmark"/></storagevolume></VmHost>'
+    expected_identifier_detail_xml = '<vmhosts \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+<VmHost><id>host-01</id><storagevolume id="storage-01">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-01" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-01" \
+rel="bookmark"/></storagevolume><storagevolume id="storage-02">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-02" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-02" \
+rel="bookmark"/></storagevolume></VmHost><VmHost>\
+<id>host-02</id><storagevolume id="storage-03">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-03" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-03" \
+rel="bookmark"/></storagevolume><storagevolume id="storage-04">\
+<atom:link href="http://localhost:8774/v2.0/storagevolumes/storage-04" \
+rel="self"/><atom:link href="http://localhost:8774/storagevolumes/storage-04" \
+rel="bookmark"/></storagevolume></VmHost></vmhosts>'
 
     def setUp(self):
         """ Setup initial mocks and logging configuration """

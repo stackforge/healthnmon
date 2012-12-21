@@ -17,7 +17,8 @@
 """
 Driver base-classes:
 
-    (Beginning of) the contract that compute inventory drivers must follow, and shared
+    (Beginning of) the contract that compute inventory
+    drivers must follow, and shared
     types that support that contract
 """
 
@@ -60,7 +61,8 @@ class ComputeInventoryDriver(object):
         window_minutes,
     ):
         """
-        Returns the performance data of VM Host, VMs for specified window minutes.
+        Returns the performance data of VM Host,
+        VMs for specified window minutes.
         """
 
         raise NotImplementedError()

@@ -44,8 +44,9 @@ class VirtualSwitchController(base.Controller):
             :returns: simple list of virtual switches with resource links to
             each virtual switch.
         """
-        virtualswitch_list = self.get_all_by_filters(req,
-                                                     api.virtual_switch_get_all_by_filters)
+        virtualswitch_list = self.get_all_by_filters(
+            req,
+            api.virtual_switch_get_all_by_filters)
         if not virtualswitch_list:
             virtualswitch_list = []
         limited_list, collection_links = self.limited_by_marker(
@@ -61,8 +62,9 @@ class VirtualSwitchController(base.Controller):
             :returns: webob response for detail list operation.
         """
 
-        virtualswitch_list = self.get_all_by_filters(req,
-                                                     api.virtual_switch_get_all_by_filters)
+        virtualswitch_list = self.get_all_by_filters(
+            req,
+            api.virtual_switch_get_all_by_filters)
         if not virtualswitch_list:
             virtualswitch_list = []
         limited_list, collection_links = self.limited_by_marker(
@@ -80,8 +82,9 @@ class VirtualSwitchController(base.Controller):
             'tag': 'subnetIds',
             'tag_replacement': 'subnet',
             'tag_key': 'id',
-            'tag_collection_url': os.path.join(application_url,
-                                               proj_id, constants.SUBNET_COLLECTION_NAME),
+            'tag_collection_url': os.path.join(
+                application_url,
+                proj_id, constants.SUBNET_COLLECTION_NAME),
             'tag_attrib': None,
         }]
 
@@ -99,8 +102,8 @@ class VirtualSwitchController(base.Controller):
             (ctx, proj_id) = util.get_project_context(req)
             virtual_switch_list = api.virtual_switch_get_by_ids(ctx,
                                                                 [id])
-            LOG.debug(_('Project id: %s Received virtual switches from database'
-                        % proj_id))
+            LOG.debug(_('Project id: %s Received virtual \
+            switches from database' % proj_id))
             if virtual_switch_list:
                 return self._show(req, virtual_switch_list[0])
         except Exception, err:

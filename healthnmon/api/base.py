@@ -68,7 +68,8 @@ class Controller(common.ViewBuilder):
         for item in items:
             itemdict = {'id': item.get_id(),
                         'name': item.get_name(),
-                        'links': self._get_links(req, item.get_id(), self._collection_name)
+                        'links': self._get_links(req, item.get_id(),
+                                                 self._collection_name)
                         }
             item_dict_list.append(itemdict)
             LOG.debug(_('Appending item:' + str(itemdict)))
@@ -151,10 +152,11 @@ class Controller(common.ViewBuilder):
         proj_id = req.environ["nova.context"].project_id
         resource_xml = util.dump_resource_xml(item, self._model_name)
         out_dict = {}
-        resource_xml_update = util.replace_with_links(resource_xml,
-                                                      self._get_resource_tag_dict_list(req.application_url,
-                                                                                       proj_id),
-                                                      out_dict)
+        resource_xml_update = util.replace_with_links(
+            resource_xml,
+            self._get_resource_tag_dict_list(req.application_url,
+                                             proj_id),
+            out_dict)
         field_list = util.get_query_fields(req)
         if field_list is not None:
             resource_xml_update = \
@@ -206,10 +208,9 @@ class Controller(common.ViewBuilder):
         :returns: all filtered items of the resource model type.
         """
         ctx = util.get_project_context(req)[0]
-        filters, sort_key, sort_dir = self.get_search_options(req,
-                                                              getattr(
-                                                              healthnmonResourceModel,
-                                                              self._model_name))
+        filters, sort_key, sort_dir = self.get_search_options(
+            req,
+            getattr(healthnmonResourceModel, self._model_name))
         try:
             return func(ctx, filters, sort_key, sort_dir)
         except sql_exc.DataError, e:
@@ -223,7 +224,8 @@ class Controller(common.ViewBuilder):
                 req - WebOb request object
                 model - Resource model object for which this API is invoked
             Returns:
-                 tuple containing dictonary of filters, sort_key and sort direction
+                 tuple containing dictonary of filters,
+                 sort_key and sort direction
         """
         query_params = {}
         query_params.update(req.GET)
@@ -266,7 +268,8 @@ class Controller(common.ViewBuilder):
         for key in query_params:
             if key in model_members:
                 value = model_members[key]
-                # For enum the value.data_type would be as [<Enumname>, xs:String]
+                # For enum the value.data_type would be as
+                # [<Enumname>, xs:String]
                 if (type(value.data_type) == ListType):
                     value.data_type = value.data_type[1]
                 if not hasattr(healthnmonResourceModel, value.data_type):
@@ -282,7 +285,8 @@ class Controller(common.ViewBuilder):
 
         return (filters, sort_key, sort_dir)
 
-    def limited_by_marker(self, items, request, max_limit=CONF.osapi_max_limit):
+    def limited_by_marker(self, items, request,
+                          max_limit=CONF.osapi_max_limit):
         """
         Return a tuple with slice of items according to the requested marker
         and limit and a set of collection links
@@ -320,19 +324,22 @@ class Controller(common.ViewBuilder):
         else:
             collection_links.append({
                 'rel': 'next',
-                'href': self._get_next_link(request,
-                                            str(items[range_end - 1].get_id()), self._collection_name)
+                'href': self._get_next_link(
+                    request,
+                    str(items[range_end - 1].get_id()), self._collection_name)
             })
         if prev_index > 0:
             collection_links.append({
                 'rel': 'previous',
-                'href': self._get_previous_link(request,
-                                                str(items[prev_index - 1].get_id()), self._collection_name)
+                'href': self._get_previous_link(
+                    request,
+                    str(items[prev_index - 1].get_id()), self._collection_name)
             })
         elif prev_index == 0:
             collection_links.append({
                 'rel': 'previous',
-                'href': self._get_previous_link(request, None, self._collection_name)
+                'href': self._get_previous_link(request,
+                                                None, self._collection_name)
             })
         return (items[start_index:range_end], collection_links)
 
@@ -367,6 +374,7 @@ class Controller(common.ViewBuilder):
                            str(identifier))
         if 'fields' in request.params:
             return "%s?%s" % (url,
-                              common.dict_to_query_str({'fields': request.params['fields']}))
+                              common.dict_to_query_str(
+                                  {'fields': request.params['fields']}))
         else:
             return url

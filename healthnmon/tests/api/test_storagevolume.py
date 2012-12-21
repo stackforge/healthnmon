@@ -31,7 +31,8 @@ class StorageVolumeTest(unittest.TestCase):
     """ Test cases for healthnmon resource extensions """
 
     expected_index_xml = \
-        '<storagevolumes xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
+        '<storagevolumes xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0">\
 <storagevolume id="datastore-111" name="datastore-111">\
 <atom:link \
 href="http://localhost:8774/v2.0/storagevolumes/datastore-111" \
@@ -60,10 +61,71 @@ rel="bookmark"/>\
 {"href": "http://localhost:8774/storagevolumes/datastore-112", \
 "rel": "bookmark"}], \
 "name": "datastore-112"}]}'
-    expected_details_json = '{"StorageVolume": {"mountPoints": {"path": "/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da", "vmhosts": [{"id": "host-9", "links": [{"href": "http://localhost:8774/v2.0/vmhosts/host-9", "rel": "self"}, {"href": "http://localhost:8774/vmhosts/host-9", "rel": "bookmark"}]}]}, "vmfsVolume": "true", "resourceManagerId": "13274325-BFD6-464F-A9D1-61332573B5E2", "name": "datastore-111", "volumeType": "VMFS", "volumeId": "/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da", "free": "32256294912", "assignedServerCount": "2", "shared": "true", "id": "datastore-111", "size": "107105746944"}}'
-    expected_storage_details_xml = '<StorageVolume><id>datastore-111</id><name>datastore-111</name><resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId><size>107105746944</size><free>32256294912</free><mountPoints><path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</path><vmhost xmlns:atom="http://www.w3.org/2005/Atom" id="host-9"><atom:link href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/><atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/></vmhost></mountPoints><vmfsVolume>true</vmfsVolume><shared>true</shared><assignedServerCount>2</assignedServerCount><volumeType>VMFS</volumeType><volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</volumeId></StorageVolume>'
-    expected_detail_xml = '<storagevolumes xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><StorageVolume><id>datastore-111</id><name>datastore-111</name><resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId><size>107105746944</size><free>32256294912</free><mountPoints><path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</path><vmhost id="host-9"><atom:link href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/><atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/></vmhost></mountPoints><vmfsVolume>true</vmfsVolume><shared>true</shared><assignedServerCount>2</assignedServerCount><volumeType>VMFS</volumeType><volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</volumeId></StorageVolume><StorageVolume><id>datastore-112</id><name>datastore-112</name><resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId><size>107105746944</size><free>32256294912</free><mountPoints><path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</path><vmhost id="host-9"><atom:link href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/><atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/></vmhost></mountPoints><vmfsVolume>false</vmfsVolume><shared>false</shared><assignedServerCount>1</assignedServerCount><volumeType>VMFS</volumeType><volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</volumeId></StorageVolume></storagevolumes>'
-    expected_limited_detail_xml = '<storagevolumes xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><StorageVolume><id>datastore-112</id><name>datastore-112</name><resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId><size>107105746944</size><free>32256294912</free><mountPoints><path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</path><vmhost id="host-9"><atom:link href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/><atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/></vmhost></mountPoints><vmfsVolume>false</vmfsVolume><shared>false</shared><assignedServerCount>1</assignedServerCount><volumeType>VMFS</volumeType><volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</volumeId></StorageVolume><atom:link href="http://localhost:8774/v2.0/storagevolumes?limit=1" rel="previous"/></storagevolumes>'
+    expected_details_json = '{"StorageVolume": \
+{"mountPoints": {"path": "/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da", \
+"vmhosts": [{"id": "host-9", "links": \
+[{"href": "http://localhost:8774/v2.0/vmhosts/host-9", \
+"rel": "self"}, {"href": "http://localhost:8774/vmhosts/host-9", \
+"rel": "bookmark"}]}]}, "vmfsVolume": "true", "resourceManagerId": \
+"13274325-BFD6-464F-A9D1-61332573B5E2", "name": "datastore-111", \
+"volumeType": "VMFS", "volumeId": \
+"/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da", \
+"free": "32256294912", "assignedServerCount": "2", "shared": "true", \
+"id": "datastore-111", "size": "107105746944"}}'
+    expected_storage_details_xml = '<StorageVolume><id>datastore-111</id>\
+<name>datastore-111</name><resourceManagerId>\
+13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId>\
+<size>107105746944</size><free>32256294912</free>\
+<mountPoints><path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</path>\
+<vmhost xmlns:atom="http://www.w3.org/2005/Atom" id="host-9">\
+<atom:link href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/>\
+<atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/>\
+</vmhost></mountPoints><vmfsVolume>true</vmfsVolume><shared>true</shared>\
+<assignedServerCount>2</assignedServerCount><volumeType>VMFS</volumeType>\
+<volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</volumeId>\
+</StorageVolume>'
+    expected_detail_xml = '<storagevolumes \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><StorageVolume>\
+<id>datastore-111</id><name>datastore-111</name>\
+<resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId>\
+<size>107105746944</size><free>32256294912</free><mountPoints>\
+<path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</path>\
+<vmhost id="host-9"><atom:link \
+href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/>\
+<atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/>\
+</vmhost></mountPoints><vmfsVolume>true</vmfsVolume><shared>true</shared>\
+<assignedServerCount>2</assignedServerCount><volumeType>VMFS</volumeType>\
+<volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5da</volumeId>\
+</StorageVolume><StorageVolume><id>datastore-112</id>\
+<name>datastore-112</name>\
+<resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId>\
+<size>107105746944</size><free>32256294912</free>\
+<mountPoints><path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</path>\
+<vmhost id="host-9"><atom:link \
+href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/>\
+<atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/>\
+</vmhost></mountPoints><vmfsVolume>false</vmfsVolume><shared>false</shared>\
+<assignedServerCount>1</assignedServerCount>\
+<volumeType>VMFS</volumeType>\
+<volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</volumeId>\
+</StorageVolume></storagevolumes>'
+    expected_limited_detail_xml = '<storagevolumes \
+xmlns:atom="http://www.w3.org/2005/Atom" \
+xmlns="http://docs.openstack.org/ext/healthnmon/api/v2.0"><StorageVolume>\
+<id>datastore-112</id><name>datastore-112</name>\
+<resourceManagerId>13274325-BFD6-464F-A9D1-61332573B5E2</resourceManagerId>\
+<size>107105746944</size><free>32256294912</free><mountPoints>\
+<path>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</path>\
+<vmhost id="host-9"><atom:link \
+href="http://localhost:8774/v2.0/vmhosts/host-9" rel="self"/>\
+<atom:link href="http://localhost:8774/vmhosts/host-9" rel="bookmark"/>\
+</vmhost></mountPoints><vmfsVolume>false</vmfsVolume><shared>false</shared>\
+<assignedServerCount>1</assignedServerCount><volumeType>VMFS</volumeType>\
+<volumeId>/vmfs/volumes/4e374cf3-328f8064-aa2c-78acc0fcb5db</volumeId>\
+</StorageVolume><atom:link \
+href="http://localhost:8774/v2.0/storagevolumes?limit=1" \
+rel="previous"/></storagevolumes>'
 
     def setUp(self):
         """ Setup initial mocks and logging configuration """
@@ -80,10 +142,11 @@ rel="bookmark"/>\
     def test_list_storagevolumes_json(self):
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes.json',
                                       base_url='http://localhost:8774/v2.0/')
@@ -95,10 +158,11 @@ rel="bookmark"/>\
     def test_list_storagevolumes_xml(self):
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes.xml',
                                       base_url='http://localhost:8774/v2.0/')
@@ -110,10 +174,11 @@ rel="bookmark"/>\
     def test_list_limited_storagevolumes_detail_xml(self):
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes/detail.xml?'
                                       'limit=1&marker=datastore-111',
@@ -125,10 +190,11 @@ rel="bookmark"/>\
     def test_list_storagevolumes_detail_xml(self):
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes/detail.xml',
                                       base_url='http://localhost:8774/v2.0/')
@@ -139,10 +205,11 @@ rel="bookmark"/>\
     def test_list_storagevolumes_detail_none_xml(self):
         storagevolumes = None
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes/detail.xml',
                                       base_url='http://localhost:8774/v2.0/')
@@ -153,10 +220,11 @@ rel="bookmark"/>\
     def test_list_storagevolumes_xml_header(self):
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes',
                                       base_url='http://localhost:8774/v2.0/')
@@ -169,10 +237,11 @@ rel="bookmark"/>\
     def test_list_storagevolumes_json_header(self):
         storagevolumes = self.get_storagevolume_list()
         self.mock.StubOutWithMock(api, 'storage_volume_get_all_by_filters')
-        api.storage_volume_get_all_by_filters(mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg(),
-                                              mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_all_by_filters(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = webob.Request.blank('/v2.0/storagevolumes',
                                       base_url='http://localhost:8774/v2.0/')
@@ -186,8 +255,9 @@ rel="bookmark"/>\
         storagevolumes = self.get_single_storagevolume()
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
-        api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank('/v2.0/storagevolumes/datastore-111.json',
@@ -203,8 +273,9 @@ rel="bookmark"/>\
         storagevolumes = self.get_single_storagevolume()
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
-        api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank('/v2.0/storagevolumes/datastore-111.xml',
@@ -220,8 +291,9 @@ rel="bookmark"/>\
         storagevolumes = None
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
-        api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank('/v2.0/storagevolumes/datastore-111.xml',
@@ -240,8 +312,9 @@ rel="bookmark"/>\
             'Test Exception'))
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
-        api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank('/v2.0/storagevolumes/datastore-111.json',
@@ -269,8 +342,9 @@ rel="bookmark"/>\
         storagevolumes = self.get_single_storagevolume()
         self.mock.StubOutWithMock(api, 'storage_volume_get_by_ids')
 
-        api.storage_volume_get_by_ids(mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn(storagevolumes)
+        api.storage_volume_get_by_ids(
+            mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(storagevolumes)
         self.mock.ReplayAll()
         request = \
             webob.Request.blank(

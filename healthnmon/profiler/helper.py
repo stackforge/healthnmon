@@ -48,7 +48,8 @@ def profile_cputime(module, decorator_name, status):
                         pass
                     else:
                         setattr(clz, method,
-                                decorator("%s.%s.%s" % (module, key, method), func))
+                                decorator("%s.%s.%s" % (module, key, method),
+                                          func))
                         LOG.info(_('Decorated method ' + method))
             # set the decorator for the function
             if isinstance(module_data[key], pyclbr.Function):
@@ -89,6 +90,7 @@ def setLogLevel(level, module_name):
     level = level.upper()
     if level not in logging._levelNames:
         LOG.error(_(' Invalid log level %s ') % level)
+        raise Exception(' Invalid log level ' + level)
 
     l = logging.getLevelName(level.upper())
 

@@ -101,12 +101,14 @@ class HealthnMonTestCase(test.TestCase):
         self.mox.StubOutWithMock(self.driver.inventory_manager,
                                  'get_resource_utilization')
 
-        self.driver.inventory_manager.get_resource_utilization(mox.IgnoreArg(),
-                                                               mox.IgnoreArg(), mox.IgnoreArg(),
-                                                               mox.IgnoreArg()).AndReturn(expected)
+        self.driver.inventory_manager.get_resource_utilization(
+            mox.IgnoreArg(),
+            mox.IgnoreArg(), mox.IgnoreArg(),
+            mox.IgnoreArg()).AndReturn(expected)
 
         self.mox.ReplayAll()
-        result = self.driver.get_resource_utilization(self.context,
-                                                      'uuid', Constants.VmHost, 5)
+        result = self.driver.get_resource_utilization(
+            self.context,
+            'uuid', Constants.VmHost, 5)
         self.assertEqual(result, expected)
         self.mox.UnsetStubs()
