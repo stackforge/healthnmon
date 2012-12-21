@@ -22,6 +22,4 @@ httplib2
 setuptools_git>=0.4
 python-cinderclient
 python-glanceclient>=0.5.0,<2
-#https://launchpad.net/nova/essex/2012.1/+download/nova-2012.1.tar.gz
-#https://launchpad.net/nova/folsom/2012.2/+download/nova-2012.2.tar.gz
-https://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g1.tar.gz
+https://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g1.tar.gz#egg=nova

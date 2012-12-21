@@ -1,3 +1,8 @@
+Authors
+AUTHORS
+ChangeLog
+healthnmon/versioninfo
+*.pyc
 /coverage.xml
 /.project
 /pep8.txt

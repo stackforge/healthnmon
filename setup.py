@@ -14,79 +14,27 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import gettext
-import glob
-import os
+import setuptools
 
-from setuptools import find_packages
+from healthnmon.openstack.common import setup
+from healthnmon.version import version_info as version
 
-# In order to run the i18n commands for compiling and
-# installing message catalogs, we use DistUtilsExtra.
-# Don't make this a hard requirement, but warn that
-# i18n commands won't be available if DistUtilsExtra is
-# not installed...
+requires = setup.parse_requirements()
+depend_links = setup.parse_dependency_links()
 
-#try:
-#    from DistUtilsExtra.auto import setup
-#except ImportError:
-#    from setuptools import setup
-#    print 'Warning: DistUtilsExtra required to use i18n builders. '
-#    print 'To build healthnmon with support for message catalogs, you need '
-#    print '  https://launchpad.net/python-distutils-extra >= 2.18'
-
-from setuptools import setup
-print 'Warning: DistUtilsExtra required to use i18n builders. '
-print 'To build healthnmon with support for message catalogs, you need '
-print '  https://launchpad.net/python-distutils-extra >= 2.18'
-
-gettext.install('healthnmon', unicode=1)
-
-from healthnmon import version
-
-nova_cmdclass = {}
-
-try:
-    from sphinx.setup_command import BuildDoc
-
-    class local_BuildDoc(BuildDoc):
-
-        def run(self):
-            for builder in ['html', 'man']:
-                self.builder = builder
-                self.finalize_options()
-                BuildDoc.run(self)
-
-    nova_cmdclass['build_sphinx'] = local_BuildDoc
-except Exception:
-
-    pass
-
-
-def find_data_files(destdir, srcdir):
-    package_data = []
-    files = []
-    for d in glob.glob('%s/*' % (srcdir,)):
-        if os.path.isdir(d):
-            package_data += find_data_files(
-                os.path.join(destdir,
-                             os.path.basename(d)), d)
-        else:
-            files += [d]
-    package_data += [(destdir, files)]
-    return package_data
-
-
-setup(
+setuptools.setup(
     name='healthnmon',
     version=version.canonical_version_string(),
-    description='Healthnmon project provides health and \
-    monitoring service for cloud',
+    description='Healthnmon project provides health and'
+                ' monitoring service for cloud',
     author='healthnmon',
     author_email='healthnmon@lists.launchpad.net',
     url='https://launchpad.net/healthnmon/',
-    cmdclass=nova_cmdclass,
-    packages=find_packages(exclude=['bin', 'smoketests']),
+    packages=setuptools.find_packages(exclude=['bin']),
+    cmdclass=setup.get_cmdclass(),
     include_package_data=True,
+    install_requires=requires,
+    dependency_links=depend_links,
     test_suite='nose.collector',
     scripts=['bin/healthnmon', 'bin/healthnmon-manage'],
     py_modules=[],

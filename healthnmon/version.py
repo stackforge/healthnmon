@@ -14,25 +14,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-HEALTHNMON_VERSION = ['2013', '1', None]
-(YEAR, COUNT, REVISION) = HEALTHNMON_VERSION
-FINAL = False  # This becomes true at Release Candidate time
+from healthnmon.openstack.common import version as common_version
 
-
-def canonical_version_string():
-    return '.'.join(filter(None, HEALTHNMON_VERSION))
-
-
-def version_string():
-    if FINAL:
-        return canonical_version_string()
-    else:
-        return '%s-dev' % (canonical_version_string(),)
-
-
-def vcs_version_string():
-    return 'LOCALBRANCH:LOCALREVISION'
-
-
-def version_string_with_vcs():
-    return '%s-%s' % (canonical_version_string(), vcs_version_string())
+version_info = common_version.VersionInfo('healthnmon')
