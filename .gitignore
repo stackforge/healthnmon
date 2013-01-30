@@ -20,3 +20,4 @@ healthnmon/versioninfo
 /covhtml
 /target
 /healthnmon.egg-info
+/build
