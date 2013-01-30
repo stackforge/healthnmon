@@ -178,7 +178,7 @@ install -p -D -m 600 etc/%{name}/logging-%{name}-manage.conf %{buildroot}%{_sysc
 %defattr(-,root,root,-)
 %doc %{_docdir}/python-%{name}/copyright
 %{python_sitelib}/%{name}
-%{python_sitelib}/%{name}-%{version}-*.egg-info
+%{python_sitelib}/%{name}-*.egg-info
 
 %if 0%{?with_doc}
 %files doc

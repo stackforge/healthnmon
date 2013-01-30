@@ -85,7 +85,7 @@ if [ $coverage -eq 1 ]; then
     files=${files////.}
 
     noseopts="$noseopts --cover-erase"
-    noseopts="$noseopts --cover-package=isc_scheduler"
+    noseopts="$noseopts --cover-package=healthnmon"
     for file in $files; do noseopts="$noseopts --cover-package=$file"; done
     noseopts="$noseopts --with-coverage --with-xunit"
     #noseopts="$noseopts --xcoverage-file=$xcoverage_file"

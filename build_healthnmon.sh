@@ -60,11 +60,12 @@ if [ $create_tar -eq 1 ]; then
 fi
 
 if [ $create_rpm -eq 1 ]; then
+    python prep_rpm_spec.py
     rpmBuildPath=`pwd`/target/rpmbuild
 	rm -rf $rpmBuildPath
 	
 	mkdir -p $rpmBuildPath/SOURCES
-	cp dist/healthnmon-2013.1.tar.gz $rpmBuildPath/SOURCES
+	cp dist/healthnmon-*.tar.gz $rpmBuildPath/SOURCES
 	cp rpm/healthnmon.init $rpmBuildPath/SOURCES
 	cp rpm/copyright $rpmBuildPath/SOURCES
 	
