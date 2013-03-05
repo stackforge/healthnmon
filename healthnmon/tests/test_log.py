@@ -20,7 +20,7 @@ import mox
 import os
 import time
 import sys
-from nova import test
+from healthnmon import test
 from healthnmon import log
 from healthnmon.log import HealthnmonFormatter
 from healthnmon.log import HealthnmonAuditFilter

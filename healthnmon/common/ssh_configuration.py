@@ -114,7 +114,7 @@ def is_valid_appliance():
 
         os.chmod(os.path.join(nova_home + '/.ssh/id_rsa.pub'), 0700)
         os.chmod(os.path.join(nova_home + '/.ssh/id_rsa'), 0700)
-        #os.popen('ssh-keygen -t rsa', 'w').write(''' ''')
+        # os.popen('ssh-keygen -t rsa', 'w').write(''' ''')
         LOG.debug(_('created new id_rsa and id_rsa.pub'))
     else:
 

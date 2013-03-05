@@ -78,7 +78,7 @@ class Constants(object):
     VM_CONNECTED = 'Connected'
     VM_DISCONNECTED = 'Disconnected'
 
-    #Vm Auto start Enabled
+    # Vm Auto start Enabled
     AUTO_START_ENABLED = 'AutostartEnabled'
     AUTO_START_DISABLED = 'AutoStartDisabled'
 

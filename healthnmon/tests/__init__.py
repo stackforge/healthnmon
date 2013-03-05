@@ -15,30 +15,33 @@
 #    under the License.
 
 
-import __builtin__
-setattr(__builtin__, '_', lambda x: x)
-
-from nova import test
-from nova.openstack.common import cfg
 from healthnmon.db import migration as healthnmon_migration
+import FakeLibvirt
 from nova.db import migration as nova_migration
+from nova.openstack.common import cfg
+import __builtin__
+import healthnmon
 import os
 import shutil
-import healthnmon
 import sys
-from healthnmon.tests import FakeLibvirt
-import eventlet
+
+setattr(__builtin__, '_', lambda x: x)
 
 sys.modules['libvirt'] = FakeLibvirt
-
+test_opts = [
+    cfg.StrOpt('sqlite_clean_db',
+               default='clean.sqlite',
+               help='File name of clean sqlite db'),
+]
 CONF = cfg.CONF
-CONF.set_default('sqlite_db', 'nova.sqlite')
-CONF.set_default('sqlite_synchronous', False)
+CONF.register_opts(test_opts)
 
 
 def setup():
     ''' for nova test.py create a dummy clean.sqlite '''
-    cleandb = os.path.join(CONF.state_path, CONF.sqlite_clean_db)
+    healthnmon_path = os.path.abspath(
+        os.path.join(healthnmon.get_healthnmon_location(), '../'))
+    cleandb = os.path.join(healthnmon_path, CONF.sqlite_clean_db)
     if os.path.exists(cleandb):
         pass
     else:
@@ -58,4 +61,4 @@ def setup():
     shutil.copyfile(testdb, cleandb)
 
 """ Uncomment the line below for running tests through eclipse """
-#setup()
+# setup()

@@ -314,5 +314,5 @@ SRS&name=SRS111&os=windows&virtualizationType=QEMU',
                           expected_base_detail_xml)
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+    # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

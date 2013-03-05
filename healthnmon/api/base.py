@@ -307,7 +307,7 @@ class Controller(common.ViewBuilder):
         if marker:
             start_index = -1
             for i, item in enumerate(items):
-                #NOTE(siva): getter from generateDS
+                # NOTE(siva): getter from generateDS
                 if item.get_id() == marker:
                     start_index = i + 1
                     break
@@ -363,7 +363,7 @@ class Controller(common.ViewBuilder):
                            collection_name)
         return "%s?%s" % (url, common.dict_to_query_str(params))
 
-    #NOTE(siva): This method is overridden to retain filtered output.
+    # NOTE(siva): This method is overridden to retain filtered output.
     def _get_href_link(self, request, identifier, collection_name):
         """Return an href string pointing to this object."""
         prefix = self._update_link_prefix(request.application_url,

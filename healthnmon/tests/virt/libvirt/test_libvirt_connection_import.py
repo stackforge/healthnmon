@@ -23,7 +23,7 @@ Created on Feb 20, 2012
 import unittest
 from healthnmon.virt.libvirt import connection as connection
 from healthnmon.tests import FakeLibvirt
-from nova import test
+from healthnmon import test
 
 
 class Test_virt_connection_cover(test.TestCase):

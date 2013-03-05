@@ -14,7 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from nova import test
+from healthnmon import test
 import mox
 from nova.openstack.common import rpc
 import healthnmon.notifier.rabbit_notifier
@@ -25,8 +25,8 @@ class RabbitNotifierTest(test.TestCase):
 
     ''' TestCase for healthnmon.notifier.rabbit_notifier '''
     def setUp(self):
-        self.flags(healthnmon_default_notification_level='INFO')
         super(RabbitNotifierTest, self).setUp()
+        self.flags(healthnmon_default_notification_level='INFO')
         self.mox.StubOutWithMock(rpc, 'notify')
         self.context = context.get_admin_context()
 

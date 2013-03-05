@@ -35,6 +35,7 @@ if os.path.exists(os.path.join(POSSIBLE_TOPDIR, 'healthnmon', '__init__.py')):
 gettext.install('healthnmon', unicode=1)
 
 from nova import context
+from nova.openstack.common import cliutils
 from nova import crypto
 from healthnmon import db
 from nova import exception
@@ -57,10 +58,9 @@ CONF = cfg.CONF
 CONF.register_opts(api_opts)
 
 
-# Decorators for actions
 def args(*args, **kwargs):
     def _decorator(func):
-        func.__dict__.setdefault('options', []).insert(0, (args, kwargs))
+        func.__dict__.setdefault('args', []).insert(0, (args, kwargs))
         return func
     return _decorator
 
@@ -193,10 +193,10 @@ class LogCommands(object):
                            "args": {"level": level,
                                     "module": module}})
 
-CATEGORIES = [('db', DbCommands),
-              ('ssh', SSHCommands),
-              ('profile', ProfileCommands),
-              ('log', LogCommands)]
+CATEGORIES = {'db': DbCommands,
+              'ssh': SSHCommands,
+              'profile': ProfileCommands,
+              'log': LogCommands}
 
 
 def lazy_match(name, key_value_tuples):
@@ -230,77 +230,87 @@ def methods_of(obj):
     return result
 
 
+def add_command_parsers(subparsers):
+    parser = subparsers.add_parser('version')
+
+    parser = subparsers.add_parser('bash-completion')
+    parser.add_argument('query_category', nargs='?')
+
+    for category in CATEGORIES:
+        command_object = CATEGORIES[category]()
+
+        parser = subparsers.add_parser(category)
+        parser.set_defaults(command_object=command_object)
+
+        category_subparsers = parser.add_subparsers(dest='action')
+
+        for (action, action_fn) in methods_of(command_object):
+            parser = category_subparsers.add_parser(action)
+
+            action_kwargs = []
+            for args, kwargs in getattr(action_fn, 'args', []):
+                action_kwargs.append(kwargs['dest'])
+                kwargs['dest'] = 'action_kwarg_' + kwargs['dest']
+                parser.add_argument(*args, **kwargs)
+
+            parser.set_defaults(action_fn=action_fn)
+            parser.set_defaults(action_kwargs=action_kwargs)
+
+            parser.add_argument('action_args', nargs='*')
+
+category_opt = cfg.SubCommandOpt('category',
+                                 title='Command categories',
+                                 help='Available categories',
+                                 handler=add_command_parsers)
+
+
 def main():
     """Parse options and call the appropriate class/method."""
-
+    CONF.register_cli_opt(category_opt)
     try:
-        argv = config.parse_args(sys.argv)
+        config.parse_args(sys.argv)
         logging.healthnmon_manage_setup()
-    except IOError, e:
-        if e.errno == errno.EACCES:
-            print _('Please re-run healthnmon-manage as root.')
-            sys.exit(2)
-        raise
+    except cfg.ConfigFilesNotFoundError:
+        cfgfile = CONF.config_file[-1] if CONF.config_file else None
+        if cfgfile and not os.access(cfgfile, os.R_OK):
+            st = os.stat(cfgfile)
+            print _("Could not read %s. Re-running with sudo") % cfgfile
+            try:
+                os.execvp('sudo', ['sudo', '-u', '#%s' % st.st_uid] + sys.argv)
+            except Exception:
+                print _('sudo failed, continuing as if nothing happened')
 
-    script_name = argv.pop(0)
-    if len(argv) < 1:
-        print _("\healthnmon version: %s (%s)\n") % \
-            (version.version_string(), version.version_string_with_vcs())
-        print script_name + " category action [<args>]"
-        print _("Available categories:")
-        for k, _v in CATEGORIES:
-            print "\t%s" % k
+        print _('Please re-run healthnmon-manage as root.')
         sys.exit(2)
-    category = argv.pop(0)
-    matches = lazy_match(category, CATEGORIES)
-    # instantiate the command group object
-    category, fn = matches[0]
-    command_object = fn()
-    actions = methods_of(command_object)
-    if len(argv) < 1:
-        if hasattr(command_object, '__call__'):
-            action = ''
-            fn = command_object.__call__
-        else:
-            print script_name + " category action [<args>]"
-            print _("Available actions for %s category:") % category
-            for k, _v in actions:
-                print "\t%s" % k
-            sys.exit(2)
-    else:
-        action = argv.pop(0)
-        matches = lazy_match(action, actions)
-        action, fn = matches[0]
 
-    # For not decorated methods
-    options = getattr(fn, 'options', [])
-
-    usage = "%%prog %s %s <args> [options]" % (category, action)
-    parser = optparse.OptionParser(usage=usage)
-    for ar, kw in options:
-        parser.add_option(*ar, **kw)
-    (opts, fn_args) = parser.parse_args(argv)
-    fn_kwargs = vars(opts)
-
-    for k, v in fn_kwargs.items():
+    fn = CONF.category.action_fn
+    fn_args = [arg.decode('utf-8') for arg in CONF.category.action_args]
+    fn_kwargs = {}
+    for k in CONF.category.action_kwargs:
+        v = getattr(CONF.category, 'action_kwarg_' + k)
         if v is None:
-            del fn_kwargs[k]
+            continue
+        if isinstance(v, basestring):
+            v = v.decode('utf-8')
+        fn_kwargs[k] = v
 
     # call the action with the remaining arguments
+    # check arguments
+    try:
+        cliutils.validate_args(fn, *fn_args, **fn_kwargs)
+    except cliutils.MissingArgs as e:
+        print fn.__doc__
+        CONF.print_help()
+        print e
+        sys.exit(1)
     try:
         fn(*fn_args, **fn_kwargs)
-        if action == 'sync':
-            print _("Database sync complete")
         rpc.cleanup()
         sys.exit(0)
-    except TypeError:
-        print _("Possible wrong number of arguments supplied")
-        print fn.__doc__
-        parser.print_help()
-        raise
     except Exception:
-        #print _("Command failed, please check log for more info")
+        print _("Command failed, please check log for more info")
         raise
+
 
 if __name__ == '__main__':
     main()

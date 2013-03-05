@@ -14,7 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from nova import test
+from healthnmon import test
 import healthnmon.notifier.api as notifier_api
 from nova.openstack.common import context
 

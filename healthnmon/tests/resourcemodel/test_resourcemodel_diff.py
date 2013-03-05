@@ -16,7 +16,7 @@
 
 """ Unit Test Class for testing ResourceModelDiff module """
 
-from nova import test
+from healthnmon import test
 from healthnmon.resourcemodel.healthnmonResourceModel import StorageVolume, \
     HostMountPoint, Vm, VmDisk, VmHost, VirtualSwitch
 from healthnmon.resourcemodel.resourcemodel_diff import ResourceModelDiff

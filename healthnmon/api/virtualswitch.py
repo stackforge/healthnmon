@@ -37,7 +37,7 @@ class VirtualSwitchController(base.Controller):
                                  'virtualswitch',
                                  'VirtualSwitch')
 
-    #NOTE(siva): virtual switch type not included in simple list output.
+    # NOTE(siva): virtual switch type not included in simple list output.
     def index(self, req):
         """ List all virtual switches as a simple list
             :param req: webob request

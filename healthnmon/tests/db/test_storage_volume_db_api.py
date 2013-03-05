@@ -18,9 +18,8 @@ from healthnmon.db import api as healthnmon_db_api
 from healthnmon.resourcemodel.healthnmonResourceModel import StorageVolume
 from healthnmon.resourcemodel.healthnmonResourceModel import Vm, VmDisk
 from healthnmon.resourcemodel.healthnmonResourceModel import VmGlobalSettings
-from healthnmon.tests.db import test
+from healthnmon import test
 from nova.db.sqlalchemy import session
-import mox
 from nova.context import get_admin_context
 from healthnmon.constants import DbConstants
 import time
@@ -32,12 +31,10 @@ class StoragevolumeDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(StoragevolumeDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
         self.admin_context = get_admin_context()
 
     def tearDown(self):
         super(StoragevolumeDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
 
     def __create_volume(self, **kwargs):
         vol = StorageVolume()
@@ -160,33 +157,33 @@ class StoragevolumeDbApiTestCase(test.TestCase):
                           self.admin_context, StorageVolume())
 
     def test_storage_get_ids_throw_exception(self):
-        self.mock.StubOutWithMock(session, 'get_session')
+        self.mox.StubOutWithMock(session, 'get_session')
         session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.storage_volume_get_by_ids,
                           self.admin_context, ['test1'])
 
     def test_storage_get_all_throw_exception(self):
-        self.mock.StubOutWithMock(session, 'get_session')
+        self.mox.StubOutWithMock(session, 'get_session')
         session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.storage_volume_get_all,
                           self.admin_context)
 
     def test_storage_delete_throw_exception(self):
-        self.mock.StubOutWithMock(session, 'get_session')
+        self.mox.StubOutWithMock(session, 'get_session')
         session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.storage_volume_delete_by_ids,
                           self.admin_context, ['test1'])
 
     def test_storage_volume_get_all_by_filters_throw_exception(self):
-        self.mock.StubOutWithMock(session, 'get_session')
+        self.mox.StubOutWithMock(session, 'get_session')
         session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.storage_volume_get_all_by_filters,
                           self.admin_context, {}, 'id', 'asc')

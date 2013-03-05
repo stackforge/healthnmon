@@ -21,14 +21,14 @@
 %endif
 
 Name:             healthnmon
-Version:          2013.1
+Version:          0.0.21.5538bc3
 Release:          1
 
 Group:            Applications/System
 License:          Apache
 Vendor:           Hewlett Packard Company
 
-Source0:          %{name}-2013.1.tar.gz
+Source0:          %{name}-0.0.21.5538bc3.tar.gz
 Source1:          %{name}.init
 Source2:          copyright
 
@@ -57,7 +57,7 @@ Requires:  python-daemon
 Requires:  python-sqlalchemy
 Requires:  python-eventlet
 Requires:  libxml2-python
-Requires:  python-webob
+Requires:  python-webob1.2
 Requires:  python-netaddr
 Requires:  python-migrate
 Requires:  python-simplejson
@@ -66,7 +66,7 @@ Requires:  pyxattr
 Requires:  sudo
 Requires:  libvirt-python
 Requires:  python-paramiko 
-#Requires:  python-guppy 
+# Requires:  python-guppy 
 Requires:  python-nova >= %{version}
 
 

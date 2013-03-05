@@ -23,7 +23,7 @@ from nova.openstack.common import timeutils
 from healthnmon import log
 
 # including instances_path defined in nova.compute.manager
-#in order to create nova-storage-pool
+# in order to create nova-storage-pool
 CONF = cfg.CONF
 CONF.import_opt('instances_path', 'nova.compute.manager')
 LOG = log.getLogger(__name__)

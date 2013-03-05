@@ -19,10 +19,9 @@ from healthnmon.resourcemodel.healthnmonResourceModel import Vm, \
     VmScsiController
 from healthnmon.resourcemodel.healthnmonResourceModel import VmNetAdapter
 from healthnmon.resourcemodel.healthnmonResourceModel import VmGlobalSettings
-from healthnmon.tests.db import test
+from healthnmon import test
 from nova.db.sqlalchemy import session as db_session
 from nova.context import get_admin_context
-import mox
 from healthnmon.constants import DbConstants, Constants
 import time
 from healthnmon import utils
@@ -33,12 +32,12 @@ class VmDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(VmDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
+        # self.mock = mox.Mox()
         self.admin_context = get_admin_context()
 
     def tearDown(self):
         super(VmDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
+#        self.mock.stubs.UnsetAll()
 
     def __create_vm(self, **kwargs):
         vm = Vm()
@@ -193,7 +192,7 @@ class VmDbApiTestCase(test.TestCase):
         self.assertTrue(vms is None or len(vms) == 0, 'VM not deleted')
 
     def test_vm_save_none(self):
-        #Initially insert a vm into db and check the length
+        # Initially insert a vm into db and check the length
         vm = Vm()
         vm.id = 'VM1-id'
         healthnmon_db_api.vm_save(get_admin_context(), vm)
@@ -201,7 +200,7 @@ class VmDbApiTestCase(test.TestCase):
         self.assertTrue(vms is not None)
         self.assertTrue(len(vms) == 1)
 
-        #Now try to save the none and check the length is same as previous
+        # Now try to save the none and check the length is same as previous
         healthnmon_db_api.vm_save(get_admin_context(), None)
         vmsaved = healthnmon_db_api.vm_get_all(get_admin_context())
         self.assertTrue(vmsaved is not None)
@@ -214,7 +213,7 @@ class VmDbApiTestCase(test.TestCase):
         self.assertTrue(vms is None)
 
     def test_vm_delete_none(self):
-        #Initially insert a vm into db and check the length
+        # Initially insert a vm into db and check the length
         vm = Vm()
         vm.id = 'VM1-id'
         healthnmon_db_api.vm_save(get_admin_context(), vm)
@@ -222,7 +221,7 @@ class VmDbApiTestCase(test.TestCase):
         self.assertTrue(vms is not None)
         self.assertTrue(len(vms) == 1)
 
-        #Now delete the None from db
+        # Now delete the None from db
         healthnmon_db_api.vm_delete_by_ids(get_admin_context(), None)
         vms = healthnmon_db_api.vm_get_all(get_admin_context())
         self.assertTrue(vms is not None)
@@ -233,31 +232,31 @@ class VmDbApiTestCase(test.TestCase):
                           get_admin_context(), Vm())
 
     def test_vm_get_ids_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, healthnmon_db_api.vm_get_by_ids,
                           get_admin_context(), ['test1'])
 
     def test_vm_get_all_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, healthnmon_db_api.vm_get_all,
                           get_admin_context())
 
     def test_vm_delete_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.vm_delete_by_ids,
                           get_admin_context(), ['test1'])
 
     def test_vm_get_all_by_filters_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.vm_get_all_by_filters,
                           get_admin_context(), {}, 'id', 'asc')

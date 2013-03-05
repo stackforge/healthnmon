@@ -23,7 +23,7 @@ from healthnmon.inventory_cache_manager import InventoryCacheManager
 from healthnmon.db import api
 from healthnmon.constants import Constants
 from nova.openstack.common import context
-from nova import test
+from healthnmon import test
 import mox
 from nova.openstack.common import cfg
 from nova.openstack.common import cfg

@@ -21,7 +21,7 @@ from healthnmon import driver
 from healthnmon.inventory_cache_manager import InventoryCacheManager
 from healthnmon.db import api
 from nova.openstack.common import context
-from nova import test
+from healthnmon import test
 import mox
 
 

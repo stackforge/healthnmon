@@ -91,7 +91,7 @@ def mem_profile():
     2) set the reference point for next dump
     """
     try:
-        #LOG.debug(_(h.heap()))
+        # LOG.debug(_(h.heap()))
         h.heap().dump(mem_profile_path)
         LOG.debug(_("Dumped the memory profiling data "))
         if setref:

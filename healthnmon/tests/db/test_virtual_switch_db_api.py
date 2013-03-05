@@ -17,7 +17,7 @@
 from healthnmon.db import api
 from healthnmon.resourcemodel.healthnmonResourceModel import VirtualSwitch, \
     Subnet, Cost, PortGroup
-from healthnmon.tests.db import test
+from healthnmon import test
 from nova.db.sqlalchemy import session as db_session
 import mox
 from nova.context import get_admin_context
@@ -31,12 +31,12 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(VirtualSwitchDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
+        # self.mock = mox.Mox()
         self.admin_context = get_admin_context()
 
     def tearDown(self):
         super(VirtualSwitchDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
+        # self.mock.stubs.UnsetAll()
 
     def __create_virtual_switch(self, **kwargs):
         switch = VirtualSwitch()
@@ -224,7 +224,7 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
         virtualswitch.add_portGroups(portGroup)
         api.virtual_switch_save(self.admin_context, virtualswitch)
 
-        #virtualswitchs = api.virtual_switch_get_by_ids([virtualswitch.id])
+        # virtualswitchs = api.virtual_switch_get_by_ids([virtualswitch.id])
 
         api.virtual_switch_delete_by_ids(self.admin_context,
                                          [virtualswitch.id])
@@ -243,30 +243,30 @@ class VirtualSwitchDbApiTestCase(test.TestCase):
                           self.admin_context, VirtualSwitch())
 
     def test_virtual_switch_get_ids_exc(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, api.virtual_switch_get_by_ids,
                           self.admin_context, ['test1'])
 
     def test_virtual_switch_get_all_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, api.virtual_switch_get_all,
                           self.admin_context)
 
     def test_virtual_switch_delete_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, api.virtual_switch_delete_by_ids,
                           self.admin_context, ['test1'])
 
     def test_virtual_switch_get_all_by_filters_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           api.virtual_switch_get_all_by_filters,
                           self.admin_context, {}, 'id', 'asc')

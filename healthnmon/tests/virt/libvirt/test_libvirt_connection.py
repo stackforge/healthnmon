@@ -30,7 +30,7 @@ from healthnmon.inventory_manager import ComputeInventory
 from healthnmon.inventory_cache_manager import InventoryCacheManager
 from healthnmon.rmcontext import ComputeRMContext
 from healthnmon.perfmon import libvirt_perfdata
-from nova import test
+from healthnmon import test
 from healthnmon.tests import FakeLibvirt as libvirt
 
 
@@ -83,22 +83,22 @@ class Test_virt_connection(test.TestCase):
         self.assertRaises(Exception, conn._get_connection)
 
     def test_update_inventory(self):
-        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
-        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
-        self.mox.StubOutWithMock(api, 'vm_save')
-        self.mox.StubOutWithMock(api, 'vm_host_save')
-        self.mox.StubOutWithMock(api, 'storage_volume_save')
-
-        api.storage_volume_save(
-            mox.IgnoreArg(),
-            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-
-        api.vm_host_save(mox.IgnoreArg(),
-                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-
-        api.vm_save(mox.IgnoreArg(),
-                    mox.IgnoreArg()).MultipleTimes().AndReturn(None)
-        self.mox.ReplayAll()
+#        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
+#        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
+#        self.mox.StubOutWithMock(api, 'vm_save')
+#        self.mox.StubOutWithMock(api, 'vm_host_save')
+#        self.mox.StubOutWithMock(api, 'storage_volume_save')
+#
+#        api.storage_volume_save(
+#            mox.IgnoreArg(),
+#            mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+#
+#        api.vm_host_save(mox.IgnoreArg(),
+#                         mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+#
+#        api.vm_save(mox.IgnoreArg(),
+#                    mox.IgnoreArg()).MultipleTimes().AndReturn(None)
+#        self.mox.ReplayAll()
         conn = connection.get_connection(True)
         compute_rmcontext = ComputeRMContext(
             rmType='QEMU',

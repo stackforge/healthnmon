@@ -109,8 +109,7 @@ class HealthnMonManager(manager.Manager):
 
         return self.driver.get_compute_list()
 
-    @manager.periodic_task(ticks_between_runs=CONF.perfmon_refresh_interval
-                           / 60 - 1)
+    @manager.periodic_task(spacing=CONF.perfmon_refresh_interval)
     def _poll_compute_perfmon(self, context):
         """Poll compute nodes periodically to refresh
         performance data details."""
