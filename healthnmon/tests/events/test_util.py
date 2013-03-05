@@ -17,7 +17,7 @@
 """Unit test for events util module
 """
 
-from nova import test
+from healthnmon import test
 from healthnmon.resourcemodel.healthnmonResourceModel import Vm
 from healthnmon.events import util as events_util
 

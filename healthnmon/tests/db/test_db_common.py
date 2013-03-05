@@ -20,11 +20,11 @@
 """
 
 
-from healthnmon.tests.db import test
+from healthnmon import test
 from healthnmon.db import api as healthnmon_db_api
 from healthnmon.db.sqlalchemy import api as healthnmon_alchemy_api
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, OsProfile
-import mox
+# import mox
 from nova.context import get_admin_context
 from nova.db.sqlalchemy import session as nova_session
 import time
@@ -35,13 +35,13 @@ class CommonDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(CommonDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
+        # self.mock = mox.Mox()
         self.admin_context = get_admin_context()
         self.db_session = nova_session.get_session()
 
     def tearDown(self):
         super(CommonDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
+        # self.mock.stubs.UnsetAll()
 
     def test_filtered_ordered_query_changessince_invalid_value(self):
         # Create VmHost

@@ -17,7 +17,7 @@
 """Unit test for event_metadata module
 """
 
-from nova import test
+from healthnmon import test
 from healthnmon.events import event_metadata
 from healthnmon import notifier
 from healthnmon.resourcemodel.healthnmonResourceModel import Vm

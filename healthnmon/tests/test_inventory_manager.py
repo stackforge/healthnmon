@@ -20,11 +20,11 @@ from healthnmon.inventory_manager import InventoryManager, ComputeInventory
 from healthnmon.inventory_cache_manager import InventoryCacheManager
 from healthnmon.events import api as event_api
 from healthnmon.constants import Constants
-#from healthnmon import inventory_manager
+# from healthnmon import inventory_manager
 from healthnmon import rmcontext
 from healthnmon.db import api
-#from nova.db import api as nova_db
-from nova import test
+# from nova.db import api as nova_db
+from healthnmon import test
 from nova.openstack.common import timeutils
 from nova import db
 from datetime import timedelta

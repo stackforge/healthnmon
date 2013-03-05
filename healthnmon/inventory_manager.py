@@ -31,7 +31,7 @@ from healthnmon import log as logging
 from nova.openstack.common import cfg
 from nova.openstack.common import importutils
 from nova.openstack.common import timeutils
-#from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
+# from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
 #    Vm, StorageVolume, Subnet
 from healthnmon.constants import Constants
 from healthnmon.events import api as event_api

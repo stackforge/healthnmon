@@ -29,7 +29,7 @@ LOG = log.getLogger(__name__)
 class HealthnmonService(Service):
 
     def start(self):
-        vcs_string = version.version_string_with_vcs()
+        vcs_string = version.version_string_with_package()
         LOG.audit(_('Starting %(topic)s node (version %(vcs_string)s)'),
                   {'topic': self.topic, 'vcs_string': vcs_string})
         self.manager.init_host()
@@ -67,19 +67,17 @@ class HealthnmonService(Service):
 
         self.manager.post_start_hook()
 
-        if self.report_interval:
-            pulse = utils.LoopingCall(self.report_state)
-            pulse.start(interval=self.report_interval,
-                        initial_delay=self.report_interval)
+        pulse = self.servicegroup_api.join(self.host, self.topic, self)
+        if pulse:
             self.timers.append(pulse)
 
-        if self.periodic_interval:
+        if self.periodic_enable:
             if self.periodic_fuzzy_delay:
                 initial_delay = random.randint(0, self.periodic_fuzzy_delay)
             else:
                 initial_delay = None
 
-            periodic = utils.LoopingCall(self.periodic_tasks)
-            periodic.start(interval=self.periodic_interval,
-                           initial_delay=initial_delay)
+            periodic = utils.DynamicLoopingCall(self.periodic_tasks)
+            periodic.start(initial_delay=initial_delay,
+                           periodic_interval_max=self.periodic_interval_max)
             self.timers.append(periodic)

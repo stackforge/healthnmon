@@ -18,7 +18,7 @@ from healthnmon.db import api as healthnmon_db_api
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
     Vm, HostMountPoint, StorageVolume, VirtualSwitch, PortGroup, Cost, \
     VmGlobalSettings
-from healthnmon.tests.db import test
+from healthnmon import test
 import mox
 from nova.db.sqlalchemy import session as db_session
 from nova.context import get_admin_context
@@ -32,12 +32,12 @@ class VmHostDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(VmHostDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
+        # self.mock = mox.Mox()
         self.admin_context = get_admin_context()
 
     def tearDown(self):
         super(VmHostDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
+        # self.mock.stubs.UnsetAll()
 
     def __create_vm_host(self, **kwargs):
         vmhost = VmHost()
@@ -537,10 +537,10 @@ class VmHostDbApiTestCase(test.TestCase):
         self.assertTrue(
             len(vmhosts) == 1,
             'vm_host_get_all does not returned expected number of hosts')
-        #Now tries to put None object in the db
+        # Now tries to put None object in the db
         healthnmon_db_api.vm_host_save(get_admin_context(), None)
-        #Again tries to retrieve the vmhost from db and
-        #check it is same as before
+        # Again tries to retrieve the vmhost from db and
+        # check it is same as before
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
         self.assertFalse(vmhosts is None, 'vm_host_get_all returned a None')
         self.assertTrue(
@@ -568,9 +568,9 @@ class VmHostDbApiTestCase(test.TestCase):
         self.assertTrue(
             len(vmhosts) == 1,
             'vm_host_get_all does not returned expected number of hosts')
-        #Now call the delete api by passing the id as None
+        # Now call the delete api by passing the id as None
         healthnmon_db_api.vm_host_delete_by_ids(get_admin_context(), None)
-        #Again try to retrieve the vmhost and check whether its intact
+        # Again try to retrieve the vmhost and check whether its intact
         vmhosts = healthnmon_db_api.vm_host_get_all(get_admin_context())
         self.assertFalse(vmhosts is None,
                          'vm_host_get_all returned a None')
@@ -583,32 +583,32 @@ class VmHostDbApiTestCase(test.TestCase):
                           get_admin_context(), VmHost())
 
     def test_vm_host_get_ids_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.vm_host_get_by_ids,
                           get_admin_context(), ['host1'])
 
     def test_vm_host_get_all_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, healthnmon_db_api.vm_host_get_all,
                           get_admin_context())
 
     def test_vm_host_delete_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.vm_host_delete_by_ids,
                           get_admin_context(), ['test1'])
 
     def test_vm_host_get_all_by_filters_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.vm_host_get_all_by_filters,
                           get_admin_context(), {}, 'id', 'asc')

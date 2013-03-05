@@ -16,8 +16,7 @@
 
 from healthnmon.db import api
 from healthnmon.resourcemodel.healthnmonResourceModel import PortGroup, Cost
-from healthnmon.tests.db import test
-import mox
+from healthnmon import test
 from nova.db.sqlalchemy import session as db_session
 from nova.context import get_admin_context
 from healthnmon import utils
@@ -29,11 +28,11 @@ class PortGroupDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(PortGroupDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
+        # self.mock = mox.Mox()
 
     def tearDown(self):
         super(PortGroupDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
+        # self.mock.stubs.UnsetAll()
 
     def test_port_group_save(self):
         portgroup = PortGroup()
@@ -229,23 +228,23 @@ class PortGroupDbApiTestCase(test.TestCase):
                           get_admin_context(), PortGroup())
 
     def test_port_group_get_ids_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, api.port_group_get_by_ids,
                           get_admin_context(), ['portgroup-01'])
 
     def test_port_group_get_all_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, api.port_group_get_all,
                           get_admin_context())
 
     def test_port_group_delete_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, api.port_group_delete_by_ids,
                           get_admin_context(), ['portgroup-01'])
 

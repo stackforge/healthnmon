@@ -70,7 +70,7 @@ class EventMetaData(object):
         for obj_mem in obj_members.keys():
             obj_mem_val = getattr(obj, obj_mem)
             if not obj_mem in kwargs and isPrimitive(obj_mem_val):
-            #if not kwargs.has_key(obj_mem) and isPrimitive(obj_mem_val):
+            # if not kwargs.has_key(obj_mem) and isPrimitive(obj_mem_val):
                 placeholder_values[obj_mem] = str(obj_mem_val)
         formatted_str = template_str % placeholder_values
         return formatted_str

@@ -331,7 +331,7 @@ def get_content_accept_type(req):
             specified in the request
         """
 
-        for header in req.accept.best_matches():
+        for header in list(req.accept):
             try:
                 str(header).index(content_type)
             except ValueError:
@@ -441,10 +441,9 @@ def get_entity_list_xml(
         :raises LookupError: If there is more than one root(key) element in the
         entity_dict.
     """
-
     if not entity_dict:
         return ''
-    #TODO(siva): add check for entities_links
+    # TODO(siva): add check for entities_links
     keys = entity_dict.keys()
     root_key = ''
     if len(keys) > 2:
@@ -484,6 +483,7 @@ def get_entity_list_xml(
                                 attrib)
         for link in link_list:
             SubElement(entity_sub, constants.ATOM + 'link', link)
+
     for link in page_links:
         SubElement(root, constants.ATOM + 'link', link)
     return etree.tostringlist(root)[0]

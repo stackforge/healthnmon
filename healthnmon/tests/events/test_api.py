@@ -14,7 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from nova import test
+from healthnmon import test
 from healthnmon.resourcemodel.healthnmonResourceModel import Vm
 import mox
 from healthnmon.events import api as events_api

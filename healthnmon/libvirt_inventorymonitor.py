@@ -58,11 +58,11 @@ class LibvirtInventoryMonitor:
         libvirtVmHost = LibvirtVmHost(conn, compute_id, self.libvirtEvents)
         libvirtVmHost.processUpdates()
         if libvirtVmHost.libvirtconn is not None:
-            #Only if connection to host is available, inventory will be
-            #collected for other entities
+            # Only if connection to host is available, inventory will be
+            # collected for other entities
             self.hostUUID = libvirtVmHost.uuid
             if self.hostUUID is not None:
-                #libvirtVmHost.processUpdates()
+                # libvirtVmHost.processUpdates()
                 LOG.info(_('***************Handling updates of Storage ' +
                            'volumes on host ' +
                            self.hostUUID + '*****************'))

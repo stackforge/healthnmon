@@ -15,7 +15,7 @@
 #    under the License.
 
 import os
-from nova import test
+from healthnmon import test
 from healthnmon.profiler import profile_cpu, profile_mem
 from healthnmon.tests.profiler import FakeGuppy
 

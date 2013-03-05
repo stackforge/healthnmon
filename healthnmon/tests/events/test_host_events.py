@@ -14,7 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from nova import test
+from healthnmon import test
 from healthnmon.virt.libvirt.connection import LibvirtConnection
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost
 from healthnmon.inventory_manager import InventoryManager, \

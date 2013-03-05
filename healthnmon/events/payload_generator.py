@@ -206,7 +206,7 @@ class VmHostPayloadGenerator(PayloadGenerator):
         if vmHostOsProfile is not None:
             payload['osVersion'] = vmHostOsProfile.get_osVersion()
 
-        #Utilization data
+        # Utilization data
         utilization_sample = {}
         utilization_data = _getattr_no_none(obj, 'utilization', None)
         if utilization_data is not None:
@@ -270,7 +270,7 @@ class VmPayloadGenerator(PayloadGenerator):
             Constants.VM_POWER_STATE_UNKNOWN: _('VM is in unknown state'
                                                 ),
         }
-        #if state_descs.has_key(upper(state)):
+        # if state_descs.has_key(upper(state)):
         if upper(state) in state_descs:
             return state_descs[upper(state)]
         else:

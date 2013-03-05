@@ -20,9 +20,8 @@ from healthnmon.resourcemodel.healthnmonResourceModel import VirtualSwitch
 from healthnmon.resourcemodel.healthnmonResourceModel import GroupIdType
 from healthnmon.resourcemodel.healthnmonResourceModel import IpAddress
 from healthnmon.resourcemodel.healthnmonResourceModel import IpAddressRange
-from healthnmon.tests.db import test
+from healthnmon import test
 from nova.db.sqlalchemy import session as db_session
-import mox
 from nova.context import get_admin_context
 from healthnmon.constants import DbConstants
 import time
@@ -35,12 +34,12 @@ class SubnetDbApiTestCase(test.TestCase):
 
     def setUp(self):
         super(SubnetDbApiTestCase, self).setUp()
-        self.mock = mox.Mox()
+#        self.mock = mox.Mox()
         self.admin_context = get_admin_context()
 
     def tearDown(self):
         super(SubnetDbApiTestCase, self).tearDown()
-        self.mock.stubs.UnsetAll()
+        # self.mock.stubs.UnsetAll()
 
     def __create_subnet(self, **kwargs):
         subnet = Subnet()
@@ -671,32 +670,32 @@ class SubnetDbApiTestCase(test.TestCase):
                           self.admin_context, Subnet())
 
     def test_subnet_get_ids_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.subnet_get_by_ids,
                           self.admin_context, ['subnet-01'])
 
     def test_subnet_get_all_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception, healthnmon_db_api.subnet_get_all,
                           self.admin_context)
 
     def test_subnet_delete_exc(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.subnet_delete_by_ids,
                           self.admin_context, ['test1'])
 
     def test_subnet_get_all_by_filters_throw_exception(self):
-        self.mock.StubOutWithMock(db_session, 'get_session')
+        self.mox.StubOutWithMock(db_session, 'get_session')
         db_session.get_session().AndRaise(Exception())
-        self.mock.ReplayAll()
+        self.mox.ReplayAll()
         self.assertRaises(Exception,
                           healthnmon_db_api.subnet_get_all_by_filters,
                           self.admin_context, {}, 'id', 'asc')

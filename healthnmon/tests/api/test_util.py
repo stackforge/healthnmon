@@ -223,7 +223,7 @@ rel="self"/><atom:link href="http://localhost/people/89" rel="bookmark"/>\
 #    def test_remove_version_from_href(self):
 #        common.remove_version_from_href( \
 #         'http://10.10.120.158:8774/v2/virtualmachines/\
-#e9f7f71d-8208-1963-77fc-a1c90d4a1802'
+# e9f7f71d-8208-1963-77fc-a1c90d4a1802'
 #                )
 #        try:
 #            common.remove_version_from_href('http://localhost/')

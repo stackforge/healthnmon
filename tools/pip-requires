@@ -8,7 +8,7 @@ eventlet>=0.9.17
 kombu==1.0.4
 lxml>=2.3,<=2.3.5
 routes==1.12.3
-WebOb==1.0.8
+WebOb>=1.0.8
 greenlet>=0.3.1
 PasteDeploy==1.5.0
 paste
@@ -22,4 +22,4 @@ httplib2
 setuptools_git>=0.4
 python-cinderclient
 python-glanceclient>=0.5.0,<2
-https://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g1.tar.gz#egg=nova
+https://launchpad.net/nova/grizzly/grizzly-2/+download/nova-2013.1~g2.tar.gz#egg=nova

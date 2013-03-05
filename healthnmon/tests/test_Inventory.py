@@ -46,7 +46,7 @@ class test_LibvirtVM(unittest.TestCase):
         self.vmHost.set_virtualMachineIds([])
         InventoryCacheManager.update_object_in_cache('1', self.vmHost)
 
-        #self.connection.setUuid('34353438-3934-434e-3738-313630323543')
+        # self.connection.setUuid('34353438-3934-434e-3738-313630323543')
         self.connection._wrapped_conn = libvirt.open('qemu:///system')
         self.libvirtVM = LibvirtVM(self.connection._wrapped_conn,
                                    '1')
@@ -174,10 +174,10 @@ class test_LibvirtVM(unittest.TestCase):
                           None)
         vm = InventoryCacheManager.get_object_from_cache(
             "25f04dd3-e924-02b2-9eac-876e3c943262", Constants.Vm)
-        #self.assertEquals('Disconnected', vm.get_connectionState())
+        # self.assertEquals('Disconnected', vm.get_connectionState())
 #        self.assertEquals('TestVirtMgrVM7', str(vm.get_name()))
         self.assertEquals("1048576", str(vm.get_memorySize()))
-        #self.assertEquals("hd", str(vm.get_bootOrder()).strip())
+        # self.assertEquals("hd", str(vm.get_bootOrder()).strip())
 
         self.mock.stubs.UnsetAll()
 
@@ -375,7 +375,7 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
 
         fake_computes = [{'id': '1', 'service': {'created_at':
                                                  'created',
-                                                 'updated_at':'updated'}}]
+                                                 'updated_at': 'updated'}}]
         self.mock.StubOutWithMock(novadb, 'compute_node_get_all')
         novadb.compute_node_get_all(mox.IgnoreArg()).AndReturn(fake_computes)
 
@@ -410,7 +410,7 @@ class test_LibvirtVmHostDisconnected(unittest.TestCase):
 
         fake_computes = [{'id': '1', 'service': {'created_at':
                                                  'created',
-                                                 'updated_at':'updated'}}]
+                                                 'updated_at': 'updated'}}]
         self.mock.StubOutWithMock(novadb, 'compute_node_get_all')
         novadb.compute_node_get_all(mox.IgnoreArg()).AndReturn(fake_computes)
 
@@ -505,8 +505,6 @@ class test_LibvirtStorage(unittest.TestCase):
                         host.get_storageVolumeIds())
         self.assertTrue(storage is not None)
         self.assertEquals('default', storage.get_name())
-        self.assertEquals('34353438-3934-434e-3738-313630323543',
-                          storage.get_resourceManagerId())
         self.mock.stubs.UnsetAll()
 
     def test_processStorageDeletes(self):
@@ -550,7 +548,7 @@ class test_LibvirtNetwork(unittest.TestCase):
         vSwitch.set_switchType('nat')
         vmHost.set_virtualSwitches([vSwitch])
         InventoryCacheManager.update_object_in_cache('1', vmHost)
-        #self.connection.setUuid('34353438-3934-434e-3738-313630323543')
+        # self.connection.setUuid('34353438-3934-434e-3738-313630323543')
         self.connection._wrapped_conn = libvirt.open('qemu:///system')
         self.connection.compute_rmcontext = \
             ComputeRMContext(rmType='KVM', rmIpAddress='10.10.155.165',

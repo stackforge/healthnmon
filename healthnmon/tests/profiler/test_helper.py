@@ -17,7 +17,7 @@
 from healthnmon.profiler import profile_cpu, helper
 from healthnmon.tests.profiler import example_a
 from healthnmon import log
-from nova import test
+from healthnmon import test
 import healthnmon
 import logging
 import os

@@ -187,7 +187,7 @@ class HealthnmonAuditHandler(logging.handlers.WatchedFileHandler):
             self, filename, mode, encoding, delay)
         self.addFilter(HealthnmonAuditFilter())
 
-#def handle_exception(type, value, tb):
+# def handle_exception(type, value, tb):
 #    extra = {}
 #    if CONF.verbose:
 #        extra['exc_info'] = (type, value, tb)
@@ -196,7 +196,7 @@ class HealthnmonAuditHandler(logging.handlers.WatchedFileHandler):
 
 def setup():
     """Setup healthnmon logging."""
-    #sys.excepthook = handle_exception
+    # sys.excepthook = handle_exception
 
     if CONF.healthnmon_log_config:
         try:
@@ -208,7 +208,7 @@ def setup():
 
 def healthnmon_manage_setup():
     """Setup healthnmon logging."""
-    #sys.excepthook = handle_exception
+    # sys.excepthook = handle_exception
 
     if CONF.healthnmon_manage_log_config:
         try:

@@ -17,7 +17,7 @@
 """Unit test for payload_generator module
 """
 
-from nova import test
+from healthnmon import test
 from healthnmon.events import payload_generator, event_metadata
 from healthnmon import notifier
 from healthnmon.resourcemodel.healthnmonResourceModel import Entity, \
