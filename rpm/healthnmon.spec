@@ -21,14 +21,14 @@
 %endif
 
 Name:             healthnmon
-Version:          0.0.21.5538bc3
+Version:          2013.1
 Release:          1
 
 Group:            Applications/System
 License:          Apache
 Vendor:           Hewlett Packard Company
 
-Source0:          %{name}-0.0.21.5538bc3.tar.gz
+Source0:          %{name}-2013.1.tar.gz
 Source1:          %{name}.init
 Source2:          copyright
 
