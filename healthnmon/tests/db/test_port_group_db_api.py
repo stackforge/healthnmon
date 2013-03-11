@@ -17,7 +17,7 @@
 from healthnmon.db import api
 from healthnmon.resourcemodel.healthnmonResourceModel import PortGroup, Cost
 from healthnmon import test
-from nova.db.sqlalchemy import session as db_session
+from nova.openstack.common.db.sqlalchemy import session as db_session
 from nova.context import get_admin_context
 from healthnmon import utils
 from healthnmon.tests import utils as test_utils

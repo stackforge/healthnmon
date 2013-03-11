@@ -26,7 +26,7 @@ from healthnmon.db.sqlalchemy import api as healthnmon_alchemy_api
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, OsProfile
 # import mox
 from nova.context import get_admin_context
-from nova.db.sqlalchemy import session as nova_session
+from nova.openstack.common.db.sqlalchemy import session as nova_session
 import time
 from healthnmon.constants import DbConstants
 

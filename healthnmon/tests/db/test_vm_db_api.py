@@ -20,7 +20,7 @@ from healthnmon.resourcemodel.healthnmonResourceModel import Vm, \
 from healthnmon.resourcemodel.healthnmonResourceModel import VmNetAdapter
 from healthnmon.resourcemodel.healthnmonResourceModel import VmGlobalSettings
 from healthnmon import test
-from nova.db.sqlalchemy import session as db_session
+from nova.openstack.common.db.sqlalchemy import session as db_session
 from nova.context import get_admin_context
 from healthnmon.constants import DbConstants, Constants
 import time

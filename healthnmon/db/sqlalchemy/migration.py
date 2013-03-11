@@ -18,7 +18,7 @@ import distutils.version as dist_version
 import os
 
 from healthnmon.db import migration
-from nova.db.sqlalchemy.session import get_engine
+from nova.openstack.common.db.sqlalchemy import session as db_session
 from nova import exception
 import migrate
 from migrate.versioning import util as migrate_util
@@ -27,6 +27,7 @@ from migrate.versioning import api as versioning_api
 from migrate.versioning.repository import Repository
 
 _REPOSITORY = None
+get_engine = db_session.get_engine
 
 
 @migrate_util.decorator

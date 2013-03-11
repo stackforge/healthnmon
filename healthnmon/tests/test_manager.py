@@ -26,7 +26,6 @@ from nova.openstack.common import context
 from healthnmon import test
 import mox
 from nova.openstack.common import cfg
-from nova.openstack.common import cfg
 
 
 class HealthnMonManagerTestCase(test.TestCase):
@@ -205,15 +204,15 @@ class HealthnMonManagerTestCase(test.TestCase):
         self.mox.UnsetStubs()
 
     def test_register_flag(self):
-        self.mox.StubOutWithMock(cfg.CommonConfigOpts, '__getattr__')
-        cfg.CommonConfigOpts.__getattr__('healthnmon_driver').\
+        self.mox.StubOutWithMock(cfg.ConfigOpts, '__getattr__')
+        cfg.ConfigOpts.__getattr__('healthnmon_driver').\
             AndRaise(cfg.NoSuchOptError('healthnmon_driver'))
-        cfg.CommonConfigOpts.__getattr__('perfmon_refresh_interval').\
+        cfg.ConfigOpts.__getattr__('perfmon_refresh_interval').\
             AndRaise(cfg.NoSuchOptError('perfmon_refresh_interval'))
-        cfg.CommonConfigOpts.__getattr__('healthnmon_topic').\
+        cfg.ConfigOpts.__getattr__('healthnmon_topic').\
             AndRaise(cfg.NoSuchOptError('healthnmon_topic'))
-        self.mox.StubOutWithMock(cfg.CommonConfigOpts, 'register_opts')
-        cfg.CommonConfigOpts.register_opts(mox.IgnoreArg()). \
+        self.mox.StubOutWithMock(cfg.ConfigOpts, 'register_opts')
+        cfg.ConfigOpts.register_opts(mox.IgnoreArg()). \
             MultipleTimes().AndReturn(None)
         self.mox.ReplayAll()
         manager.register_flags()

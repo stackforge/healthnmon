@@ -22,7 +22,7 @@ from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
     Vm, StorageVolume, HostMountPoint, VirtualSwitch, PortGroup, \
     Subnet
 from healthnmon.db.sqlalchemy.mapper import VirtualSwitchSubnetIds
-from nova.db.sqlalchemy import session as nova_session
+from nova.openstack.common.db.sqlalchemy import session as nova_session
 from nova.db.sqlalchemy import api as context_api
 from healthnmon import log as logging
 from healthnmon import constants

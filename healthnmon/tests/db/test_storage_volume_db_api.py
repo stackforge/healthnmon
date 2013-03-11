@@ -19,7 +19,7 @@ from healthnmon.resourcemodel.healthnmonResourceModel import StorageVolume
 from healthnmon.resourcemodel.healthnmonResourceModel import Vm, VmDisk
 from healthnmon.resourcemodel.healthnmonResourceModel import VmGlobalSettings
 from healthnmon import test
-from nova.db.sqlalchemy import session
+from nova.openstack.common.db.sqlalchemy import session
 from nova.context import get_admin_context
 from healthnmon.constants import DbConstants
 import time

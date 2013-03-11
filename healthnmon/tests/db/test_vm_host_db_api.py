@@ -20,7 +20,7 @@ from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \
     VmGlobalSettings
 from healthnmon import test
 import mox
-from nova.db.sqlalchemy import session as db_session
+from nova.openstack.common.db.sqlalchemy import session as db_session
 from nova.context import get_admin_context
 from healthnmon.constants import DbConstants
 import time

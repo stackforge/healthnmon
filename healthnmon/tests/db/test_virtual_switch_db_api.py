@@ -18,7 +18,7 @@ from healthnmon.db import api
 from healthnmon.resourcemodel.healthnmonResourceModel import VirtualSwitch, \
     Subnet, Cost, PortGroup
 from healthnmon import test
-from nova.db.sqlalchemy import session as db_session
+from nova.openstack.common.db.sqlalchemy import session as db_session
 import mox
 from nova.context import get_admin_context
 from healthnmon.constants import DbConstants

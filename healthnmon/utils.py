@@ -26,6 +26,7 @@ from healthnmon import log
 # in order to create nova-storage-pool
 CONF = cfg.CONF
 CONF.import_opt('instances_path', 'nova.compute.manager')
+CONF.import_opt('service_down_time', 'nova.service')
 LOG = log.getLogger(__name__)
 
 
