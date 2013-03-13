@@ -20,13 +20,17 @@ from nova.openstack.common import rpc
 import healthnmon.notifier.rabbit_notifier
 from nova.openstack.common import context
 
+DEFAULT_NOTIFICATION_PRIORITY = 'INFO'
+
 
 class RabbitNotifierTest(test.TestCase):
 
     ''' TestCase for healthnmon.notifier.rabbit_notifier '''
     def setUp(self):
         super(RabbitNotifierTest, self).setUp()
-        self.flags(healthnmon_default_notification_level='INFO')
+        self.flags(
+            healthnmon_default_notification_level=
+            DEFAULT_NOTIFICATION_PRIORITY)
         self.mox.StubOutWithMock(rpc, 'notify')
         self.context = context.get_admin_context()
 
@@ -42,8 +46,8 @@ class RabbitNotifierTest(test.TestCase):
                    mox.IgnoreArg()).AndReturn(None)
         self.mox.ReplayAll()
         self.assertEquals(
-            healthnmon.notifier.rabbit_notifier.notify(self.context, message),
-            None)
+            healthnmon.notifier.rabbit_notifier.notify(self.context,
+                                                       message), None)
 
     def testNotifyEvent_TypeNone(self):
         message = {

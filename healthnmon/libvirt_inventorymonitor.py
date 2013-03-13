@@ -44,10 +44,17 @@ from healthnmon.virt.libvirt.libvirt_event_monitor import LibvirtEvents
 
 LOG = log.getLogger(__name__)
 
+libvirt = None
+
+incomplete_vms = {}  # {compute_id : {vm_id : retry_count}}
+
 
 class LibvirtInventoryMonitor:
 
     def __init__(self):
+        global libvirt
+        if libvirt is None:
+            libvirt = __import__('libvirt')
         self.libvirtEvents = LibvirtEvents()
 
     def collectInventory(self, conn, compute_id):
@@ -85,7 +92,12 @@ class LibvirtInventoryMonitor:
                     libvirtVm = LibvirtVM(conn, compute_id)
                     libvirtVm.processUpdates()
                     self.libvirtEvents.first_poll = False
-
+                else:
+                    LOG.info(_('***************Handling updates of incomplete \
+                    Vms on host '
+                               + self.hostUUID + '*****************'))
+                    libvirtVm = LibvirtVM(conn, compute_id)
+                    libvirtVm.process_incomplete_vms()
         LOG.info(_('Exiting collectInventory for host uuid '
                    + compute_id))
 
@@ -113,16 +125,29 @@ class LibvirtVmHost:
             LOG.error(_(traceback.format_exc()))
 
     def _get_compute_running_status(self):
-        compute_alive = True
+        compute_alive = False
+        hostname = None
         computes = db.compute_node_get_all(get_admin_context())
         for compute in computes:
             computeId = str(compute['id'])
             if computeId == self.compute_id:
                 service = compute['service']
                 if service is not None:
+                    hostname = service['host']
                     compute_alive = hnm_utils.is_service_alive(
                         service['updated_at'], service['created_at'])
-        return compute_alive
+        return compute_alive, hostname
+
+    def _get_network_running_status(self, hostname):
+        network_alive = False
+        network_service = db.service_get_by_host_and_topic(
+            get_admin_context(), hostname, 'network')
+        if network_service is not None:
+            network_alive = hnm_utils.is_service_alive(network_service[
+                                                       'updated_at'],
+                                                       network_service[
+                                                       'created_at'])
+        return network_alive
 
     """This method will set the host as disconnected
     """
@@ -140,6 +165,8 @@ class LibvirtVmHost:
                 LOG.audit(_('Host with (UUID, host name) - (%s, %s) got ' +
                             'disconnected') % (self.compute_id,
                                                self.cachedvmHost.get_name()))
+                event_api.notify_host_update(
+                    event_metadata.EVENT_TYPE_HOST_UPDATED, self.cachedvmHost)
                 event_api.notify_host_update(
                     event_metadata.EVENT_TYPE_HOST_DISCONNECTED,
                     self.cachedvmHost)
@@ -160,15 +187,17 @@ class LibvirtVmHost:
                     Constants.VmHost)
 
             """Check whether the compute is running else exit from polling"""
-            compute_alive = self._get_compute_running_status()
-            if not compute_alive:
-                LOG.debug(_('De-registering the host with ' +
-                            'compute_id %s for events ' %
-                            str(self.compute_id)))
-                self.libvirtEvents.deregister_libvirt_events()
-                self._set_host_as_disconnected()
-                self.libvirtconn = None
-                return
+            compute_alive, hostname = self._get_compute_running_status()
+            network_alive = self._get_network_running_status(hostname)
+            if not compute_alive or not network_alive:
+                if self.cachedvmHost is not None:
+                    LOG.debug(_('De-registering the host with compute_id %s \
+                    for events ' % str(
+                        self.compute_id)))
+                    self.libvirtEvents.deregister_libvirt_events()
+                    self._set_host_as_disconnected()
+                    self.libvirtconn = None
+                    return
             if not self.libvirtEvents.registered:
                 LOG.debug(_('Registering host with ' +
                             'compute_id %s for events ' %
@@ -223,6 +252,9 @@ class LibvirtVmHost:
                             event_api.notify_host_update(
                                 event_metadata.EVENT_TYPE_HOST_CONNECTED,
                                 self.vmHost)
+                            event_api.notify_host_update(
+                                event_metadata.EVENT_TYPE_HOST_UPDATED,
+                                self.vmHost)
                         elif currentHostState \
                                 == Constants.VMHOST_DISCONNECTED:
                             LOG.audit(_('Host with (UUID, host name) - ' +
@@ -230,6 +262,9 @@ class LibvirtVmHost:
                                       (self.uuid, self.vmHost.get_name()))
                             event_api.notify_host_update(
                                 event_metadata.EVENT_TYPE_HOST_DISCONNECTED,
+                                self.vmHost)
+                            event_api.notify_host_update(
+                                event_metadata.EVENT_TYPE_HOST_UPDATED,
                                 self.vmHost)
                             LOG.debug(_('Un-registering the host for events'))
                             self.libvirtEvents.deregister_libvirt_events()
@@ -289,11 +324,11 @@ class LibvirtVmHost:
                   + self.compute_id))
         model = self.utils.parseXML(hostSysXml, '//system/entry')[1]
         if model:
-                self.vmHost.set_model(model.strip())
+            self.vmHost.set_model(model.strip())
 
         serialNumber = self.utils.parseXML(hostSysXml, '//system/entry')[3]
         if serialNumber:
-                self.vmHost.set_serialNumber(serialNumber.strip())
+            self.vmHost.set_serialNumber(serialNumber.strip())
         LOG.debug(_('Exiting _mapHostSystemInfo for host uuid '
                   + self.compute_id))
 
@@ -316,9 +351,10 @@ class LibvirtVmHost:
         LOG.debug(_('Entering _mapHostInfo for host uuid '
                   + self.compute_id))
         self.vmHost.set_virtualizationType('QEMU')
-        self.vmHost.set_memorySize(self.host_memory_size())
+        (totalMemory, memoryConsumed) = self.get_memory_info()
+        self.vmHost.set_memorySize(totalMemory)
         self.vmHost.set_name(self.libvirtconn.getHostname())
-        self.vmHost.set_memoryConsumed(self.get_memory_consumed())
+        self.vmHost.set_memoryConsumed(memoryConsumed)
         self.vmHost.set_processorCount(
             self.libvirtconn.getInfo()[5] * self.libvirtconn.getInfo()[7])
         self.vmHost.set_processorCoresCount(self.libvirtconn.getInfo()[2])
@@ -332,12 +368,21 @@ class LibvirtVmHost:
         LOG.debug(_('Exiting _mapHostInfo for host uuid '
                   + self.compute_id))
 
-    def host_memory_size(self):
-        return self.libvirtconn.getInfo()[1] * 1024
-
-    def get_memory_consumed(self):
-        return self.libvirtconn.getInfo()[1] * 1024 \
-            - self.libvirtconn.getFreeMemory() / 1024
+    def get_memory_info(self):
+        global libvirt
+        totalMemory = 0
+        memoryConsumed = 0
+        try:
+            memstats = self.libvirtconn.getMemoryStats(
+                libvirt.VIR_NODE_MEMORY_STATS_ALL_CELLS, 0)
+            totalMemory = memstats['total']
+            freeMemory = memstats['free'] + memstats[
+                'buffers'] + memstats['cached']
+            memoryConsumed = totalMemory - freeMemory
+        except Exception, err:
+            LOG.error(_("Error reading memory stats for host %s: %s"
+                        % (self.uuid, err)))
+        return (totalMemory, memoryConsumed)
 
     def getUuid(self):
         if self.uuid is None and self.libvirtconn is not None:
@@ -413,6 +458,35 @@ class LibvirtVM:
         LOG.debug(_('Exiting processUpdates for vms on host '
                   + self.compute_id))
 
+    def get_existing_domain_uuids(self):
+        existingVmIds = []
+        inactivedomainList = self.libvirtconn.listDefinedDomains()
+        activeDomainList = self.libvirtconn.listDomainsID()
+        for dom in inactivedomainList:
+            inactive_domainObj = self.libvirtconn.lookupByName(dom)
+            existingVmIds.append(inactive_domainObj.UUIDString())
+        for dom in activeDomainList:
+            active_domainObj = self.libvirtconn.lookupByID(dom)
+            existingVmIds.append(active_domainObj.UUIDString())
+        LOG.debug(_('Existing vm ids %s'), existingVmIds)
+        return existingVmIds
+
+    def process_incomplete_vms(self):
+        """ Process incomplete vms on a host """
+        global incomplete_vms
+        if self.compute_id in incomplete_vms:
+            vm_dic = incomplete_vms[self.compute_id]
+            if vm_dic:
+                LOG.debug(_('Processing VMs %s'), vm_dic)
+                existingVmIds = self.get_existing_domain_uuids()
+                for vm_id in vm_dic.keys():
+                    if vm_id in existingVmIds:
+                        domainObj = self.libvirtconn.lookupByUUIDString(vm_id)
+                        self._processVm(domainObj)
+                    else:
+                        # Vm got deleted. Remove it from incomplete list
+                        del vm_dic[vm_id]
+
     def process_updates_for_updated_VM(self, domainObj_notified):
         ''' Method will process the domainobj and get the mapping done
         for Resource Model "Vm" '''
@@ -420,19 +494,7 @@ class LibvirtVM:
             LOG.info(_('Processing updates for VM %s reported \
             by libvirt event' % domainObj_notified.UUIDString()))
             vmIds = self.vmHost.get_virtualMachineIds()
-            existingVmIds = []
-
-            inactivedomainList = self.libvirtconn.listDefinedDomains()
-            activeDomainList = self.libvirtconn.listDomainsID()
-
-            for dom in inactivedomainList:
-                inactive_domainObj = self.libvirtconn.lookupByName(dom)
-                existingVmIds.append(inactive_domainObj.UUIDString())
-
-            for dom in activeDomainList:
-                active_domainObj = self.libvirtconn.lookupByID(dom)
-                existingVmIds.append(active_domainObj.UUIDString())
-
+            existingVmIds = self.get_existing_domain_uuids()
             if domainObj_notified.UUIDString() in existingVmIds:
                 self._processVm(domainObj_notified)
                 self.vmHost.set_virtualMachineIds(existingVmIds)
@@ -682,27 +744,69 @@ class LibvirtVM:
                 poolUUID = None
                 storagePoolsPaths = self._getStoragePoolPath()
                 storageVolPath = \
-                    self._getStorageVolumePath(
-                        storagePoolsPaths, storageVolPath)
+                    self._getStorageVolumePath(storagePoolsPaths,
+                                               storageVolPath)
                 if storageVolPath is not None:
-                    storageVol = \
-                        self.libvirtconn.storageVolLookupByPath(storageVolPath)
+                    storageVol = None
+                    try:
+                        storageVol = self._get_instance_disk(storageVolPath)
+                    except Exception:
+                        self.utils.log_error(traceback.format_exc())
+                    if storageVol is None:
+                        # Disk not yet attached.
+                        # Add vm to incomplete list for retry
+                        global incomplete_vms
+                        if self.compute_id in incomplete_vms:
+                            if self.domainUuid in \
+                                    incomplete_vms[self.compute_id]:
+                                retry_count = incomplete_vms[
+                                    self.compute_id][self.domainUuid]
+                            else:
+                                retry_count = 0
+                        else:
+                            incomplete_vms[self.compute_id] = {}
+                            retry_count = 0
+                        if retry_count < 5:
+                            LOG.debug(_(
+                                "Instance disk not yet created. \
+                                Will be retried during next poll"))
+                            retry_count += 1
+                            incomplete_vms[self.compute_id][
+                                self.domainUuid] = retry_count
+                        else:
+                            LOG.error(_(
+                                "Instance disk does not exist or not\
+                                 yet created. Maximum retries reached."))
+                        continue
+                    else:
+                        # Disk inventory complete.
+                        # Remove this vm from incomplete list
+                        if self.compute_id in incomplete_vms and \
+                                self.domainUuid in \
+                                incomplete_vms[self.compute_id]:
+                            del incomplete_vms[
+                                self.compute_id][self.domainUuid]
+                    LOG.debug(_("Storage Volume : %s"), storageVol)
                     poolObj = storageVol.storagePoolLookupByVolume()
                     poolUUID = poolObj.UUIDString()
+                    vmDisk.set_storageVolumeId(poolUUID)
+                    vmDiskList.append(vmDisk)
                 else:
                     LOG.debug(_('There is no storage pool present for this \
                     storage volume ' + self.domainUuid
                                 + ' on host ' + self.compute_id))
 
-                vmDisk.set_storageVolumeId(poolUUID)
             except Exception:
                 self.utils.log_error(traceback.format_exc())
-
-            vmDiskList.append(vmDisk)
 
         self.Vm.set_vmDisks(vmDiskList)
         LOG.debug(_('Exiting _mapVmDisk for vm ' + self.domainUuid
                   + ' on host ' + self.compute_id))
+
+    """Method to lookup for instance storage volume."""
+    def _get_instance_disk(self, storage_vol_path):
+        storageVol = self.libvirtconn.storageVolLookupByPath(storage_vol_path)
+        return storageVol
 
     def _getStoragePoolPath(self):
         ''' if this is a openstack volume (check /var/lib/nova )

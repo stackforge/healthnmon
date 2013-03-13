@@ -212,6 +212,8 @@ class VmHostPayloadGenerator(PayloadGenerator):
         if utilization_data is not None:
             memoryConsumed = utilization_data.get_totalMemory(
             ) - utilization_data.get_freeMemory()
+            cpu_load = utilization_data.get_cpuUserLoad()
+            + utilization_data.get_cpuSystemLoad()
             utilization_sample = \
                 {'cpuUserLoad': utilization_data.get_cpuUserLoad(),
                  'processorCoresCount': utilization_data.get_ncpus(),
