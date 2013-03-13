@@ -15,8 +15,6 @@
 #    under the License.
 
 from nova.api.openstack import extensions
-from nova.api.openstack.compute import contrib
-
 from ..api import storagevolume
 from ..api import vmhosts
 from ..api import vm
@@ -38,13 +36,8 @@ class Healthnmon(extensions.ExtensionDescriptor):
     namespace = constants.XMLNS_HEALTHNMON_EXTENSION_API
     updated = '2012-01-22T13:25:27-06:00'
 
-    def __init__(self, ext_mgr):
-        """Register extension with the extension manager."""
-        ext_mgr.register(self)
-        contrib.standard_extensions(ext_mgr)
-
     def get_resources(self):
-        LOG.debug(_('Adding healthnmon resource extensions'))
+        LOG.info(_('Adding healthnmon resource extensions'))
         resources = []
         vmhosts_resource = \
             extensions.ResourceExtension(constants.VMHOSTS_COLLECTION_NAME,

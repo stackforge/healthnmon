@@ -235,6 +235,36 @@ class TestLibvirtVmHostPerfData(unittest.TestCase):
         self.assertNotEquals(self.libvirtPerf_monitor.get_perfdata_fromCache(
             self.vmhost_id, Constants.OLD_STATS), None)
 
+    def test_refresh_perfdata_cpuException(self):
+        self.mox.StubOutWithMock(libvirt.virConnect,
+                                 'getCPUStats')
+        self.connection._wrapped_conn.getCPUStats(mox.IgnoreArg(),
+                                                  mox.IgnoreArg()). \
+            AndRaise(libvirt.libvirtError)
+
+        self.mox.ReplayAll()
+        self.libvirtVmHost.refresh_perfdata()
+
+        self.assertEquals(self.libvirtPerf_monitor.get_perfdata_fromCache(
+            self.vmhost_id,
+                          Constants.NEW_STATS).status, -1)
+        self.mox.UnsetStubs()
+
+    def test_refresh_perfdata_memoryException(self):
+        self.mox.StubOutWithMock(libvirt.virConnect,
+                                 'getMemoryStats')
+        self.connection._wrapped_conn.getMemoryStats(mox.IgnoreArg(),
+                                                     mox.IgnoreArg()). \
+            AndRaise(libvirt.libvirtError)
+
+        self.mox.ReplayAll()
+        self.libvirtVmHost.refresh_perfdata()
+
+        self.assertEquals(self.libvirtPerf_monitor.get_perfdata_fromCache(
+            self.vmhost_id,
+                          Constants.NEW_STATS).status, -1)
+        self.mox.UnsetStubs()
+
     def tearDown(self):
         self.libvirtPerf_monitor.perfDataCache = {}
         self.mox.UnsetStubs()
@@ -375,7 +405,7 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_vm_perfdata(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats(False, True)
+        new_stats = self.createfake_newStats()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -392,7 +422,7 @@ class TestSamplePerfData(unittest.TestCase):
 
     def test_sample_vm_perfdata_notsampled(self):
         self.createInvCache(True)
-        new_stats = self.createfake_newStats(False, True)
+        new_stats = self.createfake_newStats()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             None, new_stats)
@@ -407,7 +437,7 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_vm_perfdata_notvalid(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats(False, False)
+        new_stats = self.createfake_newStats(status=False)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -422,7 +452,7 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_vm_perfdata_notRunning(self):
         self.createInvCache(False)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats(False, False)
+        new_stats = self.createfake_newStats(status=False)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -440,7 +470,7 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_vm_perfdata_nochange_inperf(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats_nochange(False, False)
+        new_stats = self.createfake_newStats_nochange()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -455,7 +485,7 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_vm_perfdata_poweroff(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats_nochange(True, False)
+        new_stats = self.createfake_newStats_nochange(poweroff=True)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -470,7 +500,7 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_vm_perfdata_negativeStats(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats_nochange(False, True)
+        new_stats = self.createfake_newStats_nochange(stats_decrement=True)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -485,11 +515,12 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_host_perfdata(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats(True, True)
+        new_stats = self.createfake_newStats(now=True)
+        old_stats_forhost = self.createfake_oldStats_forhost()
         new_stats_forhost = self.createfake_newStats_forhost()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vmhost_id,
-            None, new_stats_forhost)
+            old_stats_forhost, new_stats_forhost)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -510,11 +541,12 @@ class TestSamplePerfData(unittest.TestCase):
     def test_sample_host_perfdata_invlidStatus(self):
         self.createInvCache(True)
         old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats(True, True)
+        new_stats = self.createfake_newStats()
+        old_stats_forhost = self.createfake_oldStats_forhost()
         new_stats_forhost = self.createfake_newStats_forhost(False)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vmhost_id,
-            None, new_stats_forhost)
+            old_stats_forhost, new_stats_forhost)
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             old_stats, new_stats)
@@ -531,34 +563,15 @@ class TestSamplePerfData(unittest.TestCase):
         self.assertNotEquals(self.sample_perfdata.resource_utilization,
                              None)
         self.assertEquals(resource_util.get_status(), 0)
-        self.assertEquals(resource_util.get_totalMemory(), 0)
-        self.assertEquals(resource_util.get_freeMemory(), 0)
-
-    def test_sample_host_perfdata_notValid(self):
-        self.createInvCache(True)
-        old_stats = self.createfake_oldStats()
-        new_stats = self.createfake_newStats(False, True)
-        new_stats_forhost = self.createfake_newStats_forhost()
-        LibvirtPerfMonitor.update_perfdata_InCache(
-            self.vmhost_id,
-            None, new_stats_forhost)
-        LibvirtPerfMonitor.update_perfdata_InCache(
-            self.vm_id,
-            old_stats, new_stats)
-
-        resource_util = self.sample_perfdata.sample_host_perfdata(
-            self.vmhost_id,
-            5)
-
-        self.assertEquals(resource_util.get_status(), -1)
 
     def test_sample_host_perfdata_vmnotRunning(self):
         self.createInvCache(False)
-        new_stats = self.createfake_newStats(False, True)
+        new_stats = self.createfake_newStats()
+        old_stats_forhost = self.createfake_oldStats_forhost()
         new_stats_forhost = self.createfake_newStats_forhost()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vmhost_id,
-            None, new_stats_forhost)
+            old_stats_forhost, new_stats_forhost)
 
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
@@ -572,24 +585,55 @@ class TestSamplePerfData(unittest.TestCase):
 
     def test_sample_host_perfdata_notsampled(self):
         self.createInvCache(True)
-        new_stats = self.createfake_newStats(False, True)
+        new_stats = self.createfake_newStats()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
-            None, new_stats)
+            None, new_stats)\
+
+        old_stats_forhost = self.createfake_oldStats_forhost()
         new_stats_forhost = self.createfake_newStats_forhost()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vmhost_id,
-            None, new_stats_forhost)
+            old_stats_forhost, new_stats_forhost)
 
         resource_util = self.sample_perfdata.sample_host_perfdata(
             self.vmhost_id,
             5)
 
+        self.assertEquals(resource_util.get_status(), 0)
+
+    def test_sample_hostcpu_perfdata_notsampled(self):
+        self.createInvCache(True)
+        new_stats_forhost = self.createfake_newStats_forhost()
+        LibvirtPerfMonitor.update_perfdata_InCache(
+            self.vmhost_id,
+            None, new_stats_forhost)
+
+        resource_util = \
+            self.sample_perfdata.sample_host_perfdata(
+                self.vmhost_id,
+                5)
+
+        self.assertEquals(resource_util.get_status(), -1)
+
+    def test_sample_hostcpu_perfdata_notvalid(self):
+        self.createInvCache(True)
+        old_stats_forhost = self.createfake_oldStats_forhost()
+        new_stats_forhost = self.createfake_newStats_forhost(status=False)
+        LibvirtPerfMonitor.update_perfdata_InCache(
+            self.vmhost_id,
+            old_stats_forhost, new_stats_forhost)
+
+        resource_util = \
+            self.sample_perfdata.sample_host_perfdata(
+                self.vmhost_id,
+                5)
+
         self.assertEquals(resource_util.get_status(), -1)
 
     def test_sample_host_perfdata_Disconnected(self):
         self.createInvCache(True, hostconnection='Disconnected')
-        new_stats = self.createfake_newStats(False, True)
+        new_stats = self.createfake_newStats()
         LibvirtPerfMonitor.update_perfdata_InCache(
             self.vm_id,
             None, new_stats)
@@ -646,7 +690,7 @@ class TestSamplePerfData(unittest.TestCase):
             (result.get_granularity() is None), 'Granularity is null')
         self.assertFalse(
             (result.get_cpuUserLoad() is None), 'Cpu userLoad is null')
-        self.assert_((result.get_cpuSystemLoad(
+        self.assertFalse((result.get_cpuSystemLoad(
         ) is None), 'Cpu system load is not null')
         self.assertFalse(
             (result.get_cpuUserLoad() is None), 'Cpu userLoad is null')
@@ -697,13 +741,15 @@ class TestSamplePerfData(unittest.TestCase):
         stats.netTransmittedBytes = 8302L
         stats.cpuStats = CPUStats()
         stats.cpuStats.cycles['user'] = 696880000000
+        stats.cpuStats.cycles['system'] = 696880000000
         stats.cpuPerfTime = 1331372444.3490119
         stats.diskPerfTime = 1331372444.472137
         stats.netPerfTime = 1331372444.5922019
 
         return stats
 
-    def createfake_newStats_nochange(self, poweroff, stats_decrement):
+    def createfake_newStats_nochange(self, poweroff=False,
+                                     stats_decrement=False):
         stats = Stats()
         stats.freeMemory = 0L
         stats.totalMemory = 2097152L
@@ -720,13 +766,14 @@ class TestSamplePerfData(unittest.TestCase):
         stats.netTransmittedBytes = 8302L
         stats.cpuStats = CPUStats()
         stats.cpuStats.cycles['user'] = 696880000000
+        stats.cpuStats.cycles['system'] = 696880000000
         stats.cpuPerfTime = 1331372444.3490119
         stats.diskPerfTime = 1331372444.472137
         stats.netPerfTime = 1331372444.5922019
 
         return stats
 
-    def createfake_newStats(self, now, status):
+    def createfake_newStats(self, now=False, status=True):
         stats = Stats()
         stats.freeMemory = 0L
         stats.totalMemory = 2097152L
@@ -741,6 +788,7 @@ class TestSamplePerfData(unittest.TestCase):
         stats.netTransmittedBytes = 8302L
         stats.cpuStats = CPUStats()
         stats.cpuStats.cycles['user'] = 697480000000
+        stats.cpuStats.cycles['system'] = 697480000000
         stats.cpuPerfTime = 1331372624.9259009
         stats.diskPerfTime = 1331372625.050205
         stats.netPerfTime = 1331372625.1707871
@@ -750,13 +798,32 @@ class TestSamplePerfData(unittest.TestCase):
             stats.status = -1
         return stats
 
-    def createfake_newStats_forhost(self, status=True):
+    def createfake_oldStats_forhost(self):
+        stats = Stats()
+        stats.freeMemory = 0L
+        stats.totalMemory = 2097152L
+        stats.timestamp = 1331372444.5931201
+        stats.ncpus = 1
+        stats.cpuStats = CPUStats()
+        stats.cpuStats.cycles['user'] = 696880000000
+        stats.cpuStats.cycles['system'] = 696880000000
+        stats.cpuPerfTime = 1331372444.3490119
+
+        return stats
+
+    def createfake_newStats_forhost(self, now=False, status=True):
         stats = Stats()
         stats.freeMemory = 99982L
         stats.totalMemory = 2097152L
-        stats.timestamp = time.time()
-
+        if now:
+            stats.timestamp = time.time()
+        else:
+            stats.timestamp = 1331372625.171705
         stats.ncpus = 1
+        stats.cpuStats = CPUStats()
+        stats.cpuStats.cycles['user'] = 697480000000
+        stats.cpuStats.cycles['system'] = 697480000000
+        stats.cpuPerfTime = 1331372624.9259009
         if status:
             stats.status = 0
         else:

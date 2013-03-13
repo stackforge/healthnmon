@@ -32,6 +32,7 @@ from healthnmon.rmcontext import ComputeRMContext
 from healthnmon.perfmon import libvirt_perfdata
 from healthnmon import test
 from healthnmon.tests import FakeLibvirt as libvirt
+from healthnmon.resourcemodel.healthnmonResourceModel import VmHost
 
 
 class Test_virt_connection(test.TestCase):
@@ -46,6 +47,21 @@ class Test_virt_connection(test.TestCase):
             healthnmon_notification_drivers=[
                 'healthnmon.notifier.log_notifier']
         )
+        vmHost = VmHost()
+        vmHost.id = '1'
+        vmHost.uuid = '1'
+        InventoryCacheManager.update_object_in_cache('1', vmHost)
+
+    def test_rmcontext_eq(self):
+        compute_rmcontext = rmcontext.ComputeRMContext(rmType='QEMU',
+                                                       rmIpAddress='\
+                                                       10.10.155.165',
+                                                       rmUserName='\
+                                                       openstack',
+                                                       rmPassword='\
+                                                       password')
+        compute_rmcontext1 = compute_rmcontext
+        self.assertTrue(compute_rmcontext1 == compute_rmcontext)
 
     def test_init_rmcontext(self):
         compute_rmcontext = rmcontext.ComputeRMContext(
@@ -61,6 +77,9 @@ class Test_virt_connection(test.TestCase):
 
     def test__get_connection_with_conn(self):
 
+        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
+        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
+        self.mox.ReplayAll()
         conn = connection.get_connection(True)
         compute_rmcontext = ComputeRMContext(
             rmType='QEMU',
@@ -71,8 +90,12 @@ class Test_virt_connection(test.TestCase):
         result = conn._get_connection()
         assert result
 
-    def test__get_connection_with_invalid_conn(self):
+        self.mox.UnsetStubs()
 
+    def test__get_connection_with_invalid_conn(self):
+        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
+        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
+        self.mox.ReplayAll()
         conn = connection.get_connection(True)
         compute_rmcontext = ComputeRMContext(
             rmType='QEMU',
@@ -81,6 +104,8 @@ class Test_virt_connection(test.TestCase):
         conn.init_rmcontext(compute_rmcontext)
         conn._wrapped_conn = 'Invalid'
         self.assertRaises(Exception, conn._get_connection)
+
+        self.mox.UnsetStubs()
 
     def test_update_inventory(self):
 #        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
@@ -126,15 +151,41 @@ class Test_virt_connection(test.TestCase):
         conn1.get_inventory_monitor()
         self.assertTrue(conn1.get_inventory_monitor() is None)
 
+    def test_get_connection(self):
+        connection.libvirt = None
+        conn1 = connection.get_connection(True)
+        conn1._wrapped_conn = self.fakeConn
+        flag = conn1._test_connection()
+        assert flag, True
+
     def test_test_connection(self):
         conn1 = connection.get_connection(True)
         conn1._wrapped_conn = self.fakeConn
         flag = conn1._test_connection()
         assert flag, True
 
+    def test_test_connection_exception(self):
+        self.mox.StubOutWithMock(self.fakeConn, 'getCapabilities')
+        self.fakeConn.getCapabilities().AndRaise(libvirt.libvirtError())
+        self.mox.ReplayAll()
+        conn1 = connection.get_connection(True)
+        conn1._wrapped_conn = self.fakeConn
+        libvirt.VIR_ERR_SYSTEM_ERROR = 500
+        self.assertRaises(libvirt.libvirtError, conn1._test_connection)
+        self.mox.UnsetStubs()
+
+    def test_get_libvirt_error(self):
+        conn1 = connection.get_connection(True)
+        libvirt_error = conn1.get_libvirtError()
+        # get_libvirtError return libvirtError class rather then an instance
+        # Checkin for Type
+        self.assertTrue(isinstance(libvirt_error, type),
+                        'Not an instance of libvirtError')
+
     def test_get_new_connection(self):
         libvirtcon = connection.get_connection(True)
         libvirtcon.get_new_connection("wrong:///uri", True)
+        self.mox.UnsetStubs()
 
     def test_uri_uml(self):
         self.flags(libvirt_type='uml')
@@ -152,37 +203,34 @@ class Test_virt_connection(test.TestCase):
         self.assertEquals(conn1.uri, "lxc:///")
 
     def test_update_perfdata(self):
-
-        self.mox.StubOutWithMock(libvirt_perfdata.LibvirtPerfMonitor,
-                                 'refresh_perfdata')
-        libvirt_perfdata.LibvirtPerfMonitor.refresh_perfdata(
-            mox.IgnoreArg(),
-            mox.IgnoreArg(),
-            mox.IgnoreArg()).AndReturn('')
-        self.mox.ReplayAll()
-
         conn = connection.get_connection(True)
-        compute_rmcontext = ComputeRMContext(
-            rmType='QEMU',
-            rmIpAddress='10.10.155.165', rmUserName='openstack',
-            rmPassword='password')
-        conn.init_rmcontext(compute_rmcontext)
-        conn._wrapped_conn = self.fakeConn
+
+        self.mox.StubOutWithMock(connection.LibvirtConnection, 'uri')
+        conn.uri().AndReturn(None)
+
+        self.mox.StubOutWithMock(libvirt, 'openReadOnly')
+        libvirt.openReadOnly(mox.IgnoreArg()).AndReturn(self.fakeConn)
+
+        self.mox.ReplayAll()
         conn.update_perfdata('uuid', 'perfmon_type')
         self.assertTrue(conn.libvirt_perfmon.perfDataCache is not None)
 
-    def test_get_resource_utilization(self):
+        conn.update_perfdata('uuid', 'perfmon_type1')
+        self.assertTrue(conn.libvirt_perfmon.perfDataCache is not None)
 
-        self.mox.StubOutWithMock(libvirt_perfdata.LibvirtPerfMonitor,
-                                 'get_resource_utilization')
-        libvirt_perfdata.LibvirtPerfMonitor.get_resource_utilization(
-            mox.IgnoreArg(),
-            mox.IgnoreArg(), mox.IgnoreArg()).AndReturn('')
+    def test_get_resource_utilization(self):
+        mock_libvirt_perfmon = \
+            self.mox.CreateMock(libvirt_perfdata.LibvirtPerfMonitor)
+
+        mock_libvirt_perfmon.get_resource_utilization(mox.IgnoreArg(),
+                                                      mox.IgnoreArg(),
+                                                      mox.IgnoreArg()).\
+            AndReturn('')
         self.mox.ReplayAll()
         conn1 = connection.get_connection(True)
-        self.assertTrue(conn1.get_resource_utilization('uuid',
-                                                       'perfmon_type',
-                                                       'window_minutes') is '')
+        self.assertTrue(conn1.get_resource_utilization('uuid', 'perfmon_type',
+                                                       'window_minutes') is
+                        None)
         self.assertTrue(conn1.libvirt_perfmon.perfDataCache is not None)
 
     def test_get_resource_utilization_None(self):
@@ -278,6 +326,12 @@ class Test_virt_connection(test.TestCase):
                                                ).AndRaise(AttributeError)
         except Exception, e:
             self.assertEquals(type(e), AttributeError)
+
+    def tearDown(self):
+
+        self.mox.UnsetStubs()
+        self.stubs.UnsetAll()
+        self.stubs.SmartUnsetAll()
 
 if __name__ == '__main__':
 

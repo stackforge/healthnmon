@@ -25,6 +25,8 @@ import cStringIO
 import traceback
 from nova.openstack.common import cfg
 from eventlet import greenthread
+import zipfile
+import os
 
 
 log_opts = [
@@ -140,6 +142,32 @@ class HealthnmonFormatter(logging.Formatter):
         return '\n'.join(formatted_lines)
 
 
+class HealthnmonLogHandler(logging.handlers.RotatingFileHandler):
+    """Size based rotating file handler which zips the backup files
+    """
+    def __init__(self, filename, mode='a', maxBytes=104857600, backupCount=20,
+                 encoding='utf-8'):
+        logging.handlers.RotatingFileHandler.__init__(
+            self, filename, mode, maxBytes, backupCount, encoding)
+
+    def doRollover(self):
+        logging.handlers.RotatingFileHandler.doRollover(self)
+        if self.backupCount > 0:
+            for i in range(self.backupCount - 1, 0, -1):
+                sfn = "%s.%d.gz" % (self.baseFilename, i)
+                dfn = "%s.%d.gz" % (self.baseFilename, i + 1)
+                if os.path.exists(sfn):
+                    if os.path.exists(dfn):
+                        os.remove(dfn)
+                    os.rename(sfn, dfn)
+            dfn = self.baseFilename + ".1"
+            compressed_log_file = zipfile.ZipFile(dfn + ".gz", "w")
+            compressed_log_file.write(dfn, os.path.basename(
+                dfn), zipfile.ZIP_DEFLATED)
+            compressed_log_file.close()
+            os.remove(dfn)
+
+
 class HealthnmonAuditFilter(logging.Filter):
 
     def filter(self, record):
@@ -180,11 +208,12 @@ class HealthnmonAuditFormatter(HealthnmonFormatter):
         return logging.Formatter.format(self, record)
 
 
-class HealthnmonAuditHandler(logging.handlers.WatchedFileHandler):
+class HealthnmonAuditHandler(HealthnmonLogHandler):
     """"""
-    def __init__(self, filename, mode='a', encoding=None, delay=0):
-        logging.handlers.WatchedFileHandler.__init__(
-            self, filename, mode, encoding, delay)
+    def __init__(self, filename, mode='a', maxBytes=104857600, backupCount=20,
+                 encoding='utf-8'):
+        HealthnmonLogHandler.__init__(
+            self, filename, mode, maxBytes, backupCount, encoding)
         self.addFilter(HealthnmonAuditFilter())
 
 # def handle_exception(type, value, tb):

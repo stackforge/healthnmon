@@ -72,7 +72,10 @@ class Test_virt_connection_cover(test.TestCase):
             print 'error'
 
     def tearDown(self):
-        super(Test_virt_connection_cover, self).tearDown()
+        self.mox.UnsetStubs()
+        self.stubs.UnsetAll()
+        self.stubs.SmartUnsetAll()
+
 
 if __name__ == '__main__':
 
