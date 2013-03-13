@@ -54,19 +54,19 @@ def notify(event_type, obj, **kwargs):
         scheduler_services = \
             nova_db.service_get_all_by_topic(admin_ctxt, 'scheduler')
     except:
-        LOG.warn(_('Could not fetch scheduler service from nova db'))
+        LOG.error(_('Could not fetch scheduler service from nova db'))
     if scheduler_services is None or len(scheduler_services) < 1:
-        LOG.warn(_('Scheduler service not found.'))
+        LOG.debug(_('Scheduler service not found.'))
     else:
         if len(scheduler_services) > 1:
-            LOG.warn(_('More than 1 entry for Scheduler service found.'
-                       ))
+            LOG.debug(_('More than 1 entry for Scheduler service found.'
+                        ))
         scheduler_service = scheduler_services[0]
         scheduler_service_host = scheduler_service['host']
         if scheduler_service_host is None \
                 or len(scheduler_service_host) < 1:
-            LOG.warn(_('Invalid host name for Scheduler service entry : '
-                       + str(scheduler_service_host)))
+            LOG.debug(_('Invalid host name for Scheduler service entry : '
+                        + str(scheduler_service_host)))
         else:
             publisher_id = scheduler_service_host + '.' + 'healthnmon'
     if publisher_id is None:
@@ -76,7 +76,10 @@ def notify(event_type, obj, **kwargs):
                    % publisher_id))
 
     # Send message to notifier api
-
+    LOG.debug(_('Sending notification with publisher_id: %s, name: %s,\
+    payload: %s')
+              % (publisher_id, eventmetadata_obj.get_event_fully_qal_name(),
+                 payload))
     notifier_api.notify(admin_ctxt, publisher_id,
                         eventmetadata_obj.get_event_fully_qal_name(),
                         eventmetadata_obj.priority, payload)

@@ -37,12 +37,16 @@ def virEventRunDefaultImpl():
 VIR_DOMAIN_EVENT_ID_LIFECYCLE = 0
 VIR_DOMAIN_EVENT_ID_REBOOT = 1
 VIR_DOMAIN_EVENT_ID_DISK_CHANGE = 9
+VIR_NODE_CPU_STATS_ALL_CPUS = -1
+VIR_NODE_MEMORY_STATS_ALL_CELLS = -1
 
 
 class virConnect:
 
     def __init__(self):
         self.storagePools = ['dirpool', 'default', 'iscsipool']
+        self.interval = None
+        self.count = None
 
     def getCapabilities(self):
         return """<capabilities>
@@ -235,6 +239,14 @@ class virConnect:
     def getVersion(self):
         return 14001
 
+    def getCPUStats(self, cpuNum, flags):
+        return {'kernel': 5238340000000L, 'idle\
+        ': 453151690000000L, 'user': 2318860000000L, 'iowait': 20620000000L}
+
+    def getMemoryStats(self, cellNum, flags):
+        return {'cached': 140320L, 'total': 32875672L, 'buffers\
+        ': 36032L, 'free': 31977592L}
+
     def domainEventRegisterAny(self, dom, eventID, cb, opaque):
         """Adds a Domain Event Callback. Registering for a domain
            callback will enable delivery of the events """
@@ -245,6 +257,14 @@ class virConnect:
 
     def close(self):
         return 0
+
+    def setKeepAlive(self, interval, count):
+        self.interval = interval
+        self.count = count
+        return 1
+
+    def isAlive(self):
+        return self.interval and self.count
 
 
 class virDomain:

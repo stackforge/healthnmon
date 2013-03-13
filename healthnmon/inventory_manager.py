@@ -139,6 +139,16 @@ class InventoryManager(object):
         self.perf_green_pool = greenpool.GreenPool()
         self._initCache()
 
+    def _add_compute_to_inventory(self, hypervisor_type, compute_id, host):
+        LOG.info(_("Adding compute to inventory with id : %s") % compute_id)
+        rm_context = rmcontext.ComputeRMContext(
+            rmType=hypervisor_type,
+            rmIpAddress=host,
+            rmUserName='user',
+            rmPassword='********')
+        InventoryCacheManager.get_all_compute_inventory()[
+            compute_id] = ComputeInventory(rm_context)
+
     def _refresh_from_db(self, context):
         """Make our compute_node inventory map match the db."""
 
@@ -150,44 +160,39 @@ class InventoryManager(object):
         for compute in computes:
             compute_id = str(compute['id'])
             service = compute['service']
-            compute_hypervisor_type = compute['hypervisor_type']
-            LOG.debug(_(' Compute-id -> %s: Hypervisor Type -> %s') %
-                      (compute_id, compute_hypervisor_type))
-
-            if service is not None and compute_hypervisor_type == 'QEMU':
+            if service is not None:
                 compute_alive = hnm_utils.is_service_alive(
                     service['updated_at'], service['created_at'])
                 db_keys.append(compute_id)
                 if not compute_alive:
-                    LOG.warn(_('Service %s for host %s is not active')
-                             % (service['binary'], service['host']))
-                    continue
+                    LOG.warn(_('Service %s for host %s is not active') % (
+                        service['binary'], service['host']))
+#                    continue
                 if compute_id not in existing:
-                    rm_context = \
-                        rmcontext.ComputeRMContext(
-                            rmType=compute['hypervisor_type'],
-                            rmIpAddress=service['host'],
-                            rmUserName='user', rmPassword='********')
-                    InventoryCacheManager.\
-                        get_all_compute_inventory()[compute_id] =\
-                        ComputeInventory(rm_context)
-                    LOG.audit(_('New Host with compute_id  %s is obtained')
-                              % (compute_id))
-                InventoryCacheManager.get_all_compute_inventory(
-                )[compute_id].update_compute_Id(compute_id)
+                    self._add_compute_to_inventory(compute[
+                                                   'hypervisor_type'],
+                                                   compute_id, service['host'])
+                    LOG.audit(_(
+                        'New Host with compute_id  %s is \
+                        obtained') % (compute_id))
+                InventoryCacheManager.get_all_compute_inventory()[
+                    compute_id].update_compute_Id(compute_id)
             else:
-                LOG.warn(_(' No services entry found for compute id  %s')
-                         % compute_id)
+                LOG.warn(_(
+                    ' No services entry found for compute id  \
+                    %s') % compute_id)
 
         # Cleanup compute_nodes removed from db ...
+        self._clean_deleted_computes(db_keys)
 
+    def _clean_deleted_computes(self, db_keys):
         keys = InventoryCacheManager.get_all_compute_inventory(
         ).keys()  # since we're deleting
         deletion_list = []
         for compute_id in keys:
             if compute_id not in db_keys:
-                vmHostObj = InventoryCacheManager.get_all_compute_inventory(
-                )[compute_id].get_compute_info()
+                vmHostObj = InventoryCacheManager.get_all_compute_inventory()[
+                    compute_id].get_compute_info()
                 if vmHostObj is not None:
                     deletion_list.append(vmHostObj.get_id())
 
@@ -199,29 +204,30 @@ class InventoryManager(object):
                     _id, Constants.VmHost)
                 if host_deleted is not None:
                     host_deleted_list.append(
-                        InventoryCacheManager.get_object_from_cache(
-                            _id, Constants.VmHost))
+                        InventoryCacheManager.
+                        get_object_from_cache(_id, Constants.VmHost))
                 else:
-                    LOG.warn(
-                        _("VmHost object for id %s not found in cache") % _id)
+                    LOG.warn(_(
+                        "VmHost object for id %s not found in cache") % _id)
 
             # Delete the VmHost from DB
             api.vm_host_delete_by_ids(get_admin_context(), deletion_list)
             # Generate the VmHost Removed Event
             for host_deleted in host_deleted_list:
-                LOG.debug(_('Generating Host Removed event \
-                for the host id : %s') % str(host_deleted.get_id()))
+                LOG.debug(_('Generating Host Removed event for the \
+                host id : %s') % str(
+                    host_deleted.get_id()))
                 event_api.notify_host_update(
                     event_metadata.EVENT_TYPE_HOST_REMOVED, host_deleted)
-                # VmHost is deleted from compute inventory and inventory
-                # cache after notifying the event
-                del InventoryCacheManager.get_all_compute_inventory(
-                )[host_deleted.get_id()]
+                # VmHost is deleted from compute inventory and inventory cache
+                # after notifying the event
+                del InventoryCacheManager.get_all_compute_inventory()[
+                    host_deleted.get_id()]
                 InventoryCacheManager.delete_object_in_cache(
                     host_deleted.get_id(), Constants.VmHost)
-                LOG.audit(_('Host with (UUID, host name) \
-                - (%s, %s) got removed') % (host_deleted.get_id(),
-                                            host_deleted.get_name()))
+                LOG.audit(_('Host with (UUID, host name) - (%s, %s) \
+                got removed') % (
+                    host_deleted.get_id(), host_deleted.get_name()))
 
     def get_compute_list(self):
         """Return the list of nova-compute_nodes we know about."""
@@ -258,7 +264,15 @@ class InventoryManager(object):
         # Read from DB all the vmHost objects and populate
         # the cache for each IP if cache is empty
 
-        LOG.info(_(' Entering into initCache'))
+        LOG.info(_('Entering into initCache'))
+        computes = db.compute_node_get_all(get_admin_context())
+        for compute in computes:
+            compute_id = str(compute['id'])
+            service = compute['service']
+            self._add_compute_to_inventory(compute[
+                                           'hypervisor_type'],
+                                           compute_id, service['host'])
+
         vmhosts = api.vm_host_get_all(get_admin_context())
         vms = api.vm_get_all(get_admin_context())
         storageVolumes = api.storage_volume_get_all(get_admin_context())
@@ -268,10 +282,11 @@ class InventoryManager(object):
         self._updateInventory(storageVolumes)
         self._updateInventory(subNets)
 
-        LOG.info(_('Hosts obtained from db ') % vmhosts)
-        LOG.info(_('Vms obtained from db ') % vms)
-        LOG.info(_('Storage volumes obtained from db ')
-                 % storageVolumes)
+        LOG.info(_('Hosts obtained from db: %s') % str(len(vmhosts)))
+        LOG.info(_('Vms obtained from db: %s') % str(len(vms)))
+        LOG.info(_('Storage volumes obtained from db: %s') %
+                 str(len(storageVolumes)))
+        LOG.info(_('Subnets obtained from db: %s') % str(len(subNets)))
 
         LOG.info(_('Completed the initCache method'))
 

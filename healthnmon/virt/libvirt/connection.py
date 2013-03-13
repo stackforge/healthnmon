@@ -87,7 +87,8 @@ class LibvirtConnection(driver.ComputeInventoryDriver):
         self.compute_rmcontext = compute_rmcontext
 
     def _get_connection(self):
-        if not self._wrapped_conn or not self._test_connection():
+        if not self._wrapped_conn or not (self._wrapped_conn.isAlive() and
+                                          self._test_connection()):
             LOG.debug(_('Connecting to libvirt: %s'), self.uri)
             self._wrapped_conn = self._connect(self.uri, self.read_only)
         return self._wrapped_conn
@@ -115,24 +116,27 @@ class LibvirtConnection(driver.ComputeInventoryDriver):
         elif CONF.libvirt_type == 'lxc':
             uri = CONF.libvirt_uri or 'lxc:///'
         else:
-            uri = CONF.libvirt_uri or 'qemu+ssh://' \
-                + self.compute_rmcontext.rmUserName + '@' \
+            uri = CONF.libvirt_uri or 'qemu+tls://' \
                 + self.compute_rmcontext.rmIpAddress + '/system' \
-                + '?no_tty=1?no_verify=1'
+                + '?no_tty=1'
         return uri
 
     @staticmethod
     def _connect(uri, read_only):
         auth = [[libvirt.VIR_CRED_AUTHNAME,
                 libvirt.VIR_CRED_NOECHOPROMPT], 'root', None]
+        conn = None
         try:
             if read_only:
-                return libvirt.openReadOnly(uri)
+                conn = libvirt.openReadOnly(uri)
             else:
-                return libvirt.openAuth(uri, auth, 0)
+                conn = libvirt.openAuth(uri, auth, 0)
         except libvirt.libvirtError:
             LOG.debug(_('Unable to connect to libvirt on the host'))
             LOG.error(_(traceback.format_exc()))
+        if conn:
+            conn.setKeepAlive(5, 5)
+        return conn
 
     def get_new_connection(self, uri, read_only):
         return self._connect(uri, read_only)

@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-#          (c) Copyright 2012 Hewlett-Packard Development Company, L.P.
+#    (c) Copyright 2012 Hewlett-Packard Development Company, L.P.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -22,11 +22,12 @@ import time
 import sys
 from healthnmon import test
 from healthnmon import log
-from healthnmon.log import HealthnmonFormatter
+from healthnmon.log import HealthnmonFormatter, HealthnmonLogHandler
 from healthnmon.log import HealthnmonAuditFilter
 from healthnmon.log import HealthnmonAuditFormatter
 from healthnmon.log import HealthnmonAuditHandler
 from eventlet import greenthread
+import fnmatch
 
 
 class HealthnmonLoggerTestCase(test.TestCase):
@@ -266,7 +267,7 @@ class HealthnmonAuditFormatterTestCase(test.TestCase):
         self.log.logger.removeHandler(self.handler)
         super(HealthnmonAuditFormatterTestCase, self).tearDown()
 
-    def test_log_audit_formatter_format_without_optional_values(self):
+    def test_log_hnmon_audit_formatter_format_without_optional_values(self):
         formatter = HealthnmonAuditFormatter()
 
         logrecord = logging.LogRecord(
@@ -277,7 +278,7 @@ class HealthnmonAuditFormatterTestCase(test.TestCase):
         result = formatter.format(logrecord)
         self.assert_(True)
 
-    def test_log_audit_formatter_format_with_optional_values(self):
+    def test_log_healthnmon_audit_formatter_format_with_optional_values(self):
         formatter = HealthnmonAuditFormatter()
 
         logrecord = logging.LogRecord(
@@ -366,3 +367,52 @@ class HealthnmonAuditFilterTestCase(test.TestCase):
 
     def tearDown(self):
         super(HealthnmonAuditFilterTestCase, self).tearDown()
+
+
+class HealthnmonLogHandlerTestCase(test.TestCase):
+    def setUp(self):
+        super(HealthnmonLogHandlerTestCase, self).setUp()
+        self.log_name = "HealthnmonLogHandlerTestCase.log"
+
+    def test_log_healthnmon_log_handler(self):
+        handler = HealthnmonLogHandler(self.log_name, backupCount=3)
+        with open(self.log_name + ".1.gz", "w"):
+            pass
+        handler.doRollover()
+        self.assert_(os.path.exists(self.log_name), "Log file not found")
+        self.assert_(os.path.exists(
+            self.log_name + ".1.gz"), "Back file *.1.gz not found")
+        self.assert_(os.path.exists(
+            self.log_name + ".2.gz"), "Back file *.2.gz not found")
+
+    def test_log_healthnmon_log_handler_backup_full(self):
+        handler = HealthnmonLogHandler(self.log_name, backupCount=3)
+        with open(self.log_name + ".1.gz", "w"):
+            pass
+        with open(self.log_name + ".2.gz", "w"):
+            pass
+        with open(self.log_name + ".3.gz", "w"):
+            pass
+        handler.doRollover()
+        self.assert_(os.path.exists(self.log_name), "Log file not found")
+        self.assert_(os.path.exists(
+            self.log_name + ".1.gz"), "Back file *.1.gz not found")
+        self.assert_(os.path.exists(
+            self.log_name + ".2.gz"), "Back file *.2.gz not found")
+        self.assert_(os.path.exists(
+            self.log_name + ".3.gz"), "Back file *.3.gz not found")
+        self.assertFalse(os.path.exists(
+            self.log_name + ".4.gz"), "Back file *.4.gz is found")
+
+    def test_log_healthnmon_log_handler_backup_nil(self):
+        handler = HealthnmonLogHandler(self.log_name, backupCount=3)
+        handler.doRollover()
+        self.assert_(os.path.exists(self.log_name), "Log file not found")
+        self.assert_(os.path.exists(
+            self.log_name + ".1.gz"), "Back file *.1.gz not found")
+
+    def tearDown(self):
+        for f in os.listdir('.'):
+            if fnmatch.fnmatch(f, self.log_name + '*'):
+                os.remove(f)
+        super(HealthnmonLogHandlerTestCase, self).tearDown()

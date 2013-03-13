@@ -45,6 +45,29 @@ def is_service_alive(updated_at, created_at):
     return abs(utils.total_seconds(delta)) <= CONF.service_down_time
 
 
+def retry(retries=0, delay=0):
+    """Decorator for retry.
+    retries: Number of retry times in case of exception
+    delay: delay for the first retry.
+        Delay time will be added to the previous delay value on each retry.
+    """
+    def retry_deco(func):
+        def f_retry(*args, **kwargs):
+            retry_delay = delay
+            for counter in range(retries):
+                if retry_delay > delay:
+                    time.sleep(retry_delay)
+                try:
+                    return func(*args, **kwargs)
+                except Exception:
+                    LOG.error(_("Exception in " + func.__name__ + ". Retry \
+                    counter:" + str(
+                        counter + 1)))
+                    retry_delay = retry_delay + delay
+        return f_retry
+    return retry_deco
+
+
 class XMLUtils:
 
     ''' Utils class to do extract the attributes and
