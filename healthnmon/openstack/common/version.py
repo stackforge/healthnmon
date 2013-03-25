@@ -111,7 +111,7 @@ class VersionInfo(object):
             except (IOError, pkg_resources.DistributionNotFound):
                 self.version = self._generate_version()
 
-        return self.version.replace("-", "")
+        return self.version
 
     def canonical_version_string(self, always=False):
         """Return the simple version of the package excluding any suffixes.

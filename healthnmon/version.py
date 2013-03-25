@@ -16,4 +16,5 @@
 
 from healthnmon.openstack.common import version as common_version
 
-version_info = common_version.VersionInfo('healthnmon')
+version_info = common_version.VersionInfo('healthnmon',
+                                          pre_version='2013.1.g3')
