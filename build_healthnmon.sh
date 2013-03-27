@@ -48,6 +48,7 @@ if [ $run_tests -eq 1 ]; then
 fi
 
 if [ $create_tar -eq 1 ]; then
+  rm -rf healthnmon/versioninfo
   python setup.py sdist
   status=$?
   if [[ $status -ne 0 ]]
@@ -60,16 +61,16 @@ if [ $create_tar -eq 1 ]; then
 fi
 
 if [ $create_rpm -eq 1 ]; then
-    python prep_rpm_spec.py
+    ver=`python rpm_util.py`
     rpmBuildPath=`pwd`/target/rpmbuild
 	rm -rf $rpmBuildPath
 	
 	mkdir -p $rpmBuildPath/SOURCES
-	cp dist/healthnmon-*.tar.gz $rpmBuildPath/SOURCES
+	cp dist/healthnmon-$ver.tar.gz $rpmBuildPath/SOURCES
 	cp rpm/healthnmon.init $rpmBuildPath/SOURCES
 	cp rpm/copyright $rpmBuildPath/SOURCES
 	
-	rpmbuild --define "_topdir $rpmBuildPath" -ba rpm/healthnmon.spec
+	rpmbuild --define "_topdir $rpmBuildPath" --define "ver $ver" --define "release `date +%Y%m%d.%H%M%S`" -ba rpm/healthnmon.spec
 	status=$?
 	if [[ $status -ne 0 ]]
     then

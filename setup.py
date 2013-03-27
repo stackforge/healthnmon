@@ -24,7 +24,7 @@ depend_links = setup.parse_dependency_links()
 
 setuptools.setup(
     name='healthnmon',
-    version=version.canonical_version_string(),
+    version=version.canonical_version_string(True),
     description='Healthnmon project provides health and'
                 ' monitoring service for cloud',
     author='healthnmon',
