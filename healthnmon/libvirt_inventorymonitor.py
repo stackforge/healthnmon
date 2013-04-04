@@ -139,15 +139,12 @@ class LibvirtVmHost:
         return compute_alive, hostname
 
     def _get_network_running_status(self, hostname):
-        network_alive = False
-        network_service = db.service_get_by_host_and_topic(
-            get_admin_context(), hostname, 'network')
-        if network_service is not None:
-            network_alive = hnm_utils.is_service_alive(network_service[
-                                                       'updated_at'],
-                                                       network_service[
-                                                       'created_at'])
-        return network_alive
+        """
+        TODO: Need to check the network status of the node
+
+        For now consider network is up and running
+        """
+        return True
 
     """This method will set the host as disconnected
     """
