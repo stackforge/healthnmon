@@ -85,10 +85,10 @@ if [ $coverage -eq 1 ]; then
     files=${files////.}
 
     noseopts="$noseopts --cover-erase"
-    noseopts="$noseopts --cover-package=healthnmon"
+    noseopts="$noseopts "
     for file in $files; do noseopts="$noseopts --cover-package=$file"; done
-    noseopts="$noseopts --with-coverage --with-xunit"
-    #noseopts="$noseopts --xcoverage-file=$xcoverage_file"
+    noseopts="$noseopts --with-xcoverage --with-xunit"
+    noseopts="$noseopts --xcoverage-file=$xcoverage_file"
 fi
 
 if [ $no_site_packages -eq 1 ]; then
