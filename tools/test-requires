@@ -1,10 +1,12 @@
 # Packages needed for dev testing
 distribute>=0.6.24
 
+kid
 coverage
 fixtures==0.3.9
 mox==0.5.3
 nose
+nosexcover
 testtools
 openstack.nose_plugin>=0.7
 nosehtmloutput
