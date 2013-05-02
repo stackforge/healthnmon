@@ -1258,8 +1258,6 @@ class LibvirtStorageVolume:
                     + poolName + ' on host ' + self.compute_id))
         # Pool will be autostarted if host or libvirt service is restarted
         poolobj.setAutostart(1)
-        # Creates the path on filesystem if folder does not exist already.
-        poolobj.build(0)
         # Starts the pool and changes state as active,
         # since storagePoolDefineXML creates an inactive pool by default
         poolobj.create(0)
