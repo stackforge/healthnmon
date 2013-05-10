@@ -15,7 +15,7 @@
 #    under the License.
 
 import unittest
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import os
 from healthnmon.db.sqlalchemy import manage_healthnmon_db
 from sqlalchemy.engine import create_engine

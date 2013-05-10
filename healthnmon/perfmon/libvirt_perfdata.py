@@ -26,7 +26,7 @@ from healthnmon.events import event_metadata
 from healthnmon.constants import Constants
 from healthnmon.perfmon.perf_stats import Stats
 from healthnmon import log
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import time
 import datetime
 

@@ -20,7 +20,7 @@ Uses heapy- for memory profiling
 """
 
 from healthnmon import log as logging
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import traceback
 import functools
 import os

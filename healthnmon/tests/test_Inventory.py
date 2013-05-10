@@ -30,7 +30,7 @@ from healthnmon.tests import FakeLibvirt as libvirt
 from healthnmon.virt.libvirt import connection
 from healthnmon.virt.libvirt.connection import LibvirtConnection
 from healthnmon.events import api as event_api
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.db import api as nova_db
 from nova import db as novadb
 from healthnmon.virt import fake

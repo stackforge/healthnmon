@@ -25,7 +25,7 @@ from healthnmon.constants import Constants
 from nova.openstack.common import context
 from healthnmon import test
 import mox
-from nova.openstack.common import cfg
+from oslo.config import cfg
 
 
 class HealthnMonManagerTestCase(test.TestCase):

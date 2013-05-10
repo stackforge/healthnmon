@@ -19,7 +19,7 @@
 
 import json
 
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from healthnmon import log as logging
 
 CONF = cfg.CONF

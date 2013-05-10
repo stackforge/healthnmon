@@ -13,7 +13,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from nova.openstack.common import cfg
+from oslo.config import cfg
 
 notifier_opts = [cfg.StrOpt('healthnmon_default_notification_level',
                             default='INFO',

@@ -17,7 +17,7 @@
 """ Healthnmon notification driver which sends message to rabbitmq
 """
 
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.openstack.common import rpc
 from nova import context as req_context
 

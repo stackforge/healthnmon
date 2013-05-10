@@ -23,7 +23,7 @@ import logging
 import logging.handlers
 import cStringIO
 import traceback
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from eventlet import greenthread
 import zipfile
 import os

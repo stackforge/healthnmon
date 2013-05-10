@@ -18,7 +18,7 @@
 Handles all requests relating to inventory.
 """
 from healthnmon import log as logging
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.db.sqlalchemy import api as context_api
 from healthnmon.db import api
 from nova.openstack.common import rpc

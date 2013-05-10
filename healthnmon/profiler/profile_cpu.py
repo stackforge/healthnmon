@@ -21,7 +21,7 @@ from utils.monkey_patch()
 """
 
 from healthnmon import log as logging
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import functools
 import time
 

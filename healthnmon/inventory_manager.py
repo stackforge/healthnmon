@@ -28,7 +28,7 @@ from healthnmon.virt import driver
 from nova import db, utils
 from healthnmon import utils as hnm_utils
 from healthnmon import log as logging
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.openstack.common import importutils
 from nova.openstack.common import timeutils
 # from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, \

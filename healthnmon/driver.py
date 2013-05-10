@@ -19,7 +19,7 @@ heathnmon Service default driver - Manage communication with
 compute nodes and collects inventory and monitoring info
 """
 
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.openstack.common import importutils
 from healthnmon import log as logging
 

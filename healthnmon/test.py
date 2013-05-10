@@ -25,7 +25,7 @@ import mox
 import shutil
 import stubout
 import os
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import healthnmon
 
 FLAGS = cfg.CONF

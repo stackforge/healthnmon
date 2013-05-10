@@ -875,7 +875,8 @@ class LibvirtVM:
                 ip = self.utils.parseXMLAttributes(
                     filterrefobjxml,
                     "//filterref/parameter[@name='IP']", 'value', False)
-                ipAddress.append(ip)
+                if ip:
+                    ipAddress.append(ip)
             if ipAddress:
                 vmNetAdapter.set_ipAddresses(ipAddress)
                 for ip in ipAddress:
@@ -1780,8 +1781,8 @@ class LibvirtNetwork:
         self.subnet = Subnet()
         self.portGroup = PortGroup()
 
-        self.vswitch.set_id(self.utils.parseXMLAttributes(networkXML,
-                            '//network/mac', 'address'))
+        self.vswitch.set_id(str(self.utils.parseXMLAttributes(networkXML,
+                            '//network/mac', 'address')))
         self.subnet.set_id('Subnet_' + self.vswitch.get_id())
         self.portGroup.set_id('PortGroup_' + self.vswitch.get_id())
         self.subnet.set_networkAddress(self.vswitch.get_id())

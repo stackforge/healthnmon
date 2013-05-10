@@ -23,7 +23,7 @@ from lxml import etree
 from lxml.etree import Element
 from lxml.etree import SubElement
 from webob import Response
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from .. import log as logging
 from nova.api.openstack import common
 from ..api import constants

@@ -22,7 +22,7 @@ collects inventory and monitoring info
 from nova import manager, utils
 from healthnmon.profiler import helper
 from nova.openstack.common import importutils
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from healthnmon.constants import Constants
 from healthnmon import driver
 from healthnmon import log as logging

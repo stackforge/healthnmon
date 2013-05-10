@@ -18,7 +18,7 @@
 from healthnmon.db import migration as healthnmon_migration
 import FakeLibvirt
 from nova.db import migration as nova_migration
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import __builtin__
 import healthnmon
 import os

@@ -46,7 +46,8 @@ from nova import version
 from healthnmon.db import migration
 from nova.db import api as db_api
 from healthnmon.common import ssh_configuration
-from nova.openstack.common import cfg, rpc
+from nova.openstack.common import rpc
+from oslo.config import cfg
 
 api_opts = [
     cfg.StrOpt('healthnmon_topic',

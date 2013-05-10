@@ -19,9 +19,8 @@ Defines interface for healthnmon DB access.
 Uses underlying SQL alchemy layer which is dynamically loaded.
 """
 
-from nova.openstack.common import cfg
 from nova import utils
-from nova.openstack.common import cfg
+from oslo.config import cfg
 
 db_opts = [
     cfg.StrOpt('healthnmon_db_backend',

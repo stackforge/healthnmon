@@ -31,7 +31,7 @@ from healthnmon import libvirt_inventorymonitor
 from healthnmon.perfmon import libvirt_perfdata
 from healthnmon.virt import driver
 from healthnmon import log as logging
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import traceback
 
 libvirt = None
@@ -46,7 +46,13 @@ conn_opts = [
     cfg.StrOpt('libvirt_uri',
                default='',
                help='Override the default libvirt URI (which is dependent'
-               ' on libvirt_type)')
+               ' on libvirt_type)'),
+    cfg.StrOpt('libvirt_conn_type',
+               default='',
+               help='Provides the libvirt connection type like ssh/ssl'),
+    cfg.StrOpt('libvirt_user',
+               default='user',
+               help='Provides the libvirt connection type like ssh/ssl')
 ]
 CONF = cfg.CONF
 CONF.register_opts(conn_opts)
@@ -116,9 +122,19 @@ class LibvirtConnection(driver.ComputeInventoryDriver):
         elif CONF.libvirt_type == 'lxc':
             uri = CONF.libvirt_uri or 'lxc:///'
         else:
-            uri = CONF.libvirt_uri or 'qemu+tls://' \
-                + self.compute_rmcontext.rmIpAddress + '/system' \
-                + '?no_tty=1'
+            if CONF.libvirt_uri:
+                uri = CONF.libvirt_uri
+            elif CONF.libvirt_conn_type == 'ssh':
+                libvirt_user = CONF.libvirt_user or "user"
+                uri = 'qemu+ssh://' \
+                    + libvirt_user \
+                    + '@' \
+                    + self.compute_rmcontext.rmIpAddress \
+                    + '/system?no_tty=1'
+            else:
+                uri = 'qemu+tls://' \
+                    + self.compute_rmcontext.rmIpAddress + '/system' \
+                    + '?no_tty=1'
         return uri
 
     @staticmethod

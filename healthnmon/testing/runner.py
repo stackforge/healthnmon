@@ -71,7 +71,7 @@ reldir = os.path.join(os.path.dirname(__file__), '..', '..')
 absdir = os.path.abspath(reldir)
 sys.path.insert(0, absdir)
 
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.openstack.common import log as logging
 
 CONF = cfg.CONF

@@ -18,7 +18,7 @@ import time
 from lxml import etree
 from healthnmon.resourcemodel import resourcemodel_diff
 from nova import utils
-from nova.openstack.common import cfg
+from oslo.config import cfg
 from nova.openstack.common import timeutils
 from healthnmon import log
 

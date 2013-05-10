@@ -23,13 +23,12 @@ from healthnmon.virt.libvirt import connection
 from healthnmon.constants import Constants
 from healthnmon.perfmon.perf_stats import Stats, CPUStats
 from healthnmon import inventory_manager
-from nova.openstack.common import cfg
 from healthnmon.tests.perfmon import FakeSSH
 from healthnmon.rmcontext import ComputeRMContext
 from healthnmon.inventory_cache_manager import InventoryCacheManager
 from healthnmon.inventory_manager import ComputeInventory
 from healthnmon.events import api as event_api
-from nova.openstack.common import cfg
+from oslo.config import cfg
 import unittest
 import paramiko
 import mox
