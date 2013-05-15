@@ -348,7 +348,10 @@ def get_pre_version(projectname, base_version):
     if not version and os.path.isdir('.git'):
         current_tag = _get_git_current_tag()
         if current_tag is not None:
-            version = current_tag
+            if base_version:
+                version = base_version
+            else:
+                version = current_tag
         else:
             branch_name = os.getenv('BRANCHNAME',
                                     os.getenv('GERRIT_REFNAME',
