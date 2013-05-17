@@ -17,7 +17,7 @@
 from healthnmon.version import version_info
 
 def get_rpm_version():
-    version = version_info.canonical_version_string(True)
+    version = version_info.get_version("healthnmon", "2013.1")
     print version
     return version
 

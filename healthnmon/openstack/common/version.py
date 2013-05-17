@@ -20,7 +20,7 @@ Utilities for consuming the auto-generated versioninfo files.
 
 import datetime
 import pkg_resources
-
+import os
 import setup
 
 
@@ -113,7 +113,13 @@ class VersionInfo(object):
 
         return self.version
 
-    def canonical_version_string(self, always=False):
+    def get_version(self, package_name, pre_version=None):
+        version = os.environ.get("OSLO_PACKAGE_VERSION", None)
+        if version is None:
+            version = self._canonical_version_string(always=True)
+        return version
+
+    def _canonical_version_string(self, always=False):
         """Return the simple version of the package excluding any suffixes.
 
         For instance, if we are working towards the 2012.2 release,
