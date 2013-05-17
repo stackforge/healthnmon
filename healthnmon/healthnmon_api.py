@@ -26,15 +26,15 @@ from nova.openstack.common import rpc
 LOG = logging.getLogger('healthnmon.healthnmon_api')
 
 api_opts = [
-    cfg.StrOpt('healthnmon_topic',
-               default='healthnmon',
-               help='the topic healthnmon service listen on')
+    cfg.StrOpt('healthnmon_collector_topic',
+               default='healthnmon.collector',
+               help='The topic healthnmon-collector service listen on')
 ]
 
 CONF = cfg.CONF
 
 try:
-    CONF.healthnmon_topic
+    CONF.healthnmon_collector_topic
 except cfg.NoSuchOptError:
     CONF.register_opts(api_opts)
 
@@ -262,7 +262,7 @@ def get_vm_utilization(context, vm_id):
         context - nova.context.RequestContext object
     """
 
-    return rpc.call(context, CONF.healthnmon_topic,
+    return rpc.call(context, CONF.healthnmon_collector_topic,
                     {'method': 'get_vm_utilization',
                     'args': {'uuid': vm_id}})
 
@@ -277,6 +277,6 @@ def get_vmhost_utilization(context, host_id):
         context - nova.context.RequestContext object
     """
 
-    return rpc.call(context, CONF.healthnmon_topic,
+    return rpc.call(context, CONF.healthnmon_collector_topic,
                     {'method': 'get_vmhost_utilization',
                     'args': {'uuid': host_id}})

@@ -35,6 +35,11 @@ test_opts = [
 ]
 CONF = cfg.CONF
 CONF.register_opts(test_opts)
+CONF.import_opt('sqlite_db', 'nova.openstack.common.db.sqlalchemy.session')
+CONF.import_opt('sqlite_synchronous',
+                'nova.openstack.common.db.sqlalchemy.session')
+CONF.set_default('sqlite_db', 'tests.sqlite')
+CONF.set_default('sqlite_synchronous', False)
 
 
 def setup():

@@ -72,10 +72,10 @@ if [ $create_rpm -eq 1 ]; then
 	rm -rf $rpmBuildPath
 	
 	mkdir -p $rpmBuildPath/SOURCES
-	cp dist/healthnmon-$ver.tar.gz $rpmBuildPath/SOURCES
-	cp rpm/healthnmon.init $rpmBuildPath/SOURCES
+    cp dist/healthnmon*.tar.gz $rpmBuildPath/SOURCES
+	cp rpm/healthnmon*.init $rpmBuildPath/SOURCES
 	cp rpm/copyright $rpmBuildPath/SOURCES
-	
+    	
 	rpmbuild --define "_topdir $rpmBuildPath" --define "ver $ver" --define "release `date +%Y%m%d.%H%M%S`" -ba rpm/healthnmon.spec
 	status=$?
 	if [[ $status -ne 0 ]]

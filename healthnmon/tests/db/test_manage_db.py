@@ -21,8 +21,8 @@ from healthnmon.db.sqlalchemy import manage_healthnmon_db
 from sqlalchemy.engine import create_engine
 
 CONF = cfg.CONF
-CONF.set_default('sqlite_db', 'tests.sqlite')
-CONF.set_default('sqlite_synchronous', False)
+#CONF.set_default('sqlite_db', 'tests.sqlite')
+#CONF.set_default('sqlite_synchronous', False)
 
 
 class ManageDbTestCase(unittest.TestCase):

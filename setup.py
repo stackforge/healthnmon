@@ -36,6 +36,8 @@ setuptools.setup(
     install_requires=requires,
     dependency_links=depend_links,
     test_suite='nose.collector',
-    scripts=['bin/healthnmon', 'bin/healthnmon-manage'],
+    scripts=['bin/healthnmon-collector',
+             'bin/healthnmon-virtproxy',
+             'bin/healthnmon-manage'],
     py_modules=[],
 )

@@ -203,13 +203,13 @@ class HelperTestCase(test.TestCase):
                                                      "%(levelname)s | "
                                                      "%(gthread_id)d | "
                                                      "%(message)s",
-                   healthnmon_log_config=self.log_config_file_path)
+                   healthnmon_collector_log_config=self.log_config_file_path)
 
         logdir = 'healthnmon'
         if not os.path.exists(logdir):
             os.makedirs(logdir)
 
-        log.setup()
+        log.healthnmon_collector_setup()
 
     def test_set_log_level_DEBUG(self):
         self.log = log.getLogger('healthnmon.example')

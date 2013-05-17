@@ -51,14 +51,14 @@ class HealthnmonLoggerTestCase(test.TestCase):
             logging_thread_format_string="THREAD ID | "
                                          "%(thread)d | "
                                          "%(message)s",
-            healthnmon_log_config=self.log_config_file_path,
+            healthnmon_collector_log_config=self.log_config_file_path,
             healthnmon_manage_log_config=self.manage_log_config_file_path)
 
         logdir = 'healthnmon'
         if not os.path.exists(logdir):
             os.makedirs(logdir)
 
-        log.setup()
+        log.healthnmon_collector_setup()
         self.log = log.getLogger()
 
     def test_loglevel_DEBUG_from_logConf(self):
@@ -92,16 +92,16 @@ class HealthnmonLoggerTestCase(test.TestCase):
             self.handlers[2].__class__.__name__, 'HealthnmonAuditHandler')
 
     def test_loglevel_no_logConf(self):
-        self.flags(healthnmon_log_config="dummyfile")
+        self.flags(healthnmon_collector_log_config="dummyfile")
 
         try:
-            log.setup()
+            log.healthnmon_collector_setup()
         except Exception:
             self.assert_(True)  # raise exception
 
     def test_loglevel_logConf_None(self):
-        self.flags(healthnmon_log_config="")
-        log.setup()
+        self.flags(healthnmon_collector_log_config="")
+        log.healthnmon_collector_setup()
 
         self.assert_(True)  # do not raise exception
 

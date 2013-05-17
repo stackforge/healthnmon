@@ -22,9 +22,8 @@
 
 from healthnmon import test
 from healthnmon.db import api as healthnmon_db_api
-from healthnmon.db.sqlalchemy import api as healthnmon_alchemy_api
+from healthnmon.db.sqlalchemy import util as db_util
 from healthnmon.resourcemodel.healthnmonResourceModel import VmHost, OsProfile
-# import mox
 from nova.context import get_admin_context
 from nova.openstack.common.db.sqlalchemy import session as nova_session
 import time
@@ -69,7 +68,7 @@ class CommonDbApiTestCase(test.TestCase):
         # Query with changes-since
         now = long(time.time() * 1000L)
         filters = {'changes-since': now}
-        query = healthnmon_alchemy_api._create_filtered_ordered_query(
+        query = db_util._create_filtered_ordered_query(
             self.db_session, OsProfile, filters=filters)
         os_profiles = query.all()
         self.assert_(os_profiles is not None)
@@ -87,7 +86,7 @@ class CommonDbApiTestCase(test.TestCase):
         self.db_session.expunge_all()
         # Query with deleted
         filters = {'deleted': False}
-        query = healthnmon_alchemy_api._create_filtered_ordered_query(
+        query = db_util._create_filtered_ordered_query(
             self.db_session, OsProfile, filters=filters)
         os_profiles = query.all()
         self.assert_(os_profiles is not None)
@@ -105,7 +104,7 @@ class CommonDbApiTestCase(test.TestCase):
         self.db_session.expunge_all()
         # Query with invalidFilterField
         filters = {'invalidFilterField': 'SomeValue'}
-        query = healthnmon_alchemy_api._create_filtered_ordered_query(
+        query = db_util._create_filtered_ordered_query(
             self.db_session, OsProfile, filters=filters)
         os_profiles = query.all()
         self.assert_(os_profiles is not None)

@@ -119,8 +119,6 @@ class MethodSpec(object):
 #
 # Method specification for getting the member
 # details of the class hierarchy recursively
-#
-
 getallmems_method_spec = MethodSpec(name='get_all_members',
                                     source='''\
     @classmethod
@@ -132,8 +130,105 @@ getallmems_method_spec = MethodSpec(name='get_all_members',
 ''',
                                     class_names=r'^.*$')
 
-# Method specification for adding reconstructor method
+export_to_dictionary_method_spec = MethodSpec(name='export_to_dictionary',
+                                              source='''\
+    def export_to_dictionary(self):
+        return %(class_name)s._export_to_dictionary(self)
+''',
+                                              class_names=r'^.*$')
 
+
+_export_to_dictionary_method_spec = MethodSpec(name='_export_to_dictionary',
+                                               source='''\
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].\
+                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] = \
+                    cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+''',
+                                               class_names=r'^.*$')
+
+
+build_from_dictionary_method_spec = MethodSpec(name='build_from_dictionary',
+                                               source='''\
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = %(class_name)s()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.\
+                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.\
+                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+''',
+                                               class_names=r'^.*$')
+
+
+export_to_json_method_spec = MethodSpec(name='export_to_json',
+                                        source='''\
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+''',
+                                        class_names=r'^.*$')
+
+
+build_from_json_method_spec = MethodSpec(name='build_from_json',
+                                         source='''\
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return %(class_name)s.build_from_dictionary(json.loads(json_str))
+''',
+                                         class_names=r'^.*$')
+
+
+# Method specification for adding reconstructor method
 recon_method_spec = MethodSpec(name='init_loader',
                                source='''\
     from sqlalchemy import orm
@@ -165,7 +260,13 @@ recon_method_spec = MethodSpec(name='init_loader',
 # must be named METHOD_SPECS.
 #
 
-METHOD_SPECS = (getallmems_method_spec, recon_method_spec)
+METHOD_SPECS = (getallmems_method_spec,
+                export_to_dictionary_method_spec,
+                _export_to_dictionary_method_spec,
+                build_from_dictionary_method_spec,
+                export_to_json_method_spec,
+                build_from_json_method_spec,
+                recon_method_spec)
 
 
 def test():

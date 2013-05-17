@@ -28,7 +28,7 @@ import os
 from oslo.config import cfg
 import healthnmon
 
-FLAGS = cfg.CONF
+CONF = cfg.CONF
 healthnmon_path = os.path.abspath(
     os.path.join(healthnmon.get_healthnmon_location(), '../'))
 
@@ -40,8 +40,8 @@ class TestCase(unittest.TestCase):
         """Run before each test method to initialize test environment."""
         super(TestCase, self).setUp()
         self.start = utils.utcnow()
-        shutil.copyfile(os.path.join(healthnmon_path, FLAGS.sqlite_clean_db),
-                        os.path.join(healthnmon_path, FLAGS.sqlite_db))
+        shutil.copyfile(os.path.join(healthnmon_path, CONF.sqlite_clean_db),
+                        os.path.join(healthnmon_path, CONF.sqlite_db))
 
         # emulate some of the mox stuff, we can't use the metaclass
         # because it screws with our generators
@@ -62,7 +62,7 @@ class TestCase(unittest.TestCase):
         finally:
             # Clean out fake_rabbit's queue if we used it
 
-            # Reset any overridden flags
+            # Reset any overridden CONF
             self.reset_flags()
 
             # Stop any timers
@@ -87,9 +87,13 @@ class TestCase(unittest.TestCase):
 
     def flags(self, **kw):
         """Override flag variables for a test."""
+        group = kw.pop('group', None)
+        module = kw.pop('module', None)
         for k, v in kw.iteritems():
-            FLAGS.set_override(k, v)
-            self._overridden_opts.append(k)
+            if module:
+                CONF.import_opt(k, module, group)
+            CONF.set_override(k, v, group)
+            self._overridden_opts.append((k, group))
 
     def reset_flags(self):
         """Resets all flag variables for the test.
@@ -97,8 +101,8 @@ class TestCase(unittest.TestCase):
         Runs after each test.
 
         """
-        for k in self._overridden_opts:
-            FLAGS.set_override(k, None)
+        for (k, group) in self._overridden_opts:
+            CONF.clear_override(k, group)
         self._overridden_opts = []
 
     def assertIn(self, a, b, *args, **kwargs):

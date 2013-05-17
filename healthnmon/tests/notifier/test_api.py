@@ -15,7 +15,7 @@
 #    under the License.
 
 from healthnmon import test
-import healthnmon.notifier.api as notifier_api
+from healthnmon.notifier import api as notifier_api
 from nova.openstack.common import context
 
 
@@ -27,7 +27,7 @@ class APiTest(test.TestCase):
         super(APiTest, self).setUp()
         self.flags(healthnmon_default_notification_level='INFO',
                    healthnmon_notification_drivers=[
-                   'healthnmon.notifier.rabbit_notifier'
+                   'nova.openstack.common.notifier.test_notifier'
                    ])
         self.context = context.get_admin_context()
 
@@ -57,9 +57,6 @@ class APiTest(test.TestCase):
         )
 
     def testNotifierException(self):
-        self.flags(healthnmon_notification_drivers=['healthnmon.tests.\
-notifier.ExceptionNotifier']
-                   )
         event_type = 'LifeCycle.Vm.Reconfigured'
         publisher_id = 'healthnmon.unittest'
         priority = 'INFO'

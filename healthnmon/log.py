@@ -33,9 +33,12 @@ log_opts = [
     cfg.StrOpt('healthnmon_log_dir',
                default='/var/log/healthnmon',
                help='Log directory for healthnmon'),
-    cfg.StrOpt('healthnmon_log_config',
-               default='/etc/healthnmon/logging-healthnmon.conf',
-               help='Log configuration file for healthnmon'),
+    cfg.StrOpt('healthnmon_collector_log_config',
+               default='/etc/healthnmon/logging-healthnmon-collector.conf',
+               help='Log configuration file for healthnmon collector'),
+    cfg.StrOpt('healthnmon_virtproxy_log_config',
+               default='/etc/healthnmon/logging-healthnmon-virtproxy.conf',
+               help='Log configuration file for healthnmon virtproxy'),
     cfg.StrOpt('healthnmon_manage_log_config',
                default='/etc/healthnmon/logging-healthnmon-manage.conf',
                help='Log configuration file for healthnmon'),
@@ -223,13 +226,13 @@ class HealthnmonAuditHandler(HealthnmonLogHandler):
 #    getLogger().critical(str(value), **extra)
 
 
-def setup():
+def healthnmon_collector_setup():
     """Setup healthnmon logging."""
     # sys.excepthook = handle_exception
 
-    if CONF.healthnmon_log_config:
+    if CONF.healthnmon_collector_log_config:
         try:
-            logging.config.fileConfig(CONF.healthnmon_log_config)
+            logging.config.fileConfig(CONF.healthnmon_collector_log_config)
         except Exception:
             traceback.print_exc()
             raise
@@ -242,6 +245,18 @@ def healthnmon_manage_setup():
     if CONF.healthnmon_manage_log_config:
         try:
             logging.config.fileConfig(CONF.healthnmon_manage_log_config)
+        except Exception:
+            traceback.print_exc()
+            raise
+
+
+def healthnmon_virtproxy_setup():
+    """Setup healthnmon logging."""
+    # sys.excepthook = handle_exception
+
+    if CONF.healthnmon_virtproxy_log_config:
+        try:
+            logging.config.fileConfig(CONF.healthnmon_virtproxy_log_config)
         except Exception:
             traceback.print_exc()
             raise

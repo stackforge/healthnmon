@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 
 #
-# Generated Tue Jul  3 02:40:24 2012 by generateDS.py version 2.7b.
+# Generated Thu Mar 28 15:51:26 2013 by generateDS.py version 2.7b.
 #
 
 import sys
@@ -182,7 +182,7 @@ except ImportError, exp:
 # Globals
 #
 
-ExternalEncoding = 'UTF-8'
+ExternalEncoding = 'ascii'
 Tag_pattern_ = re_.compile(r'({.*})?(.*)')
 String_cleanup_pat_ = re_.compile(r"[\n\r\s]+")
 Namespace_extract_pat_ = re_.compile(r'{(.*)}(.*)')
@@ -597,6 +597,70 @@ class Entity(GeneratedsSuper):
         if Entity.superclass != None:
             member_items.update(Entity.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Entity._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Entity()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Entity.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -743,6 +807,70 @@ class Property(GeneratedsSuper):
         if Property.superclass != None:
             member_items.update(Property.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Property._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Property()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Property.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -857,6 +985,70 @@ class Cost(GeneratedsSuper):
         if Cost.superclass != None:
             member_items.update(Cost.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Cost._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Cost()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Cost.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -967,6 +1159,70 @@ class ResourceTag(GeneratedsSuper):
         if ResourceTag.superclass != None:
             member_items.update(ResourceTag.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ResourceTag._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ResourceTag()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ResourceTag.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -1131,6 +1387,70 @@ class Resource(Entity):
         if Resource.superclass != None:
             member_items.update(Resource.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Resource._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Resource()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Resource.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -1661,6 +1981,70 @@ class ResourceUtilization(GeneratedsSuper):
         if ResourceUtilization.superclass != None:
             member_items.update(ResourceUtilization.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ResourceUtilization._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ResourceUtilization()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ResourceUtilization.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -1875,6 +2259,70 @@ class ResourceLimit(GeneratedsSuper):
         if ResourceLimit.superclass != None:
             member_items.update(ResourceLimit.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ResourceLimit._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ResourceLimit()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ResourceLimit.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -1961,6 +2409,70 @@ class VendorProperties(Entity):
         if VendorProperties.superclass != None:
             member_items.update(VendorProperties.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VendorProperties._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VendorProperties()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VendorProperties.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -2047,6 +2559,70 @@ class VmGenericDevice(Entity):
         if VmGenericDevice.superclass != None:
             member_items.update(VmGenericDevice.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmGenericDevice._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmGenericDevice()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmGenericDevice.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -2162,6 +2738,70 @@ class VmGlobalSettings(Entity):
         if VmGlobalSettings.superclass != None:
             member_items.update(VmGlobalSettings.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmGlobalSettings._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmGlobalSettings()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmGlobalSettings.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -2340,6 +2980,70 @@ class OsProfile(GeneratedsSuper):
         if OsProfile.superclass != None:
             member_items.update(OsProfile.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return OsProfile._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = OsProfile()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return OsProfile.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -2486,6 +3190,70 @@ class IpProfile(GeneratedsSuper):
         if IpProfile.superclass != None:
             member_items.update(IpProfile.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return IpProfile._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = IpProfile()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return IpProfile.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -2692,6 +3460,70 @@ class VmNetAdapter(Resource):
         if VmNetAdapter.superclass != None:
             member_items.update(VmNetAdapter.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmNetAdapter._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmNetAdapter()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmNetAdapter.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -2843,6 +3675,70 @@ class VmScsiController(Resource):
         if VmScsiController.superclass != None:
             member_items.update(VmScsiController.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmScsiController._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmScsiController()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmScsiController.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -3088,6 +3984,70 @@ class VmDisk(Resource):
         if VmDisk.superclass != None:
             member_items.update(VmDisk.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmDisk._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmDisk()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmDisk.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -3300,6 +4260,70 @@ class RdmDiskProfile(GeneratedsSuper):
         if RdmDiskProfile.superclass != None:
             member_items.update(RdmDiskProfile.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return RdmDiskProfile._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = RdmDiskProfile()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return RdmDiskProfile.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -3502,6 +4526,70 @@ class ResourceAllocation(GeneratedsSuper):
         if ResourceAllocation.superclass != None:
             member_items.update(ResourceAllocation.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ResourceAllocation._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ResourceAllocation()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ResourceAllocation.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -3616,6 +4704,70 @@ class ExtensibleRaidLevel(GeneratedsSuper):
         if ExtensibleRaidLevel.superclass != None:
             member_items.update(ExtensibleRaidLevel.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ExtensibleRaidLevel._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ExtensibleRaidLevel()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ExtensibleRaidLevel.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -3726,6 +4878,70 @@ class HostMountPoint(GeneratedsSuper):
         if HostMountPoint.superclass != None:
             member_items.update(HostMountPoint.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return HostMountPoint._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = HostMountPoint()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return HostMountPoint.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -3875,6 +5091,70 @@ class VmClusterCapabilities(Resource):
         if VmClusterCapabilities.superclass != None:
             member_items.update(VmClusterCapabilities.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmClusterCapabilities._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmClusterCapabilities()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmClusterCapabilities.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -4085,6 +5365,70 @@ class VmCapabilities(GeneratedsSuper):
         if VmCapabilities.superclass != None:
             member_items.update(VmCapabilities.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmCapabilities._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmCapabilities()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmCapabilities.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -4247,6 +5591,70 @@ class Error(GeneratedsSuper):
         if Error.superclass != None:
             member_items.update(Error.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Error._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Error()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Error.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -4426,6 +5834,70 @@ class Event(GeneratedsSuper):
         if Event.superclass != None:
             member_items.update(Event.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Event._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Event()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Event.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -4569,6 +6041,70 @@ class MessageParameter(GeneratedsSuper):
         if MessageParameter.superclass != None:
             member_items.update(MessageParameter.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return MessageParameter._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = MessageParameter()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return MessageParameter.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -4873,6 +6409,70 @@ class ComputeCluster(Resource):
         if ComputeCluster.superclass != None:
             member_items.update(ComputeCluster.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ComputeCluster._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ComputeCluster()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ComputeCluster.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -5181,6 +6781,70 @@ class ComputeServer(Resource):
         if ComputeServer.superclass != None:
             member_items.update(ComputeServer.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ComputeServer._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ComputeServer()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ComputeServer.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -5519,6 +7183,70 @@ class PhysicalServer(ComputeServer):
         if PhysicalServer.superclass != None:
             member_items.update(PhysicalServer.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return PhysicalServer._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = PhysicalServer()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return PhysicalServer.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -5959,6 +7687,70 @@ class VmHost(PhysicalServer):
         if VmHost.superclass != None:
             member_items.update(VmHost.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmHost._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmHost()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmHost.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -6250,6 +8042,70 @@ class VmCluster(ComputeCluster):
         if VmCluster.superclass != None:
             member_items.update(VmCluster.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmCluster._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmCluster()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmCluster.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -6668,6 +8524,70 @@ class Vm(ComputeServer):
         if Vm.superclass != None:
             member_items.update(Vm.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Vm._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Vm()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Vm.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -6763,6 +8683,70 @@ class ResourceCapacityPool(Resource):
         if ResourceCapacityPool.superclass != None:
             member_items.update(ResourceCapacityPool.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return ResourceCapacityPool._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = ResourceCapacityPool()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return ResourceCapacityPool.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -6979,6 +8963,70 @@ class VmCapacityPool(ResourceCapacityPool):
         if VmCapacityPool.superclass != None:
             member_items.update(VmCapacityPool.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmCapacityPool._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmCapacityPool()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmCapacityPool.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -7064,6 +9112,70 @@ class CloudCapacityPool(ResourceCapacityPool):
         if CloudCapacityPool.superclass != None:
             member_items.update(CloudCapacityPool.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return CloudCapacityPool._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = CloudCapacityPool()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return CloudCapacityPool.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -7176,6 +9288,70 @@ class DiskArray(Resource):
         if DiskArray.superclass != None:
             member_items.update(DiskArray.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return DiskArray._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = DiskArray()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return DiskArray.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -7329,6 +9505,70 @@ class WwnConnection(GeneratedsSuper):
         if WwnConnection.superclass != None:
             member_items.update(WwnConnection.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return WwnConnection._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = WwnConnection()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return WwnConnection.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -7798,6 +10038,70 @@ class SanVolume(Resource):
         if SanVolume.superclass != None:
             member_items.update(SanVolume.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return SanVolume._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = SanVolume()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return SanVolume.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -7951,6 +10255,70 @@ class PhysicalServerProfile(Resource):
         if PhysicalServerProfile.superclass != None:
             member_items.update(PhysicalServerProfile.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return PhysicalServerProfile._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = PhysicalServerProfile()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return PhysicalServerProfile.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -8168,6 +10536,70 @@ class VmProfile(Resource):
         if VmProfile.superclass != None:
             member_items.update(VmProfile.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmProfile._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmProfile()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmProfile.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -8283,6 +10715,70 @@ class StorageTag(Resource):
         if StorageTag.superclass != None:
             member_items.update(StorageTag.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return StorageTag._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = StorageTag()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return StorageTag.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -8551,6 +11047,70 @@ class StorageVolume(Resource):
         if StorageVolume.superclass != None:
             member_items.update(StorageVolume.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return StorageVolume._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = StorageVolume()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return StorageVolume.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -8959,6 +11519,70 @@ class SanVolumeTemplate(Resource):
         if SanVolumeTemplate.superclass != None:
             member_items.update(SanVolumeTemplate.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return SanVolumeTemplate._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = SanVolumeTemplate()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return SanVolumeTemplate.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -9074,6 +11698,70 @@ class PortGroup(Resource):
         if PortGroup.superclass != None:
             member_items.update(PortGroup.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return PortGroup._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = PortGroup()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return PortGroup.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -9272,6 +11960,70 @@ class VirtualSwitch(Resource):
         if VirtualSwitch.superclass != None:
             member_items.update(VirtualSwitch.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VirtualSwitch._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VirtualSwitch()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VirtualSwitch.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -9480,6 +12232,70 @@ class DeployableSoftware(Resource):
         if DeployableSoftware.superclass != None:
             member_items.update(DeployableSoftware.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return DeployableSoftware._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = DeployableSoftware()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return DeployableSoftware.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -9769,6 +12585,70 @@ class VmTemplate(DeployableSoftware):
         if VmTemplate.superclass != None:
             member_items.update(VmTemplate.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VmTemplate._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VmTemplate()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VmTemplate.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -9892,6 +12772,70 @@ class Image(DeployableSoftware):
         if Image.superclass != None:
             member_items.update(Image.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Image._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Image()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Image.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -10002,6 +12946,70 @@ class CloudImage(DeployableSoftware):
         if CloudImage.superclass != None:
             member_items.update(CloudImage.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return CloudImage._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = CloudImage()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return CloudImage.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -10181,6 +13189,70 @@ class IpAddressRange(Resource):
         if IpAddressRange.superclass != None:
             member_items.update(IpAddressRange.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return IpAddressRange._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = IpAddressRange()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return IpAddressRange.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -10338,6 +13410,70 @@ class IpAddress(Resource):
         if IpAddress.superclass != None:
             member_items.update(IpAddress.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return IpAddress._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = IpAddress()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return IpAddress.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -10475,6 +13611,70 @@ class VcNetwork(Resource):
         if VcNetwork.superclass != None:
             member_items.update(VcNetwork.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return VcNetwork._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = VcNetwork()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return VcNetwork.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -10600,6 +13800,70 @@ class GroupIdType(GeneratedsSuper):
         if GroupIdType.superclass != None:
             member_items.update(GroupIdType.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return GroupIdType._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = GroupIdType()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return GroupIdType.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -11335,6 +14599,70 @@ class Subnet(Resource):
         if Subnet.superclass != None:
             member_items.update(Subnet.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Subnet._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Subnet()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Subnet.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -11625,6 +14953,70 @@ class LoadBalancer(Resource):
         if LoadBalancer.superclass != None:
             member_items.update(LoadBalancer.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return LoadBalancer._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = LoadBalancer()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return LoadBalancer.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -11785,6 +15177,70 @@ class Firewall(Resource):
         if Firewall.superclass != None:
             member_items.update(Firewall.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return Firewall._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = Firewall()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return Firewall.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):
@@ -11992,6 +15448,70 @@ class FirewallRule(GeneratedsSuper):
         if FirewallRule.superclass != None:
             member_items.update(FirewallRule.superclass.get_all_members())
         return member_items
+    def export_to_dictionary(self):
+        return FirewallRule._export_to_dictionary(self)
+    @classmethod
+    def _export_to_dictionary(cls, value):
+        resource_model_module_name = cls.__module__
+        value_module_name = value.__class__.__module__
+        if value_module_name == resource_model_module_name:
+            # This is a resource model object
+            member_specs = value.get_all_members()
+            exported = {}
+            for member_name in member_specs:
+                member_getter = getattr(value, '_'.join(('get', member_name)))
+                member_value = member_getter()
+                member_spec = member_specs.get(member_name)
+                if member_spec.get_container() == 1:
+                    exported[member_name] = []
+                    for iter_value in member_value:
+                        if member_value is not None:
+                            exported[member_name].                            append(cls._export_to_dictionary(iter_value))
+                        else:
+                            exported[member_name].append(None)
+                else:
+                    exported[member_name] =                     cls._export_to_dictionary(member_value)
+            return exported
+        else:
+            return value
+    @classmethod
+    def build_from_dictionary(cls, dict):
+        if dict is None:
+            return None
+        model = FirewallRule()
+        member_specs = cls.get_all_members()
+        for member_name in dict.keys():
+            member_spec = member_specs.get(member_name)
+            type_name = member_spec.get_data_type()
+            try:
+                __import__(cls.__module__)
+                attribute_class = getattr(sys.modules[cls.__module__],
+                                          type_name)
+            except (ValueError, AttributeError):
+                attribute_class = None
+            built_value = None
+            if attribute_class:
+                # An attribute which in itself is resource model
+                if member_spec.get_container() == 1:
+                    values = dict[member_name]
+                    if values is not None:
+                        built_value = []
+                        for value in values:
+                            built_value.append(attribute_class.                            build_from_dictionary(value))
+                else:
+                    built_value = attribute_class.                    build_from_dictionary(dict[member_name])
+            else:
+                built_value = dict[member_name]
+            member_setter = getattr(model, '_'.join(('set', member_name)))
+            member_setter(built_value)
+        return model
+    def export_to_json(self):
+        import json
+        return json.dumps(self.export_to_dictionary(), indent=2)
+    @classmethod
+    def build_from_json(cls,json_str):
+        import json
+        return FirewallRule.build_from_dictionary(json.loads(json_str))
     from sqlalchemy import orm
     @orm.reconstructor
     def init_loader(self):

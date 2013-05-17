@@ -103,8 +103,15 @@ def notify(context,
     )
     for driver in _get_drivers():
         try:
+            print 'driver name:'
+            print driver
+            print context
+            print 'message:'
+            print msg
             driver.notify(context, msg)
         except Exception, e:
+            print 'error occurred while notifiy: '
+            print e
             LOG.exception(_("Problem '%(e)s' attempting to send to \
             healthnmon notification driver %(driver)s."
                             % locals()))
@@ -116,5 +123,9 @@ def _get_drivers():
     if not drivers:
         drivers = []
         for notification_driver in CONF.healthnmon_notification_drivers:
+            print 'notification driver :'
+            print notification_driver
             drivers.append(importutils.import_module(notification_driver))
+    print 'drivers -------------------->'
+    print drivers
     return drivers

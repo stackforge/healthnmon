@@ -29,8 +29,9 @@ License:          Apache
 Vendor:           Hewlett Packard Company
 
 Source0:          %{name}-%{version}.tar.gz
-Source1:          %{name}.init
-Source2:          copyright
+Source1:          %{name}-collector.init
+Source2:          %{name}-virtproxy.init
+Source3:          copyright
 
 BuildRoot:        %{_tmppath}/%{name}-%{version}-root-%(%{__id_u} -n)
 
@@ -39,6 +40,8 @@ BuildArch:        noarch
 Summary:          healthnmon Service
 
 Requires:  python-%{name}    = %{version}
+Requires:  %{name}-virtproxy    = %{version}-{release}
+Requires:  %{name}-collector    = %{version}-{release}
 Requires:  python
 Requires:  initscripts
 Requires:  openstack-utils
@@ -46,6 +49,33 @@ Requires:  openstack-utils
 %description
 Health and Monitoring module for cloud
   The healthnmon project provides health and monitoring service for cloud.
+
+%package collector
+Summary:          Healthnmon collector service
+Group:            Applications/System
+Requires:  python-%{name}    = %{version}
+
+%description collector
+healthnmon collector is open source software designed as centralized service
+that runs on a controller node collecting the data of "Cloud Resource Inventory", 
+"Cloud Resource Performance / Utilization Data and Alerts & Notification data" 
+published by Healthnmon Virt Proxy Drivers.
+
+This package contains the healthnmon collector service.
+
+%package virtproxy
+Summary:          Healthnmon virtproxy service
+Group:            Applications/System
+Requires:  python-%{name}    = %{version}
+
+%description virtproxy
+Healthnmon virtproxy is open source software designed to support multiple 
+implementations that provides data of "Cloud Resource Inventory", 
+"Cloud Resource Performance / Utilization Data and Alerts & Notification data" 
+and plugged in using the driver model that is being followed in OpenStack 
+through configuration settings.
+
+This package contains the healthnmon virtproxy service.
 
 %package -n       python-%{name}
 Summary:          %{name} Python libraries
@@ -88,8 +118,8 @@ healthnmon Service - Documentation
   This package contains the documentation.
 %endif
 
-%post
-
+%post collector
+/sbin/chkconfig --add %{name}-collector
 case "$*" in
     1) # new installation
         openstack-config --set /etc/nova/nova.conf DEFAULT osapi_compute_extension healthnmon.api.healthnmon.Healthnmon
@@ -100,9 +130,28 @@ esac
 
 exit 0;
 
+%post virtproxy
+/sbin/chkconfig --add %{name}-virtproxy
+
 %post -n python-%{name}
 if which pycompile >/dev/null 2>&1; then
 	pycompile -p python-%{name} 
+fi
+
+%preun collector
+if [ $1 -eq 0 ] ; then
+    for svc in collector; do
+        /sbin/service %{name}-${svc} stop >/dev/null 2>&1
+        /sbin/chkconfig --del %{name}-${svc}
+    done
+fi
+
+%preun virtproxy
+if [ $1 -eq 0 ] ; then
+    for svc in virtproxy; do
+        /sbin/service %{name}-${svc} stop >/dev/null 2>&1
+        /sbin/chkconfig --del %{name}-${svc}
+    done
 fi
 
 %preun -n python-%{name}
@@ -114,7 +163,6 @@ else
 		rm -f "${file}"[co] >/dev/null
   	done
 fi
-
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -145,34 +193,47 @@ install -d -m 755 %{buildroot}%{_localstatedir}/log/%{name}
 install -d -m 755 %{buildroot}%{_sysconfdir}/%{name}/
 
 #  Install copyright
-install -p -D -m 755 %{SOURCE2} %{buildroot}%{_docdir}/%{name}/copyright
-install -p -D -m 755 %{SOURCE2} %{buildroot}%{_docdir}/python-%{name}/copyright
+install -p -D -m 755 %{SOURCE3} %{buildroot}%{_docdir}/%{name}/copyright
+install -p -D -m 755 %{SOURCE3} %{buildroot}%{_docdir}/python-%{name}/copyright
 %if 0%{?with_doc}
-install -p -D -m 755 %{SOURCE2} %{buildroot}%{_docdir}/%{name}-doc/copyright
+install -p -D -m 755 %{SOURCE3} %{buildroot}%{_docdir}/%{name}-doc/copyright
 %endif
 
 # Initscripts
-install -p -D -m 755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name}
+install -p -D -m 755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name}-collector
+install -p -D -m 755 %{SOURCE2} %{buildroot}%{_initrddir}/%{name}-virtproxy
 
 # Config files
-install -p -D -m 600 etc/%{name}/logging-%{name}.conf %{buildroot}%{_sysconfdir}/%{name}/logging-%{name}.conf
-install -p -D -m 600 etc/%{name}/logging-%{name}-manage.conf %{buildroot}%{_sysconfdir}/%{name}/logging-%{name}-manage.conf
+install -p -D -m 600 etc/healthnmon/logging-%{name}-collector.conf %{buildroot}%{_sysconfdir}/%{name}/logging-%{name}-collector.conf
+install -p -D -m 600 etc/healthnmon/logging-%{name}-virtproxy.conf %{buildroot}%{_sysconfdir}/%{name}/logging-%{name}-virtproxy.conf
+install -p -D -m 600 etc/healthnmon/logging-healthnmon-manage.conf %{buildroot}%{_sysconfdir}/healthnmon/logging-healthnmon-manage.conf
 
 %clean
 # Don't remove rpmbuild directory after build.
 
-%files
+
+
+%files collector
 %defattr(-,root,root,-)
 %dir %attr(0755, nova, nova) %{_localstatedir}/run/%{name}
 %dir %attr(0755, nova, nova) %{_localstatedir}/log/%{name}
-%dir %attr(0755, nova, root) %{_sysconfdir}/%{name}/
-%{_sysconfdir}/%{name}/logging-%{name}-manage.conf
-%{_bindir}/healthnmon
-%{_bindir}/healthnmon-manage
-%{_initrddir}/healthnmon
+%{_sysconfdir}/%{name}/logging-healthnmon-manage.conf
+%{_bindir}/%{name}-collector
+%{_bindir}/%{name}-manage
+%{_initrddir}/%{name}-collector
 %doc %{_docdir}/%{name}/copyright
 %defattr(-,nova,nova,-)
-%{_sysconfdir}/%{name}/logging-%{name}.conf
+%{_sysconfdir}/%{name}/logging-%{name}-collector.conf
+
+%files virtproxy
+%defattr(-,root,root,-)
+%dir %attr(0755, nova, nova) %{_localstatedir}/run/%{name}
+%dir %attr(0755, nova, nova) %{_localstatedir}/log/%{name}
+%{_bindir}/%{name}-virtproxy
+%{_initrddir}/%{name}-virtproxy
+%doc %{_docdir}/%{name}/copyright
+%defattr(-,nova,nova,-)
+%{_sysconfdir}/%{name}/logging-%{name}-virtproxy.conf
 
 %files -n python-%{name}
 %defattr(-,root,root,-)
