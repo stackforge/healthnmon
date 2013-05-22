@@ -40,7 +40,7 @@ class HealthnmonCollectorService(Service):
                 ctxt, self.host, self.binary)
             self.service_id = self.service_ref['id']
         except exception.NotFound:
-            self._create_service_ref(ctxt)
+            self.service_ref = self._create_service_ref(ctxt)
 
         if self.backdoor_port is not None:
             self.manager.backdoor_port = self.backdoor_port
