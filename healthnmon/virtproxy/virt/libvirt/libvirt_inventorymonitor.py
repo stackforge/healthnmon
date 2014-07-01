@@ -163,9 +163,9 @@ class LibvirtVmHost:
                 InventoryCacheManager.update_object_in_cache(
                     self.compute_id, self.cachedvmHost)
                 api.vm_host_save(get_admin_context(), self.cachedvmHost)
-                LOG.audit(_('Host with (UUID, host name) - (%s, %s) got ' +
-                            'disconnected') % (self.compute_id,
-                                               self.cachedvmHost.get_name()))
+                LOG.info(_('Host with (UUID, host name) - (%s, %s) got ' +
+                           'disconnected') % (self.compute_id,
+                                              self.cachedvmHost.get_name()))
                 event_api.notify_host_update(
                     event_metadata.EVENT_TYPE_HOST_UPDATED, self.cachedvmHost)
                 event_api.notify_host_update(
@@ -247,9 +247,9 @@ class LibvirtVmHost:
                     currentHostState = self.vmHost.get_connectionState()
                     if cachedHoststate != currentHostState:
                         if currentHostState == Constants.VMHOST_CONNECTED:
-                            LOG.audit(_('Host with (UUID, host name) - ' +
-                                        '(%s, %s) got connected') %
-                                      (self.uuid, self.vmHost.get_name()))
+                            LOG.info(_('Host with (UUID, host name) - ' +
+                                       '(%s, %s) got connected') %
+                                     (self.uuid, self.vmHost.get_name()))
                             event_api.notify_host_update(
                                 event_metadata.EVENT_TYPE_HOST_CONNECTED,
                                 self.vmHost)
@@ -258,9 +258,9 @@ class LibvirtVmHost:
                                 self.vmHost)
                         elif currentHostState \
                                 == Constants.VMHOST_DISCONNECTED:
-                            LOG.audit(_('Host with (UUID, host name) - ' +
-                                        '(%s, %s) got disconnected') %
-                                      (self.uuid, self.vmHost.get_name()))
+                            LOG.info(_('Host with (UUID, host name) - ' +
+                                       '(%s, %s) got disconnected') %
+                                     (self.uuid, self.vmHost.get_name()))
                             event_api.notify_host_update(
                                 event_metadata.EVENT_TYPE_HOST_DISCONNECTED,
                                 self.vmHost)
@@ -271,9 +271,9 @@ class LibvirtVmHost:
                             self.libvirtEvents.deregister_libvirt_events()
                 else:
                     # Generate Host Added Event
-                    LOG.audit(_('Host with (UUID, host name) - ' +
-                                '(%s, %s) got added') %
-                              (self.uuid, self.vmHost.get_name()))
+                    LOG.info(_('Host with (UUID, host name) - ' +
+                               '(%s, %s) got added') %
+                             (self.uuid, self.vmHost.get_name()))
                     event_api.notify_host_update(
                         event_metadata.EVENT_TYPE_HOST_ADDED,
                         self.vmHost)
@@ -555,9 +555,9 @@ class LibvirtVM:
                 # Generates the Event when Vm is added, Vm reconfigured
                 # mand if Vm state changes
                 if self.cachedVm is None:
-                    LOG.audit(_('New Vm '
-                              + domainObj.UUIDString() + ' created on host '
-                              + self.compute_id))
+                    LOG.info(_('New Vm '
+                             + domainObj.UUIDString() + ' created on host '
+                             + self.compute_id))
                     event_api.notify(event_metadata.EVENT_TYPE_VM_CREATED,
                                      self.Vm)
                     self.vmAdded = True
@@ -569,45 +569,45 @@ class LibvirtVM:
                                 == Constants.VM_POWER_STATES[1]:
                             if cachedVmState \
                                     == Constants.VM_POWER_STATES[3]:
-                                LOG.audit(_('Vm '
-                                            + domainObj.UUIDString()
-                                            + ' is resumed on host '
-                                            + self.compute_id))
+                                LOG.info(_('Vm '
+                                           + domainObj.UUIDString()
+                                           + ' is resumed on host '
+                                           + self.compute_id))
                                 event_api.notify(
                                     event_metadata.EVENT_TYPE_VM_RESUMED,
                                     self.Vm)
                             else:
-                                LOG.audit(_('Vm '
-                                            + domainObj.UUIDString()
-                                            + ' is started on host '
-                                            + self.compute_id))
+                                LOG.info(_('Vm '
+                                           + domainObj.UUIDString()
+                                           + ' is started on host '
+                                           + self.compute_id))
                                 event_api.notify(
                                     event_metadata.EVENT_TYPE_VM_STARTED,
                                     self.Vm)
                         elif currentVmState \
                                 == Constants.VM_POWER_STATES[3]:
-                            LOG.audit(_('Vm '
-                                        + domainObj.UUIDString()
-                                        + ' is suspended on host '
-                                        + self.compute_id))
+                            LOG.info(_('Vm '
+                                       + domainObj.UUIDString()
+                                       + ' is suspended on host '
+                                       + self.compute_id))
                             event_api.notify(
                                 event_metadata.EVENT_TYPE_VM_SUSPENDED,
                                 self.Vm)
                         elif currentVmState \
                                 == Constants.VM_POWER_STATES[5]:
-                            LOG.audit(_('Vm '
-                                        + domainObj.UUIDString()
-                                        + ' is stopped on host '
-                                        + self.compute_id))
+                            LOG.info(_('Vm '
+                                       + domainObj.UUIDString()
+                                       + ' is stopped on host '
+                                       + self.compute_id))
                             event_api.notify(
                                 event_metadata.EVENT_TYPE_VM_STOPPED,
                                 self.Vm)
                         elif currentVmState \
                                 == Constants.VM_POWER_STATES[4]:
-                            LOG.audit(_('Vm '
-                                        + domainObj.UUIDString()
-                                        + ' is shutdown on host '
-                                        + self.compute_id))
+                            LOG.info(_('Vm '
+                                       + domainObj.UUIDString()
+                                       + ' is shutdown on host '
+                                       + self.compute_id))
                             event_api.notify(
                                 event_metadata.EVENT_TYPE_VM_SHUTDOWN,
                                 self.Vm)
@@ -619,10 +619,10 @@ class LibvirtVM:
                             self.Vm,
                             diff_res_tup[1])
                     if changed_attr is not None and len(changed_attr) > 0:
-                        LOG.audit(_('Vm '
-                                    + domainObj.UUIDString()
-                                    + ' is reconfigured on host '
-                                    + self.compute_id))
+                        LOG.info(_('Vm '
+                                   + domainObj.UUIDString()
+                                   + ' is reconfigured on host '
+                                   + self.compute_id))
                         event_api.notify(
                             event_metadata.EVENT_TYPE_VM_RECONFIGURED,
                             self.Vm,
@@ -1157,9 +1157,9 @@ class LibvirtVM:
                                                              Constants.Vm)
             api.vm_delete_by_ids(get_admin_context(), deletion_list)
             for vm_deleted in vm_deleted_list:
-                LOG.audit(_('Vm '
-                          + str(vm_deleted.get_id()) + ' deleted on host '
-                          + self.compute_id))
+                LOG.info(_('Vm '
+                         + str(vm_deleted.get_id()) + ' deleted on host '
+                         + self.compute_id))
                 event_api.notify(event_metadata.EVENT_TYPE_VM_DELETED,
                                  vm_deleted)
                 self.vmDeleted = True
@@ -1307,9 +1307,9 @@ class LibvirtStorageVolume:
 
                     # Storage.Added
 
-                    LOG.audit(_('New Storage Volume '
-                              + self.storageVolume.get_id()
-                              + ' added on host ' + self.compute_id))
+                    LOG.info(_('New Storage Volume '
+                             + self.storageVolume.get_id()
+                             + ' added on host ' + self.compute_id))
                     event_api.notify(
                         event_metadata.EVENT_TYPE_STORAGE_ADDED,
                         self.storageVolume)
@@ -1321,20 +1321,20 @@ class LibvirtStorageVolume:
                     if currConnState != oldConnState:
                         if currConnState == Constants.STORAGE_STATE_ACTIVE:
                             # Storage.Enabled
-                            LOG.audit(_('Storage Volume '
-                                        + str(self.storageVolume.get_id())
-                                        + ' on host '
-                                        + str(self.compute_id) + ' enabled'
-                                        ))
+                            LOG.info(_('Storage Volume '
+                                       + str(self.storageVolume.get_id())
+                                       + ' on host '
+                                       + str(self.compute_id) + ' enabled'
+                                       ))
                             event_api.notify(
                                 event_metadata.EVENT_TYPE_STORAGE_ENABLED,
                                 self.storageVolume)
                         elif currConnState == Constants.STORAGE_STATE_INACTIVE:
                             # Storage.Disabled
-                            LOG.audit(_('Storage Volume '
-                                        + str(self.storageVolume.get_id())
-                                        + ' on host ' + str(self.compute_id))
-                                      + ' disabled')
+                            LOG.info(_('Storage Volume '
+                                       + str(self.storageVolume.get_id())
+                                       + ' on host ' + str(self.compute_id))
+                                     + ' disabled')
                             event_api.notify(
                                 event_metadata.EVENT_TYPE_STORAGE_DISABLED,
                                 self.storageVolume)
@@ -1441,10 +1441,10 @@ class LibvirtStorageVolume:
                 deletion_list)
             # Generate storage deleted event
             for storage_deleted in storage_deleted_list:
-                LOG.audit(_('Storage volume '
-                            + str(storage_deleted.get_id())
-                            + ' deleted on host '
-                            + str(self.compute_id)))
+                LOG.info(_('Storage volume '
+                           + str(storage_deleted.get_id())
+                           + ' deleted on host '
+                           + str(self.compute_id)))
                 event_api.notify(event_metadata.EVENT_TYPE_STORAGE_DELETED,
                                  storage_deleted)
         LOG.debug(_('Exiting processStorageDeletes of Storage Volumes of host '
@@ -1575,10 +1575,10 @@ class LibvirtNetwork:
                         diffdict[update][
                             virtualSwitches][add].values():
                     # Network.Added
-                    LOG.audit(_('New Network '
-                                + str(vswitch.get_name())
-                                + ' added on host '
-                                + self.compute_id))
+                    LOG.info(_('New Network '
+                               + str(vswitch.get_name())
+                               + ' added on host '
+                               + self.compute_id))
                     event_api.notify(
                         event_metadata.EVENT_TYPE_NETWORK_ADDED,
                         vswitch, host_id=self.compute_id)
@@ -1588,10 +1588,10 @@ class LibvirtNetwork:
                         diffdict[update][
                             virtualSwitches][delete].values():
                     # Network.Deleted
-                    LOG.audit(_('Network '
-                                + str(vswitch.get_name())
-                                + ' deleted on host '
-                                + self.compute_id))
+                    LOG.info(_('Network '
+                               + str(vswitch.get_name())
+                               + ' deleted on host '
+                               + self.compute_id))
                     event_api.notify(
                         event_metadata.EVENT_TYPE_NETWORK_DELETED,
                         vswitch, host_id=self.compute_id)
@@ -1610,11 +1610,11 @@ class LibvirtNetwork:
                                             update][connectionState] \
                                         == Constants.\
                                         VIRSWITCH_STATE_ACTIVE:
-                                    LOG.audit(_('Network '
-                                                + str(vswitch.
-                                                      get_name())
-                                                + ' enabled on host '
-                                                + self.compute_id))
+                                    LOG.info(_('Network '
+                                               + str(vswitch.
+                                                     get_name())
+                                               + ' enabled on host '
+                                               + self.compute_id))
                                     event_api.notify(
                                         event_metadata.
                                         EVENT_TYPE_NETWORK_ENABLED,
@@ -1625,10 +1625,10 @@ class LibvirtNetwork:
                                         vswitchid][update][
                                             connectionState] == \
                                         Constants.VIRSWITCH_STATE_INACTIVE:
-                                    LOG.audit(_('Network '
-                                                + str(vswitch.get_name())
-                                                + ' disabled on host '
-                                                + self.compute_id))
+                                    LOG.info(_('Network '
+                                               + str(vswitch.get_name())
+                                               + ' disabled on host '
+                                               + self.compute_id))
                                     event_api.\
                                         notify(event_metadata.
                                                EVENT_TYPE_NETWORK_DISABLED,
@@ -1642,11 +1642,11 @@ class LibvirtNetwork:
                 for portGroup in \
                         diffdict[update][portGroups][add].values():
                     # PortGroup.Added
-                    LOG.audit(_('New PortGroup '
-                                + str(portGroup.get_name())
-                                + ' added to virtual switch '
-                                + str(portGroup.get_virtualSwitchId())
-                                + ' on host ' + self.compute_id))
+                    LOG.info(_('New PortGroup '
+                               + str(portGroup.get_name())
+                               + ' added to virtual switch '
+                               + str(portGroup.get_virtualSwitchId())
+                               + ' on host ' + self.compute_id))
                     event_api.notify(
                         event_metadata.EVENT_TYPE_PORTGROUP_ADDED,
                         portGroup)
@@ -1655,11 +1655,11 @@ class LibvirtNetwork:
                 for portGroup in \
                         diffdict[update][portGroups][delete].values():
                     # PortGroup.Deleted
-                    LOG.audit(_('PortGroup '
-                                + str(portGroup.get_name())
-                                + ' deleted from virtual switch '
-                                + str(portGroup.get_virtualSwitchId())
-                                + ' on host ' + self.compute_id))
+                    LOG.info(_('PortGroup '
+                               + str(portGroup.get_name())
+                               + ' deleted from virtual switch '
+                               + str(portGroup.get_virtualSwitchId())
+                               + ' on host ' + self.compute_id))
                     event_api.notify(
                         event_metadata.EVENT_TYPE_PORTGROUP_DELETED,
                         portGroup)
@@ -1677,13 +1677,13 @@ class LibvirtNetwork:
                                         update][portGroupid])
                             if changed_attr is not None and\
                                     len(changed_attr) > 0:
-                                LOG.audit(_('Port group '
-                                            + str(portGroup.get_name())
-                                            + ' attached to virtual switch '
-                                            + str(portGroup.
-                                                  get_virtualSwitchId())
-                                            + ' on host ' + self.compute_id
-                                            + ' is reconfigured'))
+                                LOG.info(_('Port group '
+                                           + str(portGroup.get_name())
+                                           + ' attached to virtual switch '
+                                           + str(portGroup.
+                                                 get_virtualSwitchId())
+                                           + ' on host ' + self.compute_id
+                                           + ' is reconfigured'))
                                 event_api.notify(
                                     event_metadata.
                                     EVENT_TYPE_PORTGROUP_RECONFIGURED,

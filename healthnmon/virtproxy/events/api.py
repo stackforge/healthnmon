@@ -92,6 +92,6 @@ def notify_host_update(event_type, vmHost, **kwargs):
                                                    Constants.VmHost, 5)
     # update the host event payload with utilization data and notify
     vmHost.set_utilization(resource_utilization)
-    LOG.audit(_('Host with (UUID, host name) - (%s, %s) got updated') %
-              (vmHost.get_id(), vmHost.get_name()))
+    LOG.info(_('Host with (UUID, host name) - (%s, %s) got updated') %
+             (vmHost.get_id(), vmHost.get_name()))
     notify(event_type, vmHost, **kwargs)

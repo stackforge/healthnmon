@@ -214,7 +214,7 @@ class InventoryManager(object):
                     self._add_compute_to_inventory(compute[
                                                    'hypervisor_type'],
                                                    compute_id, service['host'])
-                    LOG.audit(_(
+                    LOG.info(_(
                         'New Host with compute_id  %s is \
                         obtained') % (compute_id))
                 InventoryCacheManager.get_all_compute_inventory()[
@@ -267,7 +267,7 @@ class InventoryManager(object):
                     host_deleted.get_id()]
                 InventoryCacheManager.delete_object_in_cache(
                     host_deleted.get_id(), Constants.VmHost)
-                LOG.audit(_('Host with (UUID, host name) - (%s, %s) \
+                LOG.info(_('Host with (UUID, host name) - (%s, %s) \
                 got removed') % (
                     host_deleted.get_id(), host_deleted.get_name()))
 

@@ -100,4 +100,4 @@ def setLogLevel(level, module_name):
     else:
         log.getLogger(module_name).logger.setLevel(l)
 
-    LOG.audit(_(module_name + ' log level set to %s ') % level)
+    LOG.info(_(module_name + ' log level set to %s ') % level)
