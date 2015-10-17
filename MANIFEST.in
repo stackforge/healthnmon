@@ -1,8 +1,0 @@
-graft etc
-include run_tests.sh
-include MANIFEST.in Authors
-include tox.ini
-include LICENSE
-include healthnmon/db/sqlalchemy/migrate_repo/migrate.cfg
-include healthnmon/db/sqlalchemy/migrate_repo/versions/*.sql
-global-exclude *.pyc
